@@ -1,13 +1,13 @@
 import { Breadcrumb, Layout, Menu, theme, Row, Col, Avatar } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import { ReactComponent as Vector } from '../../assets/images/Vector.svg';
-import { ReactComponent as Ellipse1 } from '../../assets/images/Ellipse 1.svg';
 import { useState } from 'react';
 import React from 'react';
 import './style.css';
 
 import ProfileUpdate from '../profile-update';
 
+import Profile from '../avatar/profile';
 const { Header, Content, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
@@ -65,13 +65,7 @@ const HomePage = () => {
               })}
             </Col>
             <Col md={6}>
-              <div>
-                <Avatar size="default" icon={<Ellipse1 />}></Avatar>
-                <span>
-                  <b>Ha Nguyen</b>
-                  <span>Admin</span>
-                </span>
-              </div>
+              <Profile></Profile>
             </Col>
           </Row>
         </Header>

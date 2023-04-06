@@ -1,5 +1,6 @@
 import React from 'react';
-import { theme } from 'antd';
+import { theme, Avatar } from 'antd';
+import { ReactComponent as Ellipse3 } from '../../assets/images/Ellipse 3.svg';
 
 function ProfileUpdate(props) {
   const {
@@ -9,10 +10,15 @@ function ProfileUpdate(props) {
     <div
       style={{
         padding: 24,
-        minHeight: 500,
+        height: '100vh',
+        minHeight: '100%',
         background: colorBgContainer,
       }}
-    ></div>
+    >
+      <div>
+        <Avatar size="" icon={<Ellipse3 />}></Avatar>
+      </div>
+    </div>
   );
 }
 export default ProfileUpdate;
