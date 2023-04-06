@@ -5,6 +5,9 @@ import { ReactComponent as Ellipse1 } from '../../assets/images/Ellipse 1.svg';
 import { useState } from 'react';
 import React from 'react';
 import './style.css';
+
+import ProfileUpdate from '../profile-update';
+
 const { Header, Content, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
@@ -84,13 +87,7 @@ const HomePage = () => {
           >
             <Breadcrumb.Item>{<h1>My Profile</h1>}</Breadcrumb.Item>
           </Breadcrumb>
-          <div
-            style={{
-              padding: 24,
-              minHeight: 360,
-              background: colorBgContainer,
-            }}
-          ></div>
+          <ProfileUpdate />
         </Content>
       </Layout>
     </Layout>
