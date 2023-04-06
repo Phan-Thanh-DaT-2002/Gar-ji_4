@@ -1,0 +1,29 @@
+.profile{
+    height: 316px;
+    display: flex;
+    margin-bottom: 32px;
+}
+.avatar{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+}
+.infor{
+    width: 50%;
+    padding-left: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    column-gap: 10px;
+}
+
+.button{
+    height: 104px;
+    display: flex;
+    align-items: center;
+    border-top: 2px solid #DDE4EE;
+}

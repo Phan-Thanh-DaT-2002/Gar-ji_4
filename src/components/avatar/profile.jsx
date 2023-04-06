@@ -1,9 +1,7 @@
-import { Avatar } from 'antd';
 import '../avatar/style.css'
-import { Dropdown, message, Space } from 'antd';
+import { Dropdown, Space, Avatar, Typography} from 'antd';
 import { ReactComponent as Ellipse1 } from '../../assets/images/Ellipse 1.svg';
 import React from 'react';
-import { Typography } from 'antd';
 const { Text} = Typography;
 const onClick = ({ key }) => {
     // message.info(`Click on item ${key}`); 
