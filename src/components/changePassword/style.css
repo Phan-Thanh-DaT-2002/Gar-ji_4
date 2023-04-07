@@ -1,0 +1,90 @@
+.content_div {
+
+
+  position: absolute;
+  width: 567px;
+  height: 520px;
+
+  background: #FFFFFF;
+  border-radius: 16px;
+}
+
+.text {
+  /* Now you can create a new password for your acconut */
+
+
+  width: 434px;
+  height: 24px;
+
+  /* Paragraph 3/Medium */
+
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  /* identical to box height, or 150% */
+
+
+  /* Neutral Light/2 */
+
+  color: #939393;
+
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+.line {
+  /* Line 2 */
+
+
+  width: 519px;
+  height: 0px;
+
+  /* Neutral Dark/5 */
+
+  border: 1px solid #DDE4EE;
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+  margin-bottom: 25px;
+}
+
+.btn-c-s {
+  display: flex;
+  align-content: flex-start !important;
+}
+
+.text-btn {
+  width: 142px;
+  height: 24px;
+
+  /* Paragraph 3/Regular */
+
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  /* identical to box height, or 150% */
+
+
+  /* Neutral Light/2 */
+
+  color: #939393;
+
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+  margin: 0;
+}

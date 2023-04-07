@@ -5,7 +5,8 @@ import { useState } from 'react';
 import React from 'react';
 import './style.css';
 import Profile from '../avatar/profile';
-import ViewProfile from '../viewprofile/viewprofile';
+import ChangePassword from '../changePassword/changePassword';
+
 const { Header, Content, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
@@ -72,7 +73,14 @@ const HomePage = () => {
             margin: '0 16px',
           }}
         >
-          <ViewProfile />
+          <Breadcrumb
+            style={{
+              margin: '16px 0',
+            }}
+          >
+            <Breadcrumb.Item>{<h1>My Profile</h1>}</Breadcrumb.Item>
+          </Breadcrumb>
+          <ChangePassword />
         </Content>
       </Layout>
     </Layout>
