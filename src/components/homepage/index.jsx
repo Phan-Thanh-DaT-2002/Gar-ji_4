@@ -1,5 +1,5 @@
 import { Breadcrumb, Layout, Menu, theme, Row, Col } from 'antd';
-import { MenuOutlined } from '@ant-design/icons';
+import { MenuOutlined, RightOutlined } from '@ant-design/icons';
 import { ReactComponent as Vector } from '../../assets/images/Vector.svg';
 import { useState } from 'react';
 import React from 'react';
@@ -16,10 +16,10 @@ function getItem(label, key, icon, children) {
   };
 }
 const items = [
-  getItem('Garage', '1', <Vector />),
-  getItem('Garage owner', '2', <Vector />),
-  getItem('Garage staff', '3', <Vector />),
-  getItem('Garage services', '4', <Vector />),
+  getItem('Garage', '1', <Vector />, []),
+  getItem('Garage owner', '2', <Vector />, []),
+  getItem('Garage staff', '3', <Vector />, []),
+  getItem('Garage services', '4', <Vector />, []),
 ];
 const HomePage = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -72,6 +72,13 @@ const HomePage = () => {
             margin: '0 16px',
           }}
         >
+          <Breadcrumb
+            style={{
+              margin: '16px 0',
+            }}
+          >
+            <Breadcrumb.Item>{<h1>My Profile</h1>}</Breadcrumb.Item>
+          </Breadcrumb>
           <ViewProfile />
         </Content>
       </Layout>
