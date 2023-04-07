@@ -77,14 +77,14 @@ function ProfileUpdate(props) {
                 <Input placeholder="ha.nguyen" style={inputStyle} disabled />
               </Form.Item>
               <Row gutter={16}>
-                <Col span={12}>
+                <Col span={8}>
                   <Form.Item label="DOB" style={labelStyle}>
                     <DatePicker />
                   </Form.Item>
                 </Col>
-                <Col span={12}>
+                <Col span={11}>
                   <Form.Item label="Phone Number">
-                    <DatePicker />
+                    <Input placeholder="" />
                   </Form.Item>
                 </Col>
               </Row>
