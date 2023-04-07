@@ -1,7 +1,6 @@
 .container {
   display: flex;
   flex-direction: column;
-  position: relative;
 }
 .profile {
   display: flex;
@@ -18,7 +17,6 @@
   display: flex;
   justify-content: flex-start;
   margin-top: 24px;
-  position: absolute;
   top: 480px;
   width: 100%;
   border-top: 1px solid #dde4ee;

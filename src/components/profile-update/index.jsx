@@ -30,18 +30,32 @@ function ProfileUpdate(props) {
     >
       <div className="container">
         <div className="profile">
-          <div className="avatar">
-            <Avatar size={250} icon={<Ellipse2 />}></Avatar>
+          <div className="avatar" style={{ position: 'relative' }}>
             <Avatar
-              style={{ position: 'absolute' }}
+              style={{
+                position: 'absolute',
+                top: 100,
+                left: 100,
+              }}
+              size={250}
+              icon={<Ellipse2 />}
+            ></Avatar>
+            <Avatar
+              style={{
+                position: 'absolute',
+                top: 100,
+                left: 100,
+              }}
               size={250}
               icon={<Ellipse3 />}
             />
             <Avatar
               style={{
-                position: 'absolute',
+                position: 'relative',
                 color: '#EEEEEE',
                 background: 'rgba(0)',
+                top: 200,
+                left: 200,
               }}
               size={50}
               icon={<Camera />}
