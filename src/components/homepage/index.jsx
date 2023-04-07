@@ -7,7 +7,8 @@ import './style.css';
 
 import Profile from '../avatar/profile';
 import ProfileUpdate from '../profile-update';
-import ViewProfile from '../viewprofile/viewprofile';
+import ChangePassword from '../changePassword/changePassword';
+
 const { Header, Content, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
