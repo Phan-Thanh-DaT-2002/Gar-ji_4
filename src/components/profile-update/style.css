@@ -1,0 +1,50 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.profile {
+  display: flex;
+}
+.avatar {
+  width: 500px;
+  height: 500px;
+}
+.infor {
+  width: 500px;
+  height: 500px;
+}
+.wrapper {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 24px;
+  position: absolute;
+  top: 480px;
+  width: 100%;
+  border-top: 1px solid #dde4ee;
+  padding-top: 20px;
+}
+.btn {
+  /* Auto layout */
+  padding: 12px 16px;
+  gap: 8px;
+
+  width: 179px;
+  height: 48px;
+
+  border-radius: 8px;
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+  border: 2px solid #8767e1;
+}
+.btn#save {
+  color: white;
+  background: #8767e1;
+}
+.btn#cancel {
+  color: #8767e1;
+}

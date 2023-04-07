@@ -1,13 +1,13 @@
-import { Breadcrumb, Layout, Menu, theme, Row, Col, Avatar } from 'antd';
+import { Breadcrumb, Layout, Menu, theme, Row, Col } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import { ReactComponent as Vector } from '../../assets/images/Vector.svg';
 import { useState } from 'react';
 import React from 'react';
 import './style.css';
 
-import ProfileUpdate from '../profile-update';
-
 import Profile from '../avatar/profile';
+import ProfileUpdate from '../profile-update';
+import ViewProfile from '../viewprofile/viewprofile';
 const { Header, Content, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
@@ -74,13 +74,19 @@ const HomePage = () => {
             margin: '0 16px',
           }}
         >
-          <Breadcrumb
+          <div
             style={{
               margin: '16px 0',
             }}
           >
-            <Breadcrumb.Item>{<h1>My Profile</h1>}</Breadcrumb.Item>
-          </Breadcrumb>
+            <h1
+              style={{
+                fontWeight: 700,
+              }}
+            >
+              My Profile
+            </h1>
+          </div>
           <ProfileUpdate />
         </Content>
       </Layout>
