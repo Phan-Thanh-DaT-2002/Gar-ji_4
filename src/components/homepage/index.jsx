@@ -19,10 +19,10 @@ function getItem(label, key, icon, children) {
   };
 }
 const items = [
-  getItem('Garage', '1', <Vector />),
-  getItem('Garage owner', '2', <Vector />),
-  getItem('Garage staff', '3', <Vector />),
-  getItem('Garage services', '4', <Vector />),
+  getItem('Garage', '1', <Vector />, []),
+  getItem('Garage owner', '2', <Vector />, []),
+  getItem('Garage staff', '3', <Vector />, []),
+  getItem('Garage services', '4', <Vector />, []),
 ];
 const HomePage = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -83,6 +83,7 @@ const HomePage = () => {
             <h1
               style={{
                 fontWeight: 700,
+                fontSize: 32,
               }}
             >
               My Profile
