@@ -1,3 +1,6 @@
 .ant-layout-sider-children {
     background-color: white !important;
 }
+.ant-menu .ant-menu-submenu-arrow {
+    transform: rotate(-90deg) !important;
+}

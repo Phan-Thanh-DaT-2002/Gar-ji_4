@@ -16,10 +16,10 @@ function ViewProfile() {
       }}
     >
       <div className="profile">
-        <div className="avatar">
+        <div className="avatar_view">
           <Avatar size={250} icon={<Ellipse2 />} />
         </div>
-        <div className="infor">
+        <div className="infor_view">
           <div>
             <Text type="secondary">Name</Text>
             <br />
