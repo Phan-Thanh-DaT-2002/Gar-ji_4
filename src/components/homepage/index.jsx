@@ -1,5 +1,5 @@
-import { Breadcrumb, Layout, Menu, theme, Row, Col } from 'antd';
-import { MenuOutlined, RightOutlined } from '@ant-design/icons';
+import { Layout, Menu, theme, Row, Col } from 'antd';
+import { MenuOutlined } from '@ant-design/icons';
 import { ReactComponent as Vector } from '../../assets/images/Vector.svg';
 import { useState } from 'react';
 import React from 'react';
@@ -8,6 +8,10 @@ import './style.css';
 import Profile from '../avatar/profile';
 import ProfileUpdate from '../profile-update';
 import ChangePassword from '../changePassword/changePassword';
+import ViewProfile from '../viewprofile/viewprofile';
+import GarageOwnerList from '../GarageOwner/Garage-owner-list/list';
+import GarageManagementList from '../GarageManagement/GarageList/GarageList';
+import GarageServicesList from '../GarageServices/GarageServicesList/GarageServicesList';
 
 const { Header, Content, Sider } = Layout;
 function getItem(label, key, icon, children) {
@@ -88,7 +92,7 @@ const HomePage = () => {
               My Profile
             </h1>
           </div>
-          <ProfileUpdate />
+          <GarageServicesList />
         </Content>
       </Layout>
     </Layout>
