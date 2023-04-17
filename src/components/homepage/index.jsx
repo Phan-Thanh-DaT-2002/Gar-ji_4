@@ -8,6 +8,11 @@ import './style.css';
 import Profile from '../avatar/profile';
 import ProfileUpdate from '../profile-update';
 import ChangePassword from '../changePassword/changePassword';
+import Create from '../Create_GaraMana/Create.jsx';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+
+import Login from '../login/login.jsx';
 
 const { Header, Content, Sider } = Layout;
 function getItem(label, key, icon, children) {
@@ -66,7 +71,7 @@ const HomePage = () => {
               })}
             </Col>
             <Col md={6}>
-              <Profile></Profile>
+              <Profile/>
             </Col>
           </Row>
         </Header>
@@ -89,7 +94,7 @@ const HomePage = () => {
               My Profile
             </h1>
           </div>
-          <ProfileUpdate />
+          <Create/>
         </Content>
       </Layout>
     </Layout>

@@ -1,6 +1,7 @@
-import { Button, Checkbox,Form, Input } from 'antd';
-import React from 'react'
+import { Button, Checkbox,Form, Input, message } from 'antd';
+import React, { useState } from 'react'
 import {DivStyle, FormItem, FormStyle, HeadingLogin,Label,MainLogin, InforLogin,FormItemBtn, StyleBtn} from './login'
+import { useNavigate } from 'react-router-dom';
 const onFinish = (values) => {
     console.log('Success:', values);
   };
@@ -31,6 +32,40 @@ const onFinish = (values) => {
     }
   };
 export default function Login() {
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const handleSubmit = async (values) => {
+    try {
+      // Thực hiện các xử lý khi người dùng submit form
+      console.log('Form submitted:', values);
+  
+      // Thực hiện lấy API từ Postman
+      const response = await fetch(
+        'https://edison-garage-api.savvycom.xyz/api/auth/local',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(values),
+        }
+      );
+  
+      const data = await response.json();
+  
+      console.log('API response:', data);
+      navigate('/');
+    } catch (error) {
+      console.error(error);
+      if (error.response && error.response.status === 404 && error.response.data.message === 'User not found') {
+        // Hiển thị thông báo lỗi khi email không tồn tại trong hệ thống
+        message.error('Email not found');
+      } else {
+        // Hiển thị thông báo lỗi chung khi có lỗi xảy ra
+        message.error('An error occurred');
+      }
+    }
+  };
   return (
     <DivStyle >
       <FormStyle
@@ -48,7 +83,7 @@ export default function Login() {
     initialValues={{
       remember: true,
     }}
-    onFinish={onFinish}
+    onFinish={handleSubmit}
     onFinishFailed={onFinishFailed}
     autoComplete="off"
   >
@@ -96,10 +131,11 @@ export default function Login() {
     </InforLogin>
 
     <FormItem>
-      <StyleBtn type="" htmlType="Login">
+      <StyleBtn type="" htmlType="submit">
         <span>Log in</span>
       </StyleBtn>
     </FormItem>
+    {error && <div>{error}</div>}
     </MainLogin>
   </FormStyle>
     </DivStyle>
