@@ -19,9 +19,9 @@ const useProfileClick = () => {
       case '3':
         navigate('/change-password');
         break;
-      // case '4':
-      //   navigate('/login');
-      //   break;
+      case '4':
+        navigate('/login');
+        break;
       default:
         break;
     }
@@ -41,10 +41,10 @@ const items = [
     label: 'Change password',
     key: '3',
   },
-  // {
-  //   label: 'Log out',
-  //   key: '4',
-  // },
+  {
+    label: 'Log out',
+    key: '4',
+  },
 ];
 const Profile = () => (
   <Dropdown

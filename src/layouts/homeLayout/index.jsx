@@ -6,7 +6,7 @@ import React from 'react';
 import './style.css';
 
 import Profile from '../../components/avatar/profile';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 // import ProfileUpdate from '../../components/profile-update';
 // import ChangePassword from '../../components/changePassword/changePassword';
 
@@ -27,6 +27,7 @@ const items = [
 ];
 const HomeLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -67,7 +68,7 @@ const HomeLayout = () => {
               })}
             </Col>
             <Col md={6}>
-              <Profile></Profile>
+              <Profile />
             </Col>
           </Row>
         </Header>
