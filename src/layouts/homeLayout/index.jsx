@@ -52,7 +52,6 @@ const useProfileClick = () => {
 };
 const HomeLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
-
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -94,7 +93,7 @@ const HomeLayout = () => {
               })}
             </Col>
             <Col md={6}>
-              <Profile />
+              <Profile></Profile>
             </Col>
           </Row>
         </Header>
