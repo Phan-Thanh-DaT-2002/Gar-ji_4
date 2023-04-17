@@ -40,7 +40,7 @@ const validatePassword = (rule, value, callback) => {
     callback();
   }
 };
-export default function Login() {
+function Login() {
   return (
     <DivStyle>
       <FormStyle
@@ -110,3 +110,4 @@ export default function Login() {
     </DivStyle>
   );
 }
+export default Login;
