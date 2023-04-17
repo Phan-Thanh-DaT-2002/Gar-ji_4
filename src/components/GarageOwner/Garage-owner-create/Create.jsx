@@ -1,0 +1,237 @@
+import React, { useState } from 'react'
+import { AudioOutlined,DeleteOutlined  } from '@ant-design/icons';
+import { StyledDOB, AllDiv, DivForm, DivStyle, FirstInfo, FirstLine, FormItem, StyledOption, StyleSelect, SecondLine, FormSearch, ThreeLine, StyleSearch, StyleInput, SCheckbox, StyleCheckBox, LeftColumn, RightColumn, MyDivider, Btn, ButtonStyle, } from './create.js'
+import { DatePicker,Button, Checkbox, Form, Input, Select, TreeSelect, AutoComplete, Divider,message } from 'antd';
+
+export default function Create() {
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+  const onFinish = (values) => {
+    setLoading(true);
+    setTimeout(() => {
+      message.success('Form submitted successfully!');
+      setLoading(false);
+      form.resetFields();
+    }, 2000);
+  };
+
+  const onFinishFailed = (errorInfo) => {
+    console.log('Failed:', errorInfo);
+  };
+  const { Option } = Select;
+  const onCancel = () => {
+    form.resetFields();
+  };
+
+  const onChange = (e) => {
+    console.log(`checked = ${e.target.checked}`);
+  };
+
+  const onSearch = (value) => console.log(value);
+  return (
+    <DivStyle>
+    <AllDiv>
+
+      <DivForm
+    name="basic"
+    labelCol={{
+      span: 8,
+    }}
+    wrapperCol={{
+      span: 16,
+    }}
+    style={{
+          }}
+    initialValues={{
+      remember: true,
+    }}
+    onFinish={onFinish}
+    onFinishFailed={onFinishFailed}
+    autoComplete="off"
+    form={form}
+  >
+  <FirstInfo>
+    <FirstLine>
+
+    <FormItem
+      label="Name"
+      labelCol={{span: 24}}
+      name="name"
+      rules={[
+        {
+          required: true,
+          message: 'Please input your name!',
+        },
+      ]}
+    >
+      <Input placeholder='Enter owner name' />
+    </FormItem>
+    <FormItem
+      label="Email"
+      labelCol={{span: 24}}
+      name="Email"
+      rules={[
+        {
+          required: true,
+          message: 'Please input your email!',
+        },
+        {
+      type: 'email',
+      message: 'Please enter a valid email address',
+    },
+      ]}
+    >
+      <Input placeholder='Enter owner email' />
+    </FormItem>
+
+    <FormItem
+      label="Username"
+      name="username"
+      labelCol={{span: 24}}
+      rules={[
+        {
+          required: true,
+          message: 'Please input your username!',
+        },
+      ]}
+    >
+      <Input placeholder='Enter owner username' />
+    </FormItem>
+    </FirstLine>
+
+      <FirstLine>
+
+    <FormItem
+      label="Password"
+      labelCol={{span: 24}}
+      name="password"
+      rules={[
+        {
+          required: true,
+          message: 'Please input your password!',
+        },
+      ]}
+    >
+      <Input placeholder='Enter owner password' />
+    </FormItem>
+    <FormItem
+      label="Phone number"
+      labelCol={{span: 24}}
+      name="phone"
+      rules={[
+        {
+          required: true,
+          message: 'Please input your phone number!',
+        },
+        {
+      pattern: /^[0-9]{10,}$/,
+      message: 'Please input a valid phone number!',
+    },
+      ]}
+    >
+      <Input placeholder='Enter owner phone number' />
+    </FormItem>
+    <FormItem  
+        name="gender"
+        label="Gender"
+        labelCol={{span: 24}}
+        rules={[
+          {
+            required: true,
+            message: 'Please select gender!',
+          },
+        ]}
+      >
+        <StyleSelect className='style_select' placeholder="Select owner gender" allowClear={false}>
+          <Select.Option value="male">Male</Select.Option>
+          <Select.Option value="female">Female</Select.Option>
+          <Select.Option value="other">Other</Select.Option>
+        </StyleSelect>
+      </FormItem>
+      </FirstLine>
+      <SecondLine>
+
+      <FormItem label="DOB" labelCol={{span: 24}}>
+          <StyledDOB/>
+        </FormItem>
+        <FormItem
+        name="role"
+        label="Role"
+
+        labelCol={{span: 24}}
+        rules={[
+          {
+            required: true,
+            message: 'Please select a role!',
+          },
+        ]}
+      >
+        <StyleSelect className='selectStyle' placeholder="Select a role" allowClear={false}>
+          <Option value="male">User</Option>
+          <Option value="female">Admin</Option>
+          <Option value="other">Other</Option>
+        </StyleSelect>
+      </FormItem>
+      <FormItem
+        name="status"
+        label="Status"
+        labelCol={{span: 24}}
+        rules={[
+          {
+            required: true,
+            message: 'Please select a status!',
+          },
+        ]}
+      >
+        <StyleSelect placeholder="Select a status" allowClear={false}>
+          <Option value="male">Male</Option>
+          <Option value="female">Female</Option>
+          <Option value="other">Other</Option>
+        </StyleSelect>
+      </FormItem>
+      </SecondLine>
+
+      <ThreeLine>
+      
+        <div className='title_formS'>Garages</div>
+        <FormSearch>
+        <LeftColumn>
+
+        <StyleInput placeholder="Search for garages..." />
+        <SCheckbox>
+          <StyleCheckBox onChange={onChange}>Garage ABC</StyleCheckBox>
+          <StyleCheckBox onChange={onChange}>TLS</StyleCheckBox>
+          <StyleCheckBox onChange={onChange}>AHC</StyleCheckBox>
+          <StyleCheckBox onChange={onChange}>CB Garage</StyleCheckBox>
+          <StyleCheckBox onChange={onChange}>UCQ</StyleCheckBox>
+        </SCheckbox>
+        </LeftColumn>
+        <MyDivider type="vertical" />
+        <RightColumn>
+
+        <div className="select_gara">Select garages (2)</div>
+        <div className='select_remove'>
+            <span>Garage ABC</span>
+            <DeleteOutlined  style={{ fontSize: '24px' }}/>
+        </div>
+        <div className='select_remove'>
+            <span>TLS</span>
+            <DeleteOutlined  style={{ fontSize: '24px' }}/>
+        </div>
+        </RightColumn>
+        </FormSearch>
+      </ThreeLine>
+<div className='Btns'>
+<Divider style={{ border: '1px solid #DDE4EE', margin: 0}} />
+<div className='btn-button'>
+<ButtonStyle type="primary" style={{background: '#8767E1'}} htmlType="submit"><span>Save</span></ButtonStyle>
+<ButtonStyle htmlType="button" onClick={onCancel}><span>Cancel</span></ButtonStyle>
+
+</div>
+</div>
+  </FirstInfo>
+  </DivForm>
+    </AllDiv>
+    </DivStyle>
+  )
+}
