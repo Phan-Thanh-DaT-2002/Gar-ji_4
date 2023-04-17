@@ -1,6 +1,5 @@
-import React from 'react';
 import styled from 'styled-components';
-import { Button, Checkbox, Form, Input } from 'antd';
+import { Button, Form } from 'antd';
 export const DivStyle = styled.div`
   position: relative;
   width: 100%;
