@@ -1,13 +1,14 @@
-import { Breadcrumb, Layout, Menu, theme, Row, Col } from 'antd';
+import { Layout, Menu, theme, Row, Col } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import { ReactComponent as Vector } from '../../assets/images/Vector.svg';
 import { useState } from 'react';
 import React from 'react';
 import './style.css';
 
-import Profile from '../avatar/profile';
-import ProfileUpdate from '../profile-update';
-import ChangePassword from '../changePassword/changePassword';
+import Profile from '../../components/avatar/profile';
+import { Outlet } from 'react-router-dom';
+// import ProfileUpdate from '../../components/profile-update';
+// import ChangePassword from '../../components/changePassword/changePassword';
 
 const { Header, Content, Sider } = Layout;
 function getItem(label, key, icon, children) {
@@ -24,7 +25,7 @@ const items = [
   getItem('Garage staff', '3', <Vector />, []),
   getItem('Garage services', '4', <Vector />, []),
 ];
-const HomePage = () => {
+const HomeLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer },
@@ -89,10 +90,10 @@ const HomePage = () => {
               My Profile
             </h1>
           </div>
-          <ProfileUpdate />
+          <Outlet />
         </Content>
       </Layout>
     </Layout>
   );
 };
-export default HomePage;
+export default HomeLayout;

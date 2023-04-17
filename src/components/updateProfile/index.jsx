@@ -5,7 +5,7 @@ import { ReactComponent as Ellipse2 } from '../../assets/images/Ellipse 2.svg';
 import { ReactComponent as Camera } from '../../assets/images/Camera/undefined/Vector.svg';
 import './style.css';
 
-function ProfileUpdate(props) {
+function UpdateProfile(props) {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -110,4 +110,4 @@ function ProfileUpdate(props) {
     </div>
   );
 }
-export default ProfileUpdate;
+export default UpdateProfile;

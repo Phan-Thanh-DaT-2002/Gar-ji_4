@@ -1,7 +1,7 @@
 import React from 'react';
 import { theme, Button, Avatar, Typography } from 'antd';
 import { ReactComponent as Ellipse2 } from '../../assets/images/Ellipse 2.svg';
-import '../viewprofile/style.css';
+import './style.css';
 const { Text } = Typography;
 function ViewProfile() {
   const {
