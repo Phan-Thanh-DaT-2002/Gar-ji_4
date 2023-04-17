@@ -13,7 +13,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 
 const { Header, Content, Sider } = Layout;
 
-function getItem(label, key, icon, icon_second, children) {
+function getItem(label, key, icon, children) {
   return {
     key,
     icon,

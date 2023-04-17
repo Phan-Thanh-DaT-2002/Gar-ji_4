@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, Input } from 'antd';
+import { Input } from 'antd';
 import React from 'react';
 import {
   DivStyle,
@@ -8,7 +8,6 @@ import {
   Label,
   MainLogin,
   InforLogin,
-  FormItemBtn,
   StyleBtn,
 } from './login';
 const onFinish = values => {
