@@ -1,8 +1,16 @@
 import React from 'react';
-import HomePage from './components/homepage';
+
+import { RouterProvider } from 'react-router-dom';
+import router from './router';
+
+import HomeLayout from './layouts/homeLayout';
 
 function App() {
-  return <HomePage />;
+  return (
+    <RouterProvider router={router}>
+      <HomeLayout />
+    </RouterProvider>
+  );
 }
 
 export default App;

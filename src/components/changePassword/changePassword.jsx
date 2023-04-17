@@ -9,7 +9,7 @@ const tailLayout = {
     span: 16,
   },
 };
-const changePassword = () => {
+const ChangePassword = () => {
   // const labelStyle = {
   //   /* Now you can create a new password for your acconut */
 
@@ -90,4 +90,4 @@ const changePassword = () => {
     </div>
   );
 };
-export default changePassword;
+export default ChangePassword;
