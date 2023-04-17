@@ -2,12 +2,13 @@ import { Layout, Menu, theme, Row, Col } from 'antd';
 import { MenuOutlined, RightOutlined } from '@ant-design/icons';
 import { ReactComponent as Vector } from '../../assets/images/Vector.svg';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import React from 'react';
 import './style.css';
 
 import Profile from '../../components/avatar/profile';
-import { Outlet, useNavigate } from 'react-router-dom';
-
+import { Outlet } from 'react-router-dom';
+import Create from '../../components/GarageOwner/Garage-owner-create/Create.jsx';
 // import ProfileUpdate from '../../components/profile-update';
 // import ChangePassword from '../../components/changePassword/changePassword';
 
@@ -115,7 +116,7 @@ const HomeLayout = () => {
               My Profile
             </h1>
           </div>
-          <Outlet />
+          <Create/>
         </Content>
       </Layout>
     </Layout>
