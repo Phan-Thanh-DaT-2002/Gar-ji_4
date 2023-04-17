@@ -109,3 +109,4 @@ function Login() {
     </DivStyle>
   );
 }
+export default Login;
