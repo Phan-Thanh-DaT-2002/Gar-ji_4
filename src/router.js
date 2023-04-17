@@ -7,6 +7,9 @@ import UpdateProfile from './components/updateProfile';
 import ChangePassword from './components/changePassword/changePassword';
 import Login from './components/login/login.jsx';
 import GarageOwnerList from './components/GarageOwner/Garage-owner-list/list';
+import GarageOwnerList from './components/GarageOwner/Garage-owner-list/list';
+import GarageServicesList from './components/GarageServices/GarageServicesList/GarageServicesList';
+import GarageManagementList from './components/GarageManagement/GarageList/GarageList';
 
 const router = createBrowserRouter([
   {
@@ -29,10 +32,10 @@ const router = createBrowserRouter([
         path: '/change-password',
         element: <ChangePassword />,
       },
-      {
-        path: '/Garage-owner',
-        element: <GarageOwnerList />,
-      },
+      // {
+      //   path: '/login',
+      //   element: <Login />,
+      // },
     ],
   },
 ]);

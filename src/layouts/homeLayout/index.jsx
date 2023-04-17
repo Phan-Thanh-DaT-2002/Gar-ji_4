@@ -1,17 +1,18 @@
 import { Layout, Menu, theme, Row, Col } from 'antd';
-import { MenuOutlined } from '@ant-design/icons';
+import { MenuOutlined, RightOutlined } from '@ant-design/icons';
 import { ReactComponent as Vector } from '../../assets/images/Vector.svg';
 import { useState } from 'react';
 import React from 'react';
 import './style.css';
 
 import Profile from '../../components/avatar/profile';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 // import ProfileUpdate from '../../components/profile-update';
 // import ChangePassword from '../../components/changePassword/changePassword';
 
 const { Header, Content, Sider } = Layout;
-function getItem(label, key, icon, children) {
+
+function getItem(label, key, icon, icon_second, children) {
   return {
     key,
     icon,
@@ -20,11 +21,33 @@ function getItem(label, key, icon, children) {
   };
 }
 const items = [
-  getItem('Garage', '1', <Vector />, []),
-  getItem('Garage owner', '2', <Vector />, []),
-  getItem('Garage staff', '3', <Vector />, []),
-  getItem('Garage services', '4', <Vector />, []),
+  getItem('Garage', '1', <Vector />),
+  getItem('Garage owner', '2', <Vector />),
+  getItem('Garage staff', '3', <Vector />),
+  getItem('Garage services', '4', <Vector />),
 ];
+const useProfileClick = () => {
+  const navigate = useNavigate();
+  const onClick = ({ key }) => {
+    switch (key) {
+      case '1':
+        navigate('/');
+        break;
+      case '2':
+        navigate('/garage-owner');
+        break;
+      case '3':
+        navigate('/garage-staff');
+        break;
+      case '4':
+        navigate('/garage-services');
+        break;
+      default:
+        break;
+    }
+  };
+  return onClick;
+};
 const HomeLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
 
@@ -51,6 +74,7 @@ const HomeLayout = () => {
           defaultSelectedKeys={['1']}
           mode="inline"
           items={items}
+          onClick={useProfileClick()}
         />
       </Sider>
       <Layout className="site-layout">
