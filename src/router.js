@@ -10,7 +10,7 @@ import GarageOwnerList from './components/GarageOwner/Garage-owner-list/list';
 
 import GarageServicesList from './components/GarageServices/GarageServicesList/GarageServicesList';
 import GarageManagementList from './components/GarageManagement/GarageList/GarageList';
-
+import Create from './components/GarageOwner/Garage-owner-create/Create.jsx';
 
 const router = createBrowserRouter([
   {
@@ -45,10 +45,10 @@ const router = createBrowserRouter([
         path: '/garage-services',
         element: <GarageServicesList />,
       },
-       {
-     path: '/login',
-        element: <Login />,
-       },
+      {
+        path: '/garage-owner-create',
+        element: <Create />,
+      },
     ],
   },
 ]);

@@ -8,7 +8,6 @@ import './style.css';
 
 import Profile from '../../components/avatar/profile';
 import { Outlet } from 'react-router-dom';
-import Create from '../../components/GarageOwner/Garage-owner-create/Create.jsx';
 // import ProfileUpdate from '../../components/profile-update';
 // import ChangePassword from '../../components/changePassword/changePassword';
 
@@ -116,7 +115,7 @@ const HomeLayout = () => {
               My Profile
             </h1>
           </div>
-          <Create/>
+          <Outlet />
         </Content>
       </Layout>
     </Layout>
