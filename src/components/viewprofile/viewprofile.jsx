@@ -2,8 +2,14 @@ import React from 'react';
 import { theme, Button, Avatar, Typography } from 'antd';
 import { ReactComponent as Ellipse2 } from '../../assets/images/Ellipse 2.svg';
 import './style.css';
+import { useNavigate } from 'react-router-dom';
 const { Text } = Typography;
 function ViewProfile() {
+  const navigate = useNavigate();
+  const handleClick = e => {
+    if (e === 1) navigate('/update-profile');
+    else if (e === 2) navigate('/change-password');
+  };
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -54,6 +60,8 @@ function ViewProfile() {
       </div>
       <div className="button">
         <Button
+          className="update-btn"
+          onClick={e => handleClick(1)}
           type="primary"
           style={{
             background: '#8767E1',
@@ -63,6 +71,8 @@ function ViewProfile() {
           Update Profile
         </Button>
         <Button
+          className="change-password-btn"
+          onClick={e => handleClick(2)}
           style={{
             color: '#8767E1',
           }}
