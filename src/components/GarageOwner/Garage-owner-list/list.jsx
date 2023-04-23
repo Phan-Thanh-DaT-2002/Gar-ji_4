@@ -1,5 +1,6 @@
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Form,
   theme,
@@ -12,6 +13,14 @@ import {
   Table,
 } from 'antd';
 import '../../GarageOwner/Garage-owner-list/style.css';
+
+const useHandleAdd = () => {
+  const navigate = useNavigate();
+  return () => {
+    navigate('/garage-owner-create');
+  };
+};
+
 const GarageOwnerList = () => {
   const { Search } = Input;
   const options = [
@@ -121,6 +130,7 @@ const GarageOwnerList = () => {
           </Col>
           <Col md={2}>
             <Button
+              onClick={useHandleAdd()}
               type="primary"
               style={{
                 background: '#8767E1',

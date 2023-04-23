@@ -2,6 +2,7 @@ import { Layout, Menu, theme, Row, Col } from 'antd';
 import { MenuOutlined, RightOutlined } from '@ant-design/icons';
 import { ReactComponent as Vector } from '../../assets/images/Vector.svg';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import React from 'react';
 import './style.css';
 
@@ -12,7 +13,7 @@ import { Outlet } from 'react-router-dom';
 
 const { Header, Content, Sider } = Layout;
 
-function getItem(label, key, icon, icon_second, children) {
+function getItem(label, key, icon, children) {
   return {
     key,
     icon,
@@ -50,7 +51,6 @@ const useProfileClick = () => {
 };
 const HomeLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
-
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -92,7 +92,7 @@ const HomeLayout = () => {
               })}
             </Col>
             <Col md={6}>
-              <Profile />
+              <Profile></Profile>
             </Col>
           </Row>
         </Header>
