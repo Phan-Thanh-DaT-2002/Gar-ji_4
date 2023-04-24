@@ -1,113 +1,140 @@
 import React from 'react';
-import { theme, Avatar, Form, Input, Button, DatePicker, Row, Col } from 'antd';
+import styled from 'styled-components';
+import * as Yup from 'yup';
+import {
+  theme,
+  Avatar as AntAvatar,
+  Form,
+  Input,
+  Button,
+  DatePicker,
+  Row,
+  Col,
+} from 'antd';
 import { ReactComponent as Ellipse3 } from '../../assets/images/Ellipse 3.svg';
 import { ReactComponent as Ellipse2 } from '../../assets/images/Ellipse 2.svg';
 import { ReactComponent as Camera } from '../../assets/images/Camera/undefined/Vector.svg';
 import './style.css';
 
+const schema = Yup.object().shape({
+  name: Yup.string().required('Name is required'),
+  dob: Yup.date().required('Date of birth is required'),
+  phone: Yup.string().required('Phone number is required'),
+  address: Yup.string().required('Address is required'),
+});
+
 function UpdateProfile(props) {
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
+  const AvatarContainer = styled.div`
+    position: relative;
+    width: 250px;
+    height: 250px;
+  `;
+
+  const Avatar = styled(AntAvatar)`
+    position: absolute;
+    top: 0;
+    left: 0;
+  `;
+
+  const CameraAvatar = styled(Avatar)`
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #eeeeee;
+    background: rgba(0, 0, 0, 0);
+  `;
+
   const [form] = Form.useForm();
-  const labelStyle = {
-    color: '#939393',
-    fontWeight: 'normal',
-    marginBottom: 4,
+
+  const onFinish = values => {
+    console.log('form values:', values);
   };
 
-  const inputStyle = {
-    width: 400,
-    borderRadius: 8,
-  };
   return (
-    <div
-      style={{
-        padding: 24,
-        minHeight: 600,
-        background: colorBgContainer,
-      }}
-    >
+    <div className="wrapper">
       <div className="container">
         <div className="profile">
-          <div className="avatar" style={{ position: 'relative' }}>
-            <Avatar
-              style={{
-                position: 'absolute',
-                top: 100,
-                left: 100,
-              }}
-              size={250}
-              icon={<Ellipse2 />}
-            ></Avatar>
-            <Avatar
-              style={{
-                position: 'absolute',
-                top: 100,
-                left: 100,
-              }}
-              size={250}
-              icon={<Ellipse3 />}
-            />
-            <Avatar
-              style={{
-                position: 'relative',
-                color: '#EEEEEE',
-                background: 'rgba(0)',
-                top: 200,
-                left: 200,
-              }}
-              size={50}
-              icon={<Camera />}
-            />
+          <div className="image">
+            <AvatarContainer>
+              <Avatar size={250} icon={<Ellipse2 />} />
+              <Avatar size={250} icon={<Ellipse3 />} />
+              <CameraAvatar size={50} icon={<Camera />} />
+            </AvatarContainer>
           </div>
           <div className="infor">
-            <Form form={form} layout="vertical">
-              <Form.Item label="Name" style={labelStyle}>
-                <Input placeholder="" style={inputStyle} />
+            <Form
+              form={form}
+              onFinish={onFinish}
+              initialValues={{}}
+              layout="vertical"
+            >
+              <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+                <Input placeholder="" />
               </Form.Item>
-              <Form.Item label="Email" name="email" style={labelStyle}>
-                <Input
-                  placeholder="ha.nguyen@gmail.com"
-                  style={inputStyle}
-                  disabled
-                />
+              <Form.Item label="Email" name="email" rules={[{ type: 'email' }]}>
+                <Input placeholder="ha.nguyen@gmail.com" disabled />
               </Form.Item>
-              <Form.Item label="Username" name="username" style={labelStyle}>
-                <Input placeholder="ha.nguyen" style={inputStyle} disabled />
+              <Form.Item label="Username" name="username">
+                <Input placeholder="ha.nguyen" disabled />
               </Form.Item>
-              <Row gutter={16}>
-                <Col span={8}>
-                  <Form.Item label="DOB" style={labelStyle}>
+              <Row gutter={[16, 0]}>
+                <Col span={12}>
+                  <Form.Item
+                    label="DOB"
+                    name="dob"
+                    rules={[{ required: true }]}
+                  >
                     <DatePicker />
                   </Form.Item>
                 </Col>
-                <Col span={11}>
-                  <Form.Item label="Phone Number">
+                <Col span={12}>
+                  <Form.Item
+                    label="Phone Number"
+                    name="phone"
+                    rules={[{ required: true }]}
+                  >
                     <Input placeholder="" />
                   </Form.Item>
                 </Col>
               </Row>
-              <Form.Item label="Address" style={labelStyle}>
-                <Input placeholder="" style={inputStyle} />
+              <Form.Item
+                label="Address"
+                name="address"
+                rules={[{ required: true }]}
+              >
+                <Input placeholder="" />
               </Form.Item>
-              <Form.Item label="Role" name="role" style={labelStyle}>
-                <Input placeholder="Admin" style={inputStyle} disabled />
+              <Form.Item label="Role" name="role">
+                <Input placeholder="Admin" disabled />
+              </Form.Item>
+              <hr class="hr-divider" />
+              <Form.Item className="Button">
+                <Button className="btn" htmlType="submit" id="save">
+                  Save
+                </Button>
+                <Button className="btn" id="cancel">
+                  Cancel
+                </Button>
               </Form.Item>
             </Form>
           </div>
-        </div>
-        <div className="wrapper">
-          <Button className="btn" id="save">
-            Save
-          </Button>
-          <div style={{ width: '16px' }}></div>
-          <Button className="btn" id="cancel">
-            Cancel
-          </Button>
         </div>
       </div>
     </div>
   );
 }
+
+{
+  /* <div className="wrapper">
+<Button className="btn" htmlType="submit" id="save">
+  Save
+</Button>
+<div style={{ width: '16px' }}></div>
+<Button className="btn" id="cancel">
+  Cancel
+</Button>
+</div> */
+}
+
 export default UpdateProfile;
