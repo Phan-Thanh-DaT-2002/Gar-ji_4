@@ -12,12 +12,16 @@ import {
   Row,
   Col,
   Input,
-  Select,
+  Tooltip,
   Space,
   Table,
 } from 'antd';
 import '../../GarageServices/GarageServicesList/style.css';
+import { useState } from 'react';
+import '../GarageServicesList/style.css';
 const GarageServicesList = () => {
+  const [searchText, setSearchText] = useState('');
+  const [isActived_1, setIsActived_1] = useState('');
   const { Search } = Input;
   const options = [
     {
@@ -25,32 +29,23 @@ const GarageServicesList = () => {
       label: 'Name',
     },
     {
-      value: 'Email',
-      label: 'Email',
+      value: 'Description',
+      label: 'Description',
     },
     {
-      value: 'Phone',
-      label: 'Phone',
+      value: 'Min price',
+      label: 'Min price',
     },
     {
-      value: 'Status',
-      label: 'Status',
+      value: 'Max price',
+      label: 'Max price',
     },
     {
       value: 'Actions',
       label: 'Actions',
     },
   ];
-  const optionStatus = [
-    {
-      value: 'Active',
-      label: 'Active',
-    },
-    {
-      value: 'Inactive',
-      label: 'Inactive',
-    },
-  ];
+
   const columns = [
     {
       title: '#',
@@ -61,27 +56,32 @@ const GarageServicesList = () => {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: text => <span>{text}</span>,
+      filteredValue: [searchText],
+      onFilter: (value, record) => {
+        return (
+          String(record.name).toLowerCase().includes(value.toLowerCase()) ||
+          String(record.description)
+            .toLowerCase()
+            .includes(value.toLowerCase()) ||
+          String(record.minPrice).toLowerCase().includes(value.toLowerCase()) ||
+          String(record.maxPrice).toLowerCase().includes(value.toLowerCase())
+        );
+      },
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'Description',
     },
     {
-      title: 'Phone number',
-      dataIndex: 'phoneNumber',
-      key: 'phoneNumber',
+      title: 'Min price',
+      dataIndex: 'minPrice',
+      key: 'minPrice',
     },
     {
-      title: 'Garage owner',
-      dataIndex: 'GarageOwner',
-      key: 'GarageOwner',
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
+      title: 'Max price',
+      dataIndex: 'maxPrice',
+      key: 'maxPrice',
     },
     {
       title: 'Actions',
@@ -99,26 +99,23 @@ const GarageServicesList = () => {
     {
       key: '1',
       STT: '1',
-      name: 'John Doe',
-      email: 'abc.ab@gmail.com',
-      phoneNumber: '0912 234 456',
-      GarageOwner: 'Quang Minh Tran',
-      status: 'Active',
+      name: 'John a',
+      description: 'This is description',
+      minPrice: '30000',
+      maxPrice: '200000',
     },
     {
       key: '2',
       STT: '2',
       name: 'John Doe',
-      email: 'abc.ab@gmail.com',
-      phoneNumber: '0912 234 456',
-      GarageOwner: 'Quang Minh Tran',
-      status: 'Inactive',
+      description: 'This is description',
+      minPrice: '10000',
+      maxPrice: '200000',
     },
   ];
   const {
     token: { colorBgContainer },
   } = theme.useToken();
-  const onSearch = value => console.log(value);
   return (
     <div
       style={{
@@ -147,17 +144,15 @@ const GarageServicesList = () => {
         <div>
           <Form>
             <Space.Compact size="large">
-              <Space
-                style={{
-                  padding: '7px 11px',
-                  fontSize: '16px',
-                  lineHeight: 1.5,
-                  border: '1px solid #d9d9d9',
+              <Search
+                prefix={<SearchOutlined />}
+                className="search-btn"
+                placeholder="Search"
+                allowClear
+                onSearch={value => {
+                  setSearchText(value);
                 }}
-              >
-                <SearchOutlined style={{ width: '20%' }}></SearchOutlined>
-              </Space>
-              <Input style={{ width: '80%' }} placeholder="Search by name" />
+              />
             </Space.Compact>
             <Table
               columns={columns}

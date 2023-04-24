@@ -57,39 +57,42 @@ const GarageManagementList = () => {
       key: 'name',
       filteredValue: [searchText],
       onFilter: (value, record) => {
-        return String(record.name).toLowerCase().includes(value.toLowerCase());
+        if (String(isActived_1).toLowerCase().includes('name')) {
+          return String(record.name)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+        } else if (String(isActived_1).toLowerCase().includes('email')) {
+          return String(record.email)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+        } else if (String(isActived_1).toLowerCase().includes('phone')) {
+          return String(record.phoneNumber)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+        } else if (String(isActived_1).toLowerCase().includes('owner')) {
+          return String(record.GarageOwner)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+        } else
+          return String(record.name)
+            .toLowerCase()
+            .includes(value.toLowerCase());
       },
     },
     {
       title: 'Email',
       dataIndex: 'email',
       key: 'email',
-      filteredValue: [searchText],
-      onFilter: (value, record) => {
-        return String(record.email).toLowerCase().includes(value.toLowerCase());
-      },
     },
     {
       title: 'Phone number',
       dataIndex: 'phoneNumber',
       key: 'phoneNumber',
-      filteredValue: [searchText],
-      onFilter: (value, record) => {
-        return String(record.phoneNumber)
-          .toLowerCase()
-          .includes(value.toLowerCase());
-      },
     },
     {
       title: 'Garage owner',
       dataIndex: 'GarageOwner',
       key: 'GarageOwner',
-      filteredValue: [searchText],
-      onFilter: (value, record) => {
-        return String(record.GarageOwner)
-          .toLowerCase()
-          .includes(value.toLowerCase());
-      },
     },
     {
       title: 'Status',
@@ -127,9 +130,18 @@ const GarageManagementList = () => {
       STT: '2',
       name: 'John Doe',
       email: 'abc.ab@gmail.com',
-      phoneNumber: '0912 234 456',
+      phoneNumber: '0812 234 456',
       GarageOwner: 'Quang Minh Tran',
       status: 'Inactive',
+    },
+    {
+      key: '3',
+      STT: '3',
+      name: 'John A',
+      email: 'abc.ab@gmail.com',
+      phoneNumber: '0912 234 456',
+      GarageOwner: 'Phung Ba Cong',
+      status: 'Active',
     },
   ];
   const {
