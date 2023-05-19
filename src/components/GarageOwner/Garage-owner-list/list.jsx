@@ -1,5 +1,5 @@
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Form,
@@ -22,6 +22,9 @@ const useHandleAdd = () => {
 };
 
 const GarageOwnerList = () => {
+  const [searchText, setSearchText] = useState('');
+  const [isActived_1, setIsActived_1] = useState('');
+  const [isActived_2, setIsActived_2] = useState('');
   const { Search } = Input;
   const options = [
     {
@@ -65,7 +68,25 @@ const GarageOwnerList = () => {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: text => <span>{text}</span>,
+      filteredValue: [searchText],
+      onFilter: (value, record) => {
+        if (String(isActived_1).toLowerCase().includes('name')) {
+          return String(record.name)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+        } else if (String(isActived_1).toLowerCase().includes('email')) {
+          return String(record.email)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+        } else if (String(isActived_1).toLowerCase().includes('phone')) {
+          return String(record.phoneNumber)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+        } else
+          return String(record.name)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+      },
     },
     {
       title: 'Email',
@@ -81,6 +102,10 @@ const GarageOwnerList = () => {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
+      filteredValue: [isActived_2],
+      onFilter: (value, record) => {
+        return record.status.includes(value);
+      },
     },
     {
       title: 'Actions',
@@ -149,14 +174,26 @@ const GarageOwnerList = () => {
                   style={{ width: '100px' }}
                   defaultValue="Name"
                   options={options}
+                  onChange={value => {
+                    setIsActived_1(value);
+                  }}
                 />
-                <Search placeholder="Search" allowClear />
+                <Search
+                  placeholder="Search"
+                  allowClear
+                  onSearch={value => {
+                    setSearchText(value);
+                  }}
+                />
               </Space.Compact>
               <Space.Compact size="large">
                 <Select
                   style={{ width: 224 }}
                   placeholder="Status"
                   options={optionStatus}
+                  onChange={value => {
+                    setIsActived_2(value);
+                  }}
                 />
               </Space.Compact>
             </Space>

@@ -5,3 +5,16 @@
 .ant-space-item{
     cursor: pointer;
 }
+.search-button{
+    cursor: pointer;
+}
+.ant-input-group-addon{
+    background-color: white !important;
+    border-left: 1px rgba(203, 203, 203, 1) solid !important;
+}
+.search-btn button {
+    display: none;
+}
+.search-btn svg{
+    margin-right: 10px;
+}
