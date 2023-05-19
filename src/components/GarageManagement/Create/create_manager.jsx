@@ -1,54 +1,78 @@
 import React, { useState } from 'react';
 import { AudioOutlined, DeleteOutlined } from '@ant-design/icons';
 import {
-  StyledDOB,
+  
+
   AllDiv,
   DivForm,
   DivStyle,
   FirstInfo,
   FirstLine,
   FormItem,
-  StyledOption,
+
   StyleSelect,
   SecondLine,
   FormSearch,
   ThreeLine,
-  StyleSearch,
+  
   StyleInput,
   SCheckbox,
   StyleCheckBox,
   LeftColumn,
   RightColumn,
   MyDivider,
-  Btn,
+
   ButtonStyle,
-} from './create.js';
+ 
+  StyledTimePicker,
+  StyleCommentBox,
+  StyledTextArea,
+  
+} from './index.js';
 import {
-  DatePicker,
-  Button,
-  Checkbox,
   Form,
   Input,
   Select,
-  TreeSelect,
-  AutoComplete,
   Divider,
   message,
 } from 'antd';
+import moment from 'moment';
 
-function Create() {
+function CreateManager() {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const onFinish = values => {
-    setLoading(true);
-    setTimeout(() => {
-      message.success('Form submitted successfully!');
-      setLoading(false);
+  const onFinish = async (values) => {
+    try {
+      const response = await fetch("https://edison-garage-api.savvycom.xyz/api/garages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization":("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImlhdCI6MTY4MjM5MjQ4NywiZXhwIjoxNjg0OTg0NDg3fQ.ScXFJ7wfQnHase1eCAidF9Fs0i1PT-LrON9owXDUvUc"),
+        },
+        body: JSON.stringify({
+          data: {
+            name: values.name,
+            address: values.address,
+            status: values.status,
+            phoneNumber: values.phoneNumber,
+            email: values.email,
+            openTime: values.openTime,
+            closeTime: values.closeTime,
+            description: values.description,
+            policy: values.policy,
+            owner: values.owner,
+            services: [],
+          },
+        }),
+      });
+      const data = await response.json();
+      console.log(data);
+      message.success("Form submitted successfully!");
       form.resetFields();
-      console.log(values);
-    }, 2000);
+    } catch (error) {
+      console.log("Error:", error);
+    }
   };
-  
 
   const onFinishFailed = errorInfo => {
     console.log('Failed:', errorInfo);
@@ -69,6 +93,7 @@ function Create() {
       <AllDiv>
         <DivForm
           name="basic"
+          id='my_Form'
           labelCol={{
             span: 8,
           }}
@@ -110,7 +135,7 @@ function Create() {
                   },
                   {
                     type: 'email',
-                    message: 'Please enter a valid email address',
+                    message: 'Please enter a valid email',
                   },
                 ]}
               >
@@ -118,38 +143,9 @@ function Create() {
               </FormItem>
 
               <FormItem
-                label="Username"
-                name="username"
-                labelCol={{ span: 24 }}
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please input your username!',
-                  },
-                ]}
-              >
-                <Input placeholder="Enter owner username" />
-              </FormItem>
-            </FirstLine>
-
-            <FirstLine>
-              <FormItem
-                label="Password"
-                labelCol={{ span: 24 }}
-                name="password"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please input your password!',
-                  },
-                ]}
-              >
-                <Input placeholder="Enter owner password" />
-              </FormItem>
-              <FormItem
                 label="Phone number"
                 labelCol={{ span: 24 }}
-                name="phone"
+                name="phoneNumber"
                 rules={[
                   {
                     required: true,
@@ -163,51 +159,84 @@ function Create() {
               >
                 <Input placeholder="Enter owner phone number" />
               </FormItem>
+            </FirstLine>
+
+            <FirstLine>
               <FormItem
-                name="gender"
-                label="Gender"
+                label="Address"
                 labelCol={{ span: 24 }}
+                name="address"
                 rules={[
                   {
                     required: true,
-                    message: 'Please select gender!',
+                    message: 'Please input garage address!',
                   },
+                 
                 ]}
               >
-                <StyleSelect
-                  className="style_select"
-                  placeholder="Select owner gender"
-                  allowClear={false}
-                >
-                  <Select.Option value="male">Male</Select.Option>
-                  <Select.Option value="female">Female</Select.Option>
-                  <Select.Option value="other">Other</Select.Option>
-                </StyleSelect>
+                <Input placeholder="Enter garage address" />
               </FormItem>
+              <FormItem
+                  name="openTime"
+                  label="Open time"
+                  labelCol={{ span: 24 }}
+                  rules={[
+                    {
+                      required: true,   
+                      message: 'Please select time!',
+                    },
+                  ]}
+                >
+                  <StyledTimePicker 
+                    picker="time"
+                    dropdownClassName="my-dropdown-class"
+                    className="ant-select.ant-select-in-form-item"
+                    placeholder="Select open time"
+                    format="HH:mm"
+                    defaultValue={""}
+                    
+                  />
+                </FormItem>
+                <FormItem
+                  name="closeTime"
+                  label="Close time"
+                  labelCol={{ span: 24 }}
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please select time!',
+                    },
+                  ]}
+                >
+                  <StyledTimePicker
+                    dropdownClassName="my-dropdown-class"
+                    className="ant-select.ant-select-in-form-item"
+                    placeholder="Select close time"
+                    format="HH:mm"
+                    defaultValue={moment('00:00', 'HH:mm')}
+                  />
+                </FormItem>
             </FirstLine>
             <SecondLine>
-              <FormItem label="DOB" labelCol={{ span: 24 }}>
-                <StyledDOB />
-              </FormItem>
               <FormItem
-                name="role"
-                label="Role"
+                name="owner"
+                label="Select a garage owner"
                 labelCol={{ span: 24 }}
                 rules={[
                   {
                     required: true,
-                    message: 'Please select a role!',
+                    message: 'Please select a garage owner!',
                   },
                 ]}
               >
                 <StyleSelect
-                  className="selectStyle"
-                  placeholder="Select a role"
+                  
+                  placeholder="Select a garage owner"
                   allowClear={false}
                 >
-                  <Option value="user">User</Option>
-                  <Option value="admin">Admin</Option>
-                  <Option value="other">Other</Option>
+                  <Option value="1">1</Option>
+                  <Option value="2">2</Option>
+                  <Option value="3">3</Option>
                 </StyleSelect>
               </FormItem>
               <FormItem
@@ -222,35 +251,69 @@ function Create() {
                 ]}
               >
                 <StyleSelect placeholder="Select a status" allowClear={false}>
-                  <Option value="1">1</Option>
-                  <Option value="2">3</Option>
-                  
+                  <Option value="active">Active</Option>
+                  <Option value="inactive">Inactive</Option>
+          
                 </StyleSelect>
               </FormItem>
             </SecondLine>
-                <Form></Form>
-            <ThreeLine>
+            <StyleCommentBox>
+            <FormItem
+                label="Description"
+                labelCol={{ span: 24 }}
+                name="description"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input description',
+                  },
+                 
+                ]}
+              >
+                <StyledTextArea 
+                autoSize={{ minRows: 4, maxRows: 30 }}
+                placeholder="Enter a description" 
+                
+                />
+              </FormItem>
+              <FormItem
+                label="Policy"
+                labelCol={{ span: 24 }}
+                name="policy"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input policy',
+                  },
+                 
+                ]}
+              >
+                <StyledTextArea 
+                autoSize={{ minRows: 4, maxRows: 30 }}
+                placeholder="Enter a policy" 
+                
+                />
+              </FormItem>
+            </StyleCommentBox>
 
+            <ThreeLine>
               <div className="title_formS">Garages</div>
               <FormSearch>
                 <LeftColumn>
                   <StyleInput placeholder="Search for garages..." />
                   <SCheckbox>
-                  
-                    
                     <StyleCheckBox onChange={onChange}>
                       Garage ABC
                     </StyleCheckBox>
-                    <StyleCheckBox value="TLS" onChange={onChange}>TLS</StyleCheckBox>
+                    <StyleCheckBox onChange={onChange}>TLS</StyleCheckBox>
                     <StyleCheckBox onChange={onChange}>AHC</StyleCheckBox>
                     <StyleCheckBox onChange={onChange}>CB Garage</StyleCheckBox>
                     <StyleCheckBox onChange={onChange}>UCQ</StyleCheckBox>
-                  
                   </SCheckbox>
                 </LeftColumn>
                 <MyDivider type="vertical" />
                 <RightColumn>
-                  <div className="select_gara">Select garages (2)</div>
+                  <div className="select_gara">Services garages (2)</div>
                   <div className="select_remove">
                     <span>Garage ABC</span>
                     <DeleteOutlined style={{ fontSize: '24px' }} />
@@ -284,4 +347,4 @@ function Create() {
   );
 }
 
-export default Create;
+export default CreateManager;
