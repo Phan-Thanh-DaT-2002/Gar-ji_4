@@ -109,9 +109,7 @@ padding: 16px;
 gap: 16px;
 width: 339px;
 height: 56px;
-/* Neutral Light/6 */
 background: #FFFFFE;
-/* Neutral Light/3 */
 border: 1px solid #CBCBCB;
 border-radius: 8px;
 `
@@ -250,14 +248,12 @@ border-radius: 8px;
 & span{
     width: 77px;
 height: 24px;
-/* Paragraph 3/Medium */
 font-family: 'Poppins';
 font-style: normal;
 font-weight: 500;
 font-size: 16px;
 line-height: 24px;
-/* identical to box height, or 150% */
+
 text-align: center;
-/* Neutral Dark/6 */
 }
 `

@@ -2,6 +2,11 @@ import { Button, Checkbox,Form, Input, message } from 'antd';
 import React, { useState } from 'react'
 import {DivStyle, FormItem, FormStyle, HeadingLogin,Label,MainLogin, InforLogin,FormItemBtn, StyleBtn} from './login'
 import { useNavigate } from 'react-router-dom';
+const handleLoginSuccess = (jwt) => {
+  localStorage.setItem('jwt', jwt);
+  const jwtUpdatedEvent = new CustomEvent('jwtUpdated');
+  window.dispatchEvent(jwtUpdatedEvent);
+};
 const onFinish = (values) => {
   console.log('Success:', values);
 };
@@ -21,15 +26,15 @@ const onFinishFailed = (errorInfo) => {
 
 const validatePassword = (rule, value, callback) => {
   if (!value) {
-    callback('Hãy nhập mật khẩu!');
+    callback('Please enter the password!');
   } else if (value.length < 6) {
-    callback('Nhập mật khẩu đủ 6 ký tự!');
+    callback('Enter a password of 6 characters!');
   } else if (!/[a-z]/.test(value)) {
-    callback('Nhập mật khẩu gồm ký tự viết thường!');
+    callback('Enter a password with lowercase characters!');
   } else if (!/[A-Z]/.test(value)) {
-    callback('Nhập mật khẩu gồm ký tự viết hoa!');
+    callback('Enter a password with uppercase characters!');
   } else if (!/[!@#$%^&*]/.test(value)) {
-    callback('Nhập mật khẩu gồm ký tự đặc biệt!');
+    callback('Enter a password with special characters!');
   } else {
     callback();
   }
@@ -41,36 +46,29 @@ export default function Login() {
 
   const handleSubmit = async (values) => {
     try {
-     
-      console.log('Form submitted:', values);
-
-      
-      const response = await fetch(
-        'https://edison-garage-api.savvycom.xyz/api/auth/local',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(values),
-        }
-      );
+      // Gửi yêu cầu đăng nhập và nhận JWT từ phản hồi
+      const response = await fetch('https://edison-garage-api.savvycom.xyz/api/auth/local', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
 
       const data = await response.json();
 
-      console.log('API response:', data);
-
       if (response.ok) {
-        
+        // Nếu đăng nhập thành công, gọi hàm handleLoginSuccess và truyền JWT
+        handleLoginSuccess(data.jwt);
         navigate('/');
       } else if (response.status === 404 && data.message === 'User not found') {
-       message.error('Email not found'); 
+        message.error('Email not found');
       } else {
-       message.error('An error occurred');
+        message.error('An error occurred');
       }
     } catch (error) {
       console.error(error);
-     message.error('An error occurred');
+      message.error('An error occurred');
     }
   };
 

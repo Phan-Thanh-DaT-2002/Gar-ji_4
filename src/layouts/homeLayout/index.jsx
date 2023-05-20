@@ -11,6 +11,7 @@ import { Outlet } from 'react-router-dom';
 import CreateManager from '../../components/GarageManagement/Create/create_manager';
 import CreateServices from '../../components/GarageServices/GarageServicesCreate/Create_services';
 import Create from '../../components/GarageOwner/Garage-owner-create/Create.jsx';
+import OwnerUpdate from '../../components/GarageOwner/Garage-owner-update/OwnerUpdate.jsx';
 // import ProfileUpdate from '../../components/profile-update';
 // import ChangePassword from '../../components/changePassword/changePassword';
 
@@ -118,7 +119,7 @@ const HomeLayout = () => {
               My Profile
             </h1>
           </div>
-          <Outlet />
+          <Outlet/>
         </Content>
       </Layout>
     </Layout>
