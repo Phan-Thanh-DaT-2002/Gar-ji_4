@@ -120,7 +120,7 @@ export const StyleSelect = styled(Select)`
  &.ant-select.ant-select-in-form-item{
     width: 339px !important;
 }
-&:where(.css-dev-only-do-not-override-1vtf12y).ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+&:where(.css-dev-only-do-not-override-15rg2km).ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
     width: 100%;
     height: 56px !important;
     padding: 11px 11px !important;
@@ -150,7 +150,7 @@ export const LeftColumn = styled.div`
 export const RightColumn = styled.div`
     flex-basis: 50%;
     & .select_gara{
-width: 151px;
+width: 160px;
 height: 24px;
 font-family: 'Poppins';
 font-style: normal;
@@ -250,14 +250,12 @@ border-radius: 8px;
 & span{
     width: 77px;
 height: 24px;
-/* Paragraph 3/Medium */
 font-family: 'Poppins';
 font-style: normal;
 font-weight: 500;
 font-size: 16px;
 line-height: 24px;
-/* identical to box height, or 150% */
+
 text-align: center;
-/* Neutral Dark/6 */
 }
 `
