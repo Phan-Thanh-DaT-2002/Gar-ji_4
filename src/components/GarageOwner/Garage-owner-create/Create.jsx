@@ -156,12 +156,11 @@ function Create() {
   const selectedGarage = garagesData.find((garage) => garage.id === garageId);
   return selectedGarage ? selectedGarage.attributes.name : '';
 };
-
-const filteredGarages = garagesData.filter((garage) => {
+const filteredGarages = garagesData ? garagesData.filter((garage) => {
   const garageName = garage.attributes.name.toLowerCase();
   const searchTermLower = searchTerm.toLowerCase();
   return garage.id.toString().includes(searchTermLower) || garageName.includes(searchTermLower);
-});
+}) : [];
   return (
     <DivStyle>
     <AllDiv>
@@ -309,7 +308,7 @@ const filteredGarages = garagesData.filter((garage) => {
               </StyleSelect>
             </FormItem>
             <FormItem
-              name="status"
+              name="block"
               label="Status"
               labelCol={{ span: 24 }}
               rules={[
@@ -320,8 +319,8 @@ const filteredGarages = garagesData.filter((garage) => {
               ]}
             >
               <StyleSelect placeholder="Select a status" allowClear={false}>
-                <Option value="1">1</Option>
-                <Option value="2">2</Option>
+                <Option value="1">Active</Option>
+                <Option value="2">Deactive</Option>
               </StyleSelect>
             </FormItem>
           </SecondLine>

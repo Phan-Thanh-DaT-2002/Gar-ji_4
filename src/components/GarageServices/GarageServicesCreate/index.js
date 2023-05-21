@@ -55,6 +55,7 @@ export const FirstInfo = styled.div`
     align-items: flex-start;
 padding: 0px;
 gap: 24px;
+
 `
 
 export const FirstLine = styled.div`
@@ -73,6 +74,7 @@ padding: 0px;
 gap: 28px;
 width: 1073px;
 height: 88px;
+
 `
 
 export const FormItem = styled(Form.Item)`
@@ -94,7 +96,12 @@ height: 56px;
 background: #FFFFFE;
 border: 1px solid #CBCBCB;
 border-radius: 8px;
+
     }
+    &:where(.css-dev-only-do-not-override-15rg2km).ant-form-item .ant-form-item-control-input-content {
+    flex: auto;
+    max-width: 150% !important;
+}
     
 `
 
@@ -132,6 +139,9 @@ gap: 28vh;
 
 width: 100%;
 height: 30vh;
+
+
+
 `
 export const StyledTextArea = styled(Input.TextArea)`
   padding: 16px 16px 80px;
@@ -141,13 +151,4 @@ export const StyledTextArea = styled(Input.TextArea)`
   background: #FFFFFE;
   border: 1px solid #CBCBCB;
   border-radius: 8px;
-  &:where(.css-dev-only-do-not-override-1vtf12y).ant-input {
-      max-width: none !important;
-    height: auto;
-    min-height: 32px;
-    line-height: 1.5714285714285714;
-    vertical-align: bottom;
-    transition: all 0.3s,height 0s;
-    resize: vertical;
-} 
 `;

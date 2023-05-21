@@ -30,7 +30,18 @@ import {
 function CreateManager() {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const onFinish = values => {
+  const onFinish = async (values) => {
+    try {
+      const jwt = localStorage.getItem('jwt')
+      const raw = JSON.stringify({
+        name: values.name,
+        description: values.description,
+        minPrice: 100000,
+        maxPrice: 200000
+      })
+    } catch (error) {
+      
+    }
     setLoading(true);
     setTimeout(() => {
       message.success('Form submitted successfully!');
@@ -129,7 +140,7 @@ function CreateManager() {
             <FormItem
                 label="Description"
                 labelCol={{ span: 24 }}
-                name="Desc"
+                name="desc"
                 rules={[
                   {
                     required: true,
@@ -137,6 +148,7 @@ function CreateManager() {
                   },
                  
                 ]}
+                
               >
                 <StyledTextArea 
                 autoSize={{ minRows: 4, maxRows: 30 }}
