@@ -26,65 +26,62 @@ import {
   
 } from 'antd';
 
-
-export default function CreateManager() {
-  const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
-  const onFinish = async (values) => {
-    try {
-      const jwt = localStorage.getItem('jwt')
-      const minPrice = parseInt(values.minPrice);
-      const maxPrice = parseInt(values.maxPrice);
-      if (minPrice >= maxPrice) {
-        message.error('Min price must be lower than max price');
-        return;
-      }
-      const raw = JSON.stringify({
-        "data": {
-          name: values.name,
-          description: values.description,
-          minPrice: minPrice,
-          maxPrice: maxPrice
+export default function UpdateServices() {
+    const [form] = Form.useForm();
+    const [loading, setLoading] = useState(false);
+    const onFinish = async (values) => {
+      try {
+        const jwt = localStorage.getItem('jwt')
+        const minPrice = parseInt(values.minPrice);
+        const maxPrice = parseInt(values.maxPrice);
+        if (minPrice >= maxPrice) {
+          message.error('Min price must be lower than max price');
+          return;
         }
-      });
-      const requestOptions = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${jwt}`,
-        },
-        body: raw,
-        redirect: 'follow',
-      };
-  
-      const response = await fetch('https://edison-garage-api.savvycom.xyz/api/garage-services', requestOptions);
-      const data = await response.json();
-  
-      if (response.ok) {
-        console.log('Response:', data);
-        message.success('Form submitted successfully!');
+        const raw = JSON.stringify({
+          "data": {
+            name: values.name,
+            description: values.description,
+            minPrice: minPrice,
+            maxPrice: maxPrice
+          }
+        });
+        const requestOptions = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`,
+          },
+          body: raw,
+          redirect: 'follow',
+        };
+    
+        const response = await fetch('https://edison-garage-api.savvycom.xyz/api/garage-services', requestOptions);
+        const data = await response.json();
+    
+        if (response.ok) {
+          console.log('Response:', data);
+          message.success('Form submitted successfully!');
+         
+        } else {
+          console.error('Error:', data);
+          message.error('Failed to submit form!');
+        
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        message.error('An error occurred');
        
-      } else {
-        console.error('Error:', data);
-        message.error('Failed to submit form!');
-      
       }
-    } catch (error) {
-      console.error('Error:', error);
-      message.error('An error occurred');
-     
-    }
-  };
-
-  const onFinishFailed = errorInfo => {
-    console.log('Failed:', errorInfo);
-  };
-  const { Option } = Select;
-  const onCancel = () => {
-    form.resetFields();
-  };
-
+    };
   
+    const onFinishFailed = errorInfo => {
+      console.log('Failed:', errorInfo);
+    };
+    const { Option } = Select;
+    const onCancel = () => {
+      form.resetFields();
+    };
   return (
     <DivStyle>
       <AllDiv>
@@ -198,7 +195,5 @@ export default function CreateManager() {
         </DivForm>
       </AllDiv>
     </DivStyle>
-  );
+  )
 }
-
-

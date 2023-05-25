@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import moment from 'moment';
 import {
     DatePicker,
     Button,
@@ -38,53 +39,141 @@ import {
 export default function OwnerUpdate() {
     
     const [form] = Form.useForm();
-    const [loading, setLoading] = useState(false);
+    const [userData, setUserData] = useState({
+      fullname: '',
+      email: '',
+      username: '',
+      password: '',
+      phone: '',
+      gender: '',
+      dob: null,
+      role: '',
+      status: '',
+    });
+  
+
+
+    const [userId, setUserId] = useState(null);
+
+    const fetchData = async (userId) => {
+      try {
+        const jwt = localStorage.getItem('jwt');
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+          redirect: 'follow',
+        };
+    
+        const response = await fetch(
+          `https://edison-garage-api.savvycom.xyz/api/users/${userId}`,
+          requestOptions
+        );
+        const data = await response.json();
+    
+        if (response.ok) {
+          console.log(data);
+          form.setFieldsValue({
+            name: data?.fullname || '',
+            email: data?.email || '',
+            username: data?.username || '',
+            password: '***',
+            phone: data?.phoneNumber || '',
+            gender: data?.gender || '',
+            dob: data?.dob ? moment(data.dob, 'YYYY-MM-DD') : null,
+            role: '***',
+            status: data?.blocked ? 'inactive' : 'active',
+          });
+        } else {
+          console.error('Error:', data);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+    
+    const fetchUserList = async () => {
+      try {
+        const jwt = localStorage.getItem('jwt');
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+          redirect: 'follow',
+        };
+    
+        const response = await fetch(
+          'https://edison-garage-api.savvycom.xyz/api/users',
+          requestOptions
+        );
+        const userList = await response.json();
+    
+        if (response.ok) {
+          userList.forEach((user) => {
+            const userId = user.id;
+            console.log('User ID:', userId);
+            setUserId(userId); // Cập nhật giá trị userId trong state
+            fetchData(userId);
+          });
+        } else {
+          console.error('Error:', userList);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+    
+    useEffect(() => {
+      fetchUserList();
+    }, []);
+    
     const onFinish = async (values) => {
       try {
         const jwt = localStorage.getItem('jwt');
-  
-        const raw = JSON.stringify({
-        username: values.username,
-        fullname: values.name,
-        email: values.email,
-        dob: values.dob.format('YYYY-MM-DD'), 
-        address: values.address,
-        phoneNumber: values.phone,
-        gender: values.gender,
-        password: values.password,
-        role: parseInt(values.role), 
-        confirmed: true,
-        blocked: false,
-      });
+        const updatedUserId = userId; // Sử dụng giá trị userId hiện tại
     
-      const requestOptions = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${jwt}`,
-        },
-        body: raw,
-        redirect: 'follow',
-      };
-  
-      const response = await fetch('https://edison-garage-api.savvycom.xyz/api/users', requestOptions);
-      const data = await response.json();
-  
-      if (response.ok) {
-        console.log('Response:', data);
-        message.success('Form submitted successfully!');
-       
-      } else {
-        console.error('Error:', data);
-        message.error('Failed to submit form!');
-      
+        const raw = JSON.stringify({
+          fullname: values.name,
+          dob: values.dob.format('YYYY-MM-DD'),
+          address: values.address,
+          phoneNumber: values.phone,
+          
+          confirmed: true,
+          blocked: false,
+        });
+    
+        const requestOptions = {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+          body: raw,
+          redirect: 'follow',
+        };
+    
+        const response = await fetch(
+          `https://edison-garage-api.savvycom.xyz/api/users/${updatedUserId}`, // Sử dụng updatedUserId thay cho userId
+          requestOptions
+        );
+        const data = await response.json();
+    
+        if (response.ok) {
+          console.log('Response:', data);
+          message.success('Form submitted successfully!');
+        } else {
+          console.error('Error:', data);
+          message.error('Failed to submit form!');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        message.error('An error occurred');
       }
-    } catch (error) {
-      console.error('Error:', error);
-      message.error('An error occurred');
-     
-    }
-  };
+    };
   
     
     const onFinishFailed = (errorInfo) => {
@@ -109,23 +198,25 @@ export default function OwnerUpdate() {
       const [searchTerm, setSearchTerm] = useState('');
       const [selectedGarages, setSelectedGarages] = useState([]);
     
-      
-      const handleSearchChange = (event) => {
-        setSearchTerm(event.target.value);
-      };
-      
-      const handleGarageChange = (garage) => {
-        const index = selectedGarages.findIndex((g) => g.id === garage.id);
-        if (index === -1) {
-          setSelectedGarages([...selectedGarages, garage]);
-        } else {
-          setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
-        }
-      };
-      
-      const handleRemoveGarage = (garage) => {
-        setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
-      };
+      const [displayCount, setDisplayCount] = useState(5);
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+    setDisplayCount(5);
+  };
+
+  const handleGarageChange = (garage) => {
+    const index = selectedGarages.findIndex((g) => g.id === garage.id);
+    if (index === -1) {
+      setSelectedGarages([...selectedGarages, garage]);
+    } else {
+      setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
+    }
+  };
+
+  const handleRemoveGarage = (garage) => {
+    setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
+  };
       
       useEffect(() => {
         const jwt = localStorage.getItem('jwt');
@@ -150,15 +241,23 @@ export default function OwnerUpdate() {
      
       
       const getGarageNameById = (garageId) => {
-  const selectedGarage = garagesData.find((garage) => garage.id === garageId);
-  return selectedGarage ? selectedGarage.attributes.name : '';
-};
-
-const filteredGarages = garagesData.filter((garage) => {
-  const garageName = garage.attributes.name.toLowerCase();
-  const searchTermLower = searchTerm.toLowerCase();
-  return garage.id.toString().includes(searchTermLower) || garageName.includes(searchTermLower);
-});
+        const selectedGarage = garagesData.find((garage) => garage.id === garageId);
+        return selectedGarage ? selectedGarage.attributes.name : '';
+      };
+    
+      const filteredGarages = garagesData
+        ? garagesData
+            .filter((garage) => {
+              const garageName = garage.attributes.name.toLowerCase();
+              const searchTermLower = searchTerm.toLowerCase();
+              return (
+                garage.id.toString().includes(searchTermLower) ||
+                garageName.includes(searchTermLower)
+              );
+            })
+            .slice(0, displayCount)
+        : [];
+    
     return (
       <DivStyle>
       <AllDiv>
@@ -171,13 +270,12 @@ const filteredGarages = garagesData.filter((garage) => {
             span: 16,
           }}
           style={{}}
-          initialValues={{
-            remember: true,
-          }}
+          form={form}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
+          
           autoComplete="off"
-          form={form}
+          
         >
           <FirstInfo>
             <FirstLine>
@@ -185,12 +283,14 @@ const filteredGarages = garagesData.filter((garage) => {
                 label="Name"
                 labelCol={{ span: 24 }}
                 name="name"
+                  initialValue={userData?.fullname}
                 rules={[
                   {
                     required: true,
                     message: 'Please input your name!',
                   },
                 ]}
+                
               >
                 <Input placeholder="Enter owner name" />
               </FormItem>
@@ -198,6 +298,7 @@ const filteredGarages = garagesData.filter((garage) => {
                 label="Email"
                 labelCol={{ span: 24 }}
                 name="email"
+                initialValue={userData?.email}
                 rules={[
                   {
                     required: true,
@@ -306,21 +407,21 @@ const filteredGarages = garagesData.filter((garage) => {
                 </StyleSelect>
               </FormItem>
               <FormItem
-                name="status"
-                label="Status"
-                labelCol={{ span: 24 }}
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please select a status!',
-                  },
-                ]}
-              >
-                <StyleSelect placeholder="Select a status" allowClear={false}>
-                  <Option value="1">1</Option>
-                  <Option value="2">2</Option>
-                </StyleSelect>
-              </FormItem>
+              name="status"
+              label="Status"
+              labelCol={{ span: 24 }}
+              rules={[
+                {
+                  required: true,
+                  message: 'Please select a status!',
+                },
+              ]}
+            >
+              <StyleSelect placeholder="Select a status" allowClear={false}>
+                <Option value="active">Active</Option>
+                <Option value="inactive">Inactive</Option>
+              </StyleSelect>
+            </FormItem>
             </SecondLine>
                   <Form></Form>
                   <ThreeLine>
@@ -369,7 +470,7 @@ const filteredGarages = garagesData.filter((garage) => {
                     style={{ background: '#8767E1' }}
                     htmlType="submit"
                   >
-                    <span>Save</span>
+                    <span>Update</span>
                   </ButtonStyle>
                   <ButtonStyle htmlType="button" onClick={onCancel}>
                     <span>Cancel</span>

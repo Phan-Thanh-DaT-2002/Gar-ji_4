@@ -25,7 +25,7 @@ import {
 import { Form, Input, Select, Divider, message } from 'antd';
 import moment from 'moment';
 
-function CreateManager() {
+function UpdateMana() {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
@@ -34,7 +34,6 @@ function CreateManager() {
       const jwt = localStorage.getItem('jwt');
 
       const raw = JSON.stringify({
-        "data": {
         name: values.name,
         address: values.address,
         status: values.status,
@@ -45,7 +44,7 @@ function CreateManager() {
         description: values.description,
         policy: values.policy,
         owner: values.owner,
-        services: [],}
+        services: [],
       });
 
       const requestOptions = {
@@ -77,30 +76,21 @@ function CreateManager() {
       message.error('An error occurred');
     }
   };
-
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
   };
-
   const { Option } = Select;
-
   const onCancel = () => {
     form.resetFields();
     window.history.back();
   };
-
   const onChange = (e) => {
     console.log(`checked = ${e.target.checked}`);
   };
-
   const [garagesData, setGaragesData] = useState([]);
-    
-   
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGarages, setSelectedGarages] = useState([]);
-
   const [displayCount, setDisplayCount] = useState(5);
-
 const handleSearchChange = (event) => {
 setSearchTerm(event.target.value);
 setDisplayCount(5);
@@ -417,4 +407,4 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
   );
 }
 
-export default CreateManager;
+export default UpdateMana;

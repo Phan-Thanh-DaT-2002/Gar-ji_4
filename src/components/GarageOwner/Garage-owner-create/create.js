@@ -120,7 +120,7 @@ export const StyleSelect = styled(Select)`
  &.ant-select.ant-select-in-form-item{
     width: 339px !important;
 }
-&:where(.css-dev-only-do-not-override-1vtf12y).ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+&:where(.css-dev-only-do-not-override-15rg2km).ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
     width: 100%;
     height: 56px !important;
     padding: 11px 11px !important;

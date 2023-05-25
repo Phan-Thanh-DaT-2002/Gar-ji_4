@@ -38,6 +38,7 @@ import {
 
 
 function Create() {
+  
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   
@@ -57,7 +58,7 @@ function Create() {
       password: values.password,
       role: parseInt(values.role), 
       confirmed: true,
-      blocked: false,
+      blocked: values.status === 'inactive' ? true : false,
     });
   
     const requestOptions = {
@@ -112,23 +113,25 @@ function Create() {
       const [searchTerm, setSearchTerm] = useState('');
       const [selectedGarages, setSelectedGarages] = useState([]);
     
-      
-      const handleSearchChange = (event) => {
-        setSearchTerm(event.target.value);
-      };
-      
-      const handleGarageChange = (garage) => {
-        const index = selectedGarages.findIndex((g) => g.id === garage.id);
-        if (index === -1) {
-          setSelectedGarages([...selectedGarages, garage]);
-        } else {
-          setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
-        }
-      };
-      
-      const handleRemoveGarage = (garage) => {
-        setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
-      };
+      const [displayCount, setDisplayCount] = useState(5);
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+    setDisplayCount(5);
+  };
+
+  const handleGarageChange = (garage) => {
+    const index = selectedGarages.findIndex((g) => g.id === garage.id);
+    if (index === -1) {
+      setSelectedGarages([...selectedGarages, garage]);
+    } else {
+      setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
+    }
+  };
+
+  const handleRemoveGarage = (garage) => {
+    setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
+  };
       
       useEffect(() => {
         const jwt = localStorage.getItem('jwt');
@@ -153,14 +156,25 @@ function Create() {
      
       
       const getGarageNameById = (garageId) => {
-  const selectedGarage = garagesData.find((garage) => garage.id === garageId);
-  return selectedGarage ? selectedGarage.attributes.name : '';
-};
-const filteredGarages = garagesData ? garagesData.filter((garage) => {
-  const garageName = garage.attributes.name.toLowerCase();
-  const searchTermLower = searchTerm.toLowerCase();
-  return garage.id.toString().includes(searchTermLower) || garageName.includes(searchTermLower);
-}) : [];
+        const selectedGarage = garagesData.find((garage) => garage.id === garageId);
+        return selectedGarage ? selectedGarage.attributes.name : '';
+      };
+    
+      const filteredGarages = garagesData
+        ? garagesData
+            .filter((garage) => {
+              const garageName = garage.attributes.name.toLowerCase();
+              const searchTermLower = searchTerm.toLowerCase();
+              return (
+                garage.id.toString().includes(searchTermLower) ||
+                garageName.includes(searchTermLower)
+              );
+            })
+            .slice(0, displayCount)
+        : [];
+    
+      
+    
   return (
     <DivStyle>
     <AllDiv>
@@ -308,7 +322,7 @@ const filteredGarages = garagesData ? garagesData.filter((garage) => {
               </StyleSelect>
             </FormItem>
             <FormItem
-              name="block"
+              name="status"
               label="Status"
               labelCol={{ span: 24 }}
               rules={[
@@ -319,8 +333,8 @@ const filteredGarages = garagesData ? garagesData.filter((garage) => {
               ]}
             >
               <StyleSelect placeholder="Select a status" allowClear={false}>
-                <Option value="1">Active</Option>
-                <Option value="2">Deactive</Option>
+                <Option value="active">Active</Option>
+                <Option value="inactive">Inactive</Option>
               </StyleSelect>
             </FormItem>
           </SecondLine>
