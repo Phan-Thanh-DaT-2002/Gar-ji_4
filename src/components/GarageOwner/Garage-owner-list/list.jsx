@@ -1,17 +1,7 @@
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Form,
-  theme,
-  Button,
-  Row,
-  Col,
-  Input,
-  Select,
-  Space,
-  Table,
-} from 'antd';
+import { Form, Button, Row, Col, Input, Select, Space, Table, theme } from 'antd';
 import '../../GarageOwner/Garage-owner-list/style.css';
 
 const useHandleAdd = () => {
@@ -22,6 +12,9 @@ const useHandleAdd = () => {
 };
 
 const GarageOwnerList = () => {
+  const [searchText, setSearchText] = useState('');
+  const [isActived_1, setIsActived_1] = useState('');
+  const [isActived_2, setIsActived_2] = useState('');
   const { Search } = Input;
   const options = [
     {
@@ -35,10 +28,6 @@ const GarageOwnerList = () => {
     {
       value: 'Phone',
       label: 'Phone',
-    },
-    {
-      value: 'Status',
-      label: 'Status',
     },
     {
       value: 'Actions',
@@ -63,9 +52,27 @@ const GarageOwnerList = () => {
     },
     {
       title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-      render: text => <span>{text}</span>,
+      dataIndex: 'username',
+      key: 'username',
+      filteredValue: [searchText],
+      onFilter: (value, record) => {
+        if (String(isActived_1).toLowerCase().includes('username')) {
+          return String(record.username)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+        } else if (String(isActived_1).toLowerCase().includes('email')) {
+          return String(record.email)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+        } else if (String(isActived_1).toLowerCase().includes('phone')) {
+          return String(record.phoneNumber)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+        } else
+          return String(record.username)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+      },
     },
     {
       title: 'Email',
@@ -79,42 +86,56 @@ const GarageOwnerList = () => {
     },
     {
       title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
+      dataIndex: 'blocked',
+      key: 'blocked',
+      filteredValue: [isActived_2],
+      onFilter: (value, record) => {
+        return record.blocked.includes(value);
+      },
     },
     {
       title: 'Actions',
       key: 'actions',
       render: (_, record) => (
         <Space size="middle">
-          <EyeOutlined></EyeOutlined>
-          <EditOutlined></EditOutlined>
-          <DeleteOutlined></DeleteOutlined>
+          <EyeOutlined />
+          <EditOutlined />
+          <DeleteOutlined />
         </Space>
       ),
     },
   ];
-  const data = [
-    {
-      key: '1',
-      STT: '1',
-      name: 'John Doe',
-      email: 'abc.ab@gmail.com',
-      phoneNumber: '0912 234 456',
-      status: 'Active',
-    },
-    {
-      key: '2',
-      STT: '2',
-      name: 'John Doe',
-      email: 'abc.ab@gmail.com',
-      phoneNumber: '0912 234 456',
-      status: 'Inactive',
-    },
-  ];
+  const [userData, setUserData] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwt}`,
+      },
+      redirect: 'follow',
+    };
+
+    fetch("https://edison-garage-api.savvycom.xyz/api/users", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        setUserData(result);
+      })
+      .catch(error => console.log('error', error));
+  }, []);
+
+  const handleAdd = () => {
+    navigate('/garage-owner-create');
+  };
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+
   return (
     <div
       style={{
@@ -130,7 +151,7 @@ const GarageOwnerList = () => {
           </Col>
           <Col md={2}>
             <Button
-              onClick={useHandleAdd()}
+              onClick={handleAdd}
               type="primary"
               style={{
                 background: '#8767E1',
@@ -149,26 +170,38 @@ const GarageOwnerList = () => {
                   style={{ width: '100px' }}
                   defaultValue="Name"
                   options={options}
+                  onChange={value => {
+                    setIsActived_1(value);
+                  }}
                 />
-                <Search placeholder="Search" allowClear />
+                <Search
+                  placeholder="Search"
+                  allowClear
+                  onSearch={value => {
+                    setSearchText(value);
+                  }}
+                />
               </Space.Compact>
               <Space.Compact size="large">
                 <Select
                   style={{ width: 224 }}
                   placeholder="Status"
                   options={optionStatus}
+                  onChange={value => {
+                    setIsActived_2(value);
+                  }}
                 />
               </Space.Compact>
             </Space>
-            <Table
-              columns={columns}
-              dataSource={data}
-              style={{ marginTop: 20 }}
-            ></Table>
+            
+            <Table columns={columns} dataSource={userData && userData.map((user, id) => {
+              return { ...user, STT: id + 1, blocked:user.blocked?'Inactive':'Active' }
+            })} style={{ marginTop: 20 }} />
           </Form>
         </div>
       </div>
     </div>
   );
 };
+
 export default GarageOwnerList;

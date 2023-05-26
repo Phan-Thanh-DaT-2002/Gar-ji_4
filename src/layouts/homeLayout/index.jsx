@@ -121,7 +121,7 @@ const HomeLayout = () => {
               My Profile
             </h1>
           </div>
-          <CreateManager/>
+          <Outlet/>
         </Content>
       </Layout>
     </Layout>
