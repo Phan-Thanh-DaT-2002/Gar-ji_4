@@ -1,8 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import * as Yup from 'yup';
+import { useLocation, Navigate } from 'react-router-dom';
 import {
-  theme,
   Avatar as AntAvatar,
   Form,
   Input,
@@ -10,20 +9,16 @@ import {
   DatePicker,
   Row,
   Col,
+  message,
+  Select,
 } from 'antd';
+import dayjs from 'dayjs';
 import { ReactComponent as Ellipse3 } from '../../assets/images/Ellipse 3.svg';
 import { ReactComponent as Ellipse2 } from '../../assets/images/Ellipse 2.svg';
 import { ReactComponent as Camera } from '../../assets/images/Camera/undefined/Vector.svg';
 import './style.css';
 
-const schema = Yup.object().shape({
-  name: Yup.string().required('Name is required'),
-  dob: Yup.date().required('Date of birth is required'),
-  phone: Yup.string().required('Phone number is required'),
-  address: Yup.string().required('Address is required'),
-});
-
-function UpdateProfile(props) {
+function UpdateProfile() {
   const AvatarContainer = styled.div`
     position: relative;
     width: 250px;
@@ -45,10 +40,53 @@ function UpdateProfile(props) {
     background: rgba(0, 0, 0, 0);
   `;
 
+  const { Option } = Select;
+  const location = useLocation();
+  const { data, role, userId } = location.state || {};
+  console.log(data);
+
   const [form] = Form.useForm();
 
-  const onFinish = values => {
-    console.log('form values:', values);
+  const onFinish = async values => {
+    try {
+      const jwt = localStorage.getItem('jwt');
+      console.log(values);
+      const raw = JSON.stringify({
+        fullname: values.fullname,
+        dob: values.dob.format('YYYY-MM-DD'),
+        address: values.address,
+        phoneNumber: values.phoneNumber,
+      });
+
+      const requestOptions = {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: raw,
+        redirect: 'follow',
+      };
+
+      const response = await fetch(
+        `http://localhost:1337/api/users/${userId}`,
+        requestOptions
+      );
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log('Response:', data);
+        message.success('Form submitted successfully!');
+        Navigate('/');
+      } else {
+        console.error('Error:', data);
+        message.error('Failed to submit form!');
+      }
+    } catch (error) {
+      console.log(error);
+      console.error('Error:', error);
+      message.error('An error occurred');
+    }
   };
 
   return (
@@ -65,11 +103,21 @@ function UpdateProfile(props) {
           <div className="infor">
             <Form
               form={form}
-              onFinish={onFinish}
-              initialValues={{}}
               layout="vertical"
+              initialValues={{
+                ...data,
+                name: data.fullname,
+                dob: dayjs(data.dob),
+                role: role,
+              }}
+              onFinish={onFinish}
+              id="myForm"
             >
-              <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+              <Form.Item
+                name="Name"
+                label="fullname"
+                rules={[{ required: true }]}
+              >
                 <Input placeholder="" />
               </Form.Item>
               <Form.Item label="Email" name="email" rules={[{ type: 'email' }]}>
@@ -91,7 +139,7 @@ function UpdateProfile(props) {
                 <Col span={12}>
                   <Form.Item
                     label="Phone Number"
-                    name="phone"
+                    name="phoneNumber"
                     rules={[{ required: true }]}
                   >
                     <Input placeholder="" />
@@ -106,7 +154,14 @@ function UpdateProfile(props) {
                 <Input placeholder="" />
               </Form.Item>
               <Form.Item label="Role" name="role">
-                <Input placeholder="Admin" disabled />
+                {role.type === 'admin' ? (
+                  <Select placeholder="">
+                    <Option value="admin">Admin</Option>
+                    <Option value="user">User</Option>
+                  </Select>
+                ) : (
+                  <Input placeholder="" disabled />
+                )}
               </Form.Item>
               <hr class="hr-divider" />
               <Form.Item className="Button">
@@ -123,18 +178,6 @@ function UpdateProfile(props) {
       </div>
     </div>
   );
-}
-
-{
-  /* <div className="wrapper">
-<Button className="btn" htmlType="submit" id="save">
-  Save
-</Button>
-<div style={{ width: '16px' }}></div>
-<Button className="btn" id="cancel">
-  Cancel
-</Button>
-</div> */
 }
 
 export default UpdateProfile;
