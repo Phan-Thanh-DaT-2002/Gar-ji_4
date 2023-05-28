@@ -58,7 +58,7 @@ function UpdateMana() {
       };
 
       const response = await fetch(
-        'https://edison-garage-api.savvycom.xyz/api/garages',
+        'http://localhost:1337/api/garages',
         requestOptions
       );
       const data = await response.json();
@@ -120,7 +120,7 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
       redirect: 'follow'
     };
   
-    fetch("https://edison-garage-api.savvycom.xyz/api/garage-services", requestOptions)
+    fetch("http://localhost:1337/api/garage-services", requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);

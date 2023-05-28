@@ -26,27 +26,55 @@ import { Form, Input, Select, Divider, message } from 'antd';
 import moment from 'moment';
 
 function CreateManager() {
+  
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [garageOwners, setGarageOwners] = useState([]); // Chỉnh sửa tên biến thành 'setGarageOwners'
 
+  useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwt}`,
+      },
+      redirect: 'follow'
+    };
+  
+    fetch("http://localhost:1337/api/users", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        setGarageOwners(result); // Sửa thành setGarageOwners(result)
+      })
+      .catch(error => console.log('error', error));
+  }, []);
+  
   const onFinish = async (values) => {
     try {
+      
       const jwt = localStorage.getItem('jwt');
 
-      const raw = JSON.stringify({
-        "data": {
+      const openTime = moment(values.openTime).format('HH:mm:ss');
+    const closeTime = moment(values.closeTime).format('HH:mm:ss');
+
+    const raw = JSON.stringify({
+      "data": {
         name: values.name,
         address: values.address,
         status: values.status,
         phoneNumber: values.phoneNumber,
         email: values.email,
-        openTime: values.openTime,
-        closeTime: values.closeTime,
+        openTime: openTime,
+        closeTime: closeTime,
         description: values.description,
         policy: values.policy,
         owner: values.owner,
-        services: [],}
-      });
+        services: [],
+      }
+    });
+
 
       const requestOptions = {
         method: 'POST',
@@ -59,7 +87,7 @@ function CreateManager() {
       };
 
       const response = await fetch(
-        'https://edison-garage-api.savvycom.xyz/api/garages',
+        'http://localhost:1337/api/garages',
         requestOptions
       );
       const data = await response.json();
@@ -130,7 +158,7 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
       redirect: 'follow'
     };
   
-    fetch("https://edison-garage-api.savvycom.xyz/api/garage-services", requestOptions)
+    fetch("http://localhost:1337/api/garage-services", requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
@@ -300,10 +328,12 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
                 ]}
               >
                 <StyleSelect placeholder="Select a garage owner" allowClear={false}>
-                  <Option value="1">1</Option>
-                  <Option value="2">2</Option>
-                  <Option value="3">3</Option>
-                </StyleSelect>
+                {garageOwners.map((owner) => (
+      <Option key={owner.id} value={owner.id}>
+        {owner.name}
+      </Option>
+    ))}
+</StyleSelect>
               </FormItem>
               <FormItem
                 name="status"

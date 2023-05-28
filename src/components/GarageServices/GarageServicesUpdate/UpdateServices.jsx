@@ -56,7 +56,7 @@ export default function UpdateServices() {
           redirect: 'follow',
         };
     
-        const response = await fetch('https://edison-garage-api.savvycom.xyz/api/garage-services', requestOptions);
+        const response = await fetch('http://localhost:1337/api/garage-services', requestOptions);
         const data = await response.json();
     
         if (response.ok) {

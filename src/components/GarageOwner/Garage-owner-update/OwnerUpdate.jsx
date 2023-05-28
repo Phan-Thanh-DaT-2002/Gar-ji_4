@@ -68,7 +68,7 @@ export default function OwnerUpdate() {
         };
     
         const response = await fetch(
-          `https://edison-garage-api.savvycom.xyz/api/users/${userId}`,
+          `http://localhost:1337/api/users/${userId}`,
           requestOptions
         );
         const data = await response.json();
@@ -107,7 +107,7 @@ export default function OwnerUpdate() {
         };
     
         const response = await fetch(
-          'https://edison-garage-api.savvycom.xyz/api/users',
+          'http://localhost:1337/api/users',
           requestOptions
         );
         const userList = await response.json();
@@ -157,7 +157,7 @@ export default function OwnerUpdate() {
         };
     
         const response = await fetch(
-          `https://edison-garage-api.savvycom.xyz/api/users/${updatedUserId}`, // Sử dụng updatedUserId thay cho userId
+          `http://localhost:1337/api/users/${updatedUserId}`, // Sử dụng updatedUserId thay cho userId
           requestOptions
         );
         const data = await response.json();
@@ -229,7 +229,7 @@ export default function OwnerUpdate() {
           redirect: 'follow'
         };
       
-        fetch("https://edison-garage-api.savvycom.xyz/api/garage-services", requestOptions)
+        fetch("http://localhost:1337/api/garage-services", requestOptions)
           .then(response => response.json())
           .then(result => {
             console.log(result);

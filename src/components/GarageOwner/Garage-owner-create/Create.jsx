@@ -71,7 +71,7 @@ function Create() {
       redirect: 'follow',
     };
 
-    const response = await fetch('https://edison-garage-api.savvycom.xyz/api/users', requestOptions);
+    const response = await fetch('http://localhost:1337/api/users', requestOptions);
     const data = await response.json();
 
     if (response.ok) {
@@ -144,7 +144,7 @@ function Create() {
           redirect: 'follow'
         };
       
-        fetch("https://edison-garage-api.savvycom.xyz/api/garage-services", requestOptions)
+        fetch("http://localhost:1337/api/garage-services", requestOptions)
           .then(response => response.json())
           .then(result => {
             console.log(result);

@@ -119,7 +119,7 @@ const GarageOwnerList = () => {
       redirect: 'follow',
     };
 
-    fetch("https://edison-garage-api.savvycom.xyz/api/users", requestOptions)
+    fetch("http://localhost:1337/api/users", requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);

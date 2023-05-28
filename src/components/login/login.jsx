@@ -47,7 +47,7 @@ export default function Login() {
   const handleSubmit = async (values) => {
     try {
       // Gửi yêu cầu đăng nhập và nhận JWT từ phản hồi
-      const response = await fetch('https://edison-garage-api.savvycom.xyz/api/auth/local', {
+      const response = await fetch('http://localhost:1337/api/auth/local', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -132,7 +132,8 @@ export default function Login() {
         },
       ]}
     >
-      <Input/>
+  
+      <Input type='password'/>
     </FormItem>
     </InforLogin>
 
