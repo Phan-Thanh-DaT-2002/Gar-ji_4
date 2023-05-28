@@ -105,8 +105,6 @@ function Create() {
   const onChange = (e) => {
     console.log(`checked = ${e.target.checked}`);
   };
-  
-
   const [garagesData, setGaragesData] = useState([]);
     
    
@@ -132,7 +130,7 @@ function Create() {
   const handleRemoveGarage = (garage) => {
     setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
   };
-      
+     
       useEffect(() => {
         const jwt = localStorage.getItem('jwt');
         const requestOptions = {
@@ -172,8 +170,6 @@ function Create() {
             })
             .slice(0, displayCount)
         : [];
-    
-      
     
   return (
     <DivStyle>

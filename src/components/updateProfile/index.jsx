@@ -10,6 +10,13 @@ import dayjs from 'dayjs'
 import './style.css';
 import moment from 'moment';
 
+const schema = Yup.object().shape({
+  name: Yup.string().required('Name is required'),
+  dob: Yup.date().required('Date of birth is required'),
+  phone: Yup.string().required('Phone number is required'),
+  address: Yup.string().required('Address is required'),
+});
+
 function UpdateProfile(props) {
   const { Option } = Select;
   const location = useLocation();
@@ -21,15 +28,9 @@ function UpdateProfile(props) {
     token: { colorBgContainer },
   } = theme.useToken();
   const [form] = Form.useForm();
-  const labelStyle = {
-    color: '#939393',
-    fontWeight: 'normal',
-    marginBottom: 4,
-  };
 
-  const inputStyle = {
-    width: 400,
-    borderRadius: 8,
+  const onFinish = values => {
+    console.log('form values:', values);
   };
 
   const onFinish = async (values) => {
@@ -76,45 +77,15 @@ function UpdateProfile(props) {
   };
   
   return (
-    <div
-      style={{
-        padding: 24,
-        minHeight: 600,
-        background: colorBgContainer,
-      }}
-    >
+    <div className="wrapper">
       <div className="container">
         <div className="profile">
-          <div className="avatar" style={{ position: 'relative' }}>
-            <Avatar
-              style={{
-                position: 'absolute',
-                top: 100,
-                left: 100,
-              }}
-              size={250}
-              icon={<Ellipse2 />}
-            ></Avatar>
-            <Avatar
-              style={{
-                position: 'absolute',
-                top: 100,
-                left: 100,
-              }}
-              size={250}
-              icon={<Ellipse3 />}
-            />
-            <Avatar
-              style={{
-                position: 'relative',
-                color: '#EEEEEE',
-                background: 'rgba(0)',
-                top: 200,
-                left: 200,
-              }}
-              size={50}
-              icon={<Camera />}
-            />
+          <div className="image">
+            <AvatarContainer>
+              <Avatar size={250} icon={<Ellipse2 />} />
+              <Avatar size={250} icon={<Ellipse3 />} />
+              <CameraAvatar size={50} icon={<Camera />} />
+            </AvatarContainer>
           </div>
           <div className="infor">
             <Form form={form} layout="vertical" initialValues={{...data,dob : dayjs(data.dob),role: role}} onFinish={onFinish}
