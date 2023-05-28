@@ -1,50 +1,50 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useLocation, Navigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Avatar as AntAvatar,
   Form,
   Input,
   Button,
-  DatePicker,
   Row,
   Col,
   message,
   Select,
 } from 'antd';
-import dayjs from 'dayjs';
 import { ReactComponent as Ellipse3 } from '../../assets/images/Ellipse 3.svg';
 import { ReactComponent as Ellipse2 } from '../../assets/images/Ellipse 2.svg';
 import { ReactComponent as Camera } from '../../assets/images/Camera/undefined/Vector.svg';
-import './style.css';
+import { DatePicker } from 'antd';
+import dayjs from 'dayjs';
+import './updateProfile.css';
+
+const AvatarContainer = styled.div`
+  position: relative;
+  width: 250px;
+  height: 250px;
+`;
+
+const Avatar = styled(AntAvatar)`
+  position: absolute;
+  top: 0;
+  left: 0;
+`;
+
+const CameraAvatar = styled(Avatar)`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #eeeeee;
+  background: rgba(0, 0, 0, 0);
+`;
 
 function UpdateProfile() {
-  const AvatarContainer = styled.div`
-    position: relative;
-    width: 250px;
-    height: 250px;
-  `;
-
-  const Avatar = styled(AntAvatar)`
-    position: absolute;
-    top: 0;
-    left: 0;
-  `;
-
-  const CameraAvatar = styled(Avatar)`
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #eeeeee;
-    background: rgba(0, 0, 0, 0);
-  `;
-
   const { Option } = Select;
+  const navigate = useNavigate();
   const location = useLocation();
   const { data, role, userId } = location.state || {};
   console.log(data);
-
   const [form] = Form.useForm();
 
   const onFinish = async values => {
@@ -77,7 +77,7 @@ function UpdateProfile() {
       if (response.ok) {
         console.log('Response:', data);
         message.success('Form submitted successfully!');
-        Navigate('/');
+        navigate('/');
       } else {
         console.error('Error:', data);
         message.error('Failed to submit form!');
@@ -87,6 +87,10 @@ function UpdateProfile() {
       console.error('Error:', error);
       message.error('An error occurred');
     }
+  };
+
+  const handleCancel = () => {
+    navigate('/');
   };
 
   return (
@@ -113,44 +117,28 @@ function UpdateProfile() {
               onFinish={onFinish}
               id="myForm"
             >
-              <Form.Item
-                name="Name"
-                label="fullname"
-                rules={[{ required: true }]}
-              >
+              <Form.Item label="Name" name="fullname">
                 <Input placeholder="" />
               </Form.Item>
-              <Form.Item label="Email" name="email" rules={[{ type: 'email' }]}>
-                <Input placeholder="ha.nguyen@gmail.com" disabled />
+              <Form.Item label="Email" name="email">
+                <Input placeholder="" disabled />
               </Form.Item>
               <Form.Item label="Username" name="username">
-                <Input placeholder="ha.nguyen" disabled />
+                <Input placeholder="" disabled />
               </Form.Item>
               <Row gutter={[16, 0]}>
                 <Col span={12}>
-                  <Form.Item
-                    label="DOB"
-                    name="dob"
-                    rules={[{ required: true }]}
-                  >
+                  <Form.Item label="DOB" name="dob">
                     <DatePicker />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item
-                    label="Phone Number"
-                    name="phoneNumber"
-                    rules={[{ required: true }]}
-                  >
+                  <Form.Item label="Phone Number" name="phoneNumber">
                     <Input placeholder="" />
                   </Form.Item>
                 </Col>
               </Row>
-              <Form.Item
-                label="Address"
-                name="address"
-                rules={[{ required: true }]}
-              >
+              <Form.Item label="Address" name="address">
                 <Input placeholder="" />
               </Form.Item>
               <Form.Item label="Role" name="role">
@@ -168,7 +156,11 @@ function UpdateProfile() {
                 <Button className="btn" htmlType="submit" id="save">
                   Save
                 </Button>
-                <Button className="btn" id="cancel">
+                <Button
+                  className="btn"
+                  id="cancel"
+                  onClick={() => handleCancel()}
+                >
                   Cancel
                 </Button>
               </Form.Item>
@@ -179,5 +171,4 @@ function UpdateProfile() {
     </div>
   );
 }
-
 export default UpdateProfile;

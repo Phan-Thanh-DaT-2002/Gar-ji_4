@@ -1,4 +1,4 @@
-import { Button, Checkbox,DatePicker,Divider,Form, Input, Select } from 'antd';
+import { Button, Checkbox,DatePicker,Divider,Form, Input, Select, TimePicker } from 'antd';
 import Search from 'antd/es/transfer/search';
 import { AudioOutlined,DeleteOutlined  } from '@ant-design/icons';
 import React from 'react'
@@ -7,7 +7,7 @@ import styled from 'styled-components';
 export const DivStyle = styled.div `
     position: relative;
     width: 100%;
-    height: 1000px;
+    height: 155vh;
     background: #F6F6F6;  
 `
 export const AllDiv = styled.div`
@@ -97,6 +97,7 @@ background: #FFFFFE;
 border: 1px solid #CBCBCB;
 border-radius: 8px;
     }
+    
 `
 
 
@@ -120,7 +121,7 @@ export const StyleSelect = styled(Select)`
  &.ant-select.ant-select-in-form-item{
     width: 339px !important;
 }
-&:where(.css-dev-only-do-not-override-15rg2km).ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+&:where(.css-dev-only-do-not-override-15rg2km).ant-select-single:not(.ant-select-customize-input) .ant-select-selector{
     width: 100%;
     height: 56px !important;
     padding: 11px 11px !important;
@@ -150,7 +151,7 @@ export const LeftColumn = styled.div`
 export const RightColumn = styled.div`
     flex-basis: 50%;
     & .select_gara{
-width: 160px;
+
 height: 24px;
 font-family: 'Poppins';
 font-style: normal;
@@ -261,3 +262,45 @@ text-align: center;
 /* Neutral Dark/6 */
 }
 `
+export const StyledTimePicker = styled(TimePicker)`
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 16px;
+gap: 16px;
+width: 339px;
+height: 56px;
+background-color: #FFFFFE;
+border: 1px solid #CBCBCB;
+border-radius: 8px;
+
+`;
+
+export const StyleCommentBox = styled.div`
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 0px;
+gap: 28vh;
+
+width: 100%;
+height: 30vh;
+`
+export const StyledTextArea = styled(Input.TextArea)`
+  padding: 16px 16px 80px;
+  gap: 8px;
+  width: 518px;
+  height: 178px;
+  background: #FFFFFE;
+  border: 1px solid #CBCBCB;
+  border-radius: 8px;
+  &:where(.css-dev-only-do-not-override-15rg2km).ant-input {
+      max-width: none !important;
+    height: auto;
+    min-height: 32px;
+    line-height: 1.5714285714285714;
+    vertical-align: bottom;
+    transition: all 0.3s,height 0s;
+    resize: vertical;
+} 
+`;
