@@ -1,50 +1,62 @@
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { theme, Avatar, Form, Input, Button, Row, Col, message, Select } from 'antd';
+import styled from 'styled-components';
+import { useLocation, useNavigate } from 'react-router-dom';
+import {
+  Avatar as AntAvatar,
+  Form,
+  Input,
+  Button,
+  Row,
+  Col,
+  message,
+  Select,
+} from 'antd';
 import { ReactComponent as Ellipse3 } from '../../assets/images/Ellipse 3.svg';
 import { ReactComponent as Ellipse2 } from '../../assets/images/Ellipse 2.svg';
-import { DatePicker } from 'antd';
 import { ReactComponent as Camera } from '../../assets/images/Camera/undefined/Vector.svg';
-
-import dayjs from 'dayjs'
+import { DatePicker } from 'antd';
+import dayjs from 'dayjs';
 import './style.css';
-import moment from 'moment';
 
-function UpdateProfile(props) {
+const AvatarContainer = styled.div`
+  position: relative;
+  width: 250px;
+  height: 250px;
+`;
+
+const Avatar = styled(AntAvatar)`
+  position: absolute;
+  top: 0;
+  left: 0;
+`;
+
+const CameraAvatar = styled(Avatar)`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #eeeeee;
+  background: rgba(0, 0, 0, 0);
+`;
+
+function UpdateProfile() {
   const { Option } = Select;
+  const navigate = useNavigate();
   const location = useLocation();
   const { data, role, userId } = location.state || {};
   console.log(data);
-  
-  const navigate = useNavigate();
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
   const [form] = Form.useForm();
-  const labelStyle = {
-    color: '#939393',
-    fontWeight: 'normal',
-    marginBottom: 4,
-  };
 
-  const inputStyle = {
-    width: 400,
-    borderRadius: 8,
-  };
-
-  const onFinish = async (values) => {
+  const onFinish = async values => {
     try {
       const jwt = localStorage.getItem('jwt');
-      
-  
+      console.log(values);
       const raw = JSON.stringify({
-      
         dob: values.dob.format('YYYY-MM-DD'),
         address: values.address,
         phoneNumber: values.phoneNumber,
-        
       });
-  
+
       const requestOptions = {
         method: 'PUT',
         headers: {
@@ -54,16 +66,17 @@ function UpdateProfile(props) {
         body: raw,
         redirect: 'follow',
       };
-  
+
       const response = await fetch(
         `http://localhost:1337/api/users/${userId}`,
         requestOptions
       );
       const data = await response.json();
-  
+
       if (response.ok) {
         console.log('Response:', data);
         message.success('Form submitted successfully!');
+        navigate('/');
       } else {
         console.error('Error:', data);
         message.error('Failed to submit form!');
@@ -74,103 +87,86 @@ function UpdateProfile(props) {
       message.error('An error occurred');
     }
   };
-  
+
+  const handleCancel = () => {
+    navigate('/');
+  };
+
   return (
-    <div
-      style={{
-        padding: 24,
-        minHeight: 600,
-        background: colorBgContainer,
-      }}
-    >
+    <div className="wrapper">
       <div className="container">
         <div className="profile">
-          <div className="avatar" style={{ position: 'relative' }}>
-            <Avatar
-              style={{
-                position: 'absolute',
-                top: 100,
-                left: 100,
-              }}
-              size={250}
-              icon={<Ellipse2 />}
-            ></Avatar>
-            <Avatar
-              style={{
-                position: 'absolute',
-                top: 100,
-                left: 100,
-              }}
-              size={250}
-              icon={<Ellipse3 />}
-            />
-            <Avatar
-              style={{
-                position: 'relative',
-                color: '#EEEEEE',
-                background: 'rgba(0)',
-                top: 200,
-                left: 200,
-              }}
-              size={50}
-              icon={<Camera />}
-            />
+          <div className="image">
+            <AvatarContainer>
+              <Avatar size={250} icon={<Ellipse2 />} />
+              <Avatar size={250} icon={<Ellipse3 />} />
+              <CameraAvatar size={50} icon={<Camera />} />
+            </AvatarContainer>
           </div>
           <div className="infor">
-            <Form form={form} layout="vertical" initialValues={{...data,dob : dayjs(data.dob),role: role}} onFinish={onFinish}
-              id="myForm">
-              <Form.Item label="Name" name="fullname" style={labelStyle}>
-                <Input placeholder="" style={inputStyle} disabled />
+            <Form
+              form={form}
+              layout="vertical"
+              initialValues={{
+                ...data,
+                dob: dayjs(data.dob),
+                role: role,
+              }}
+              onFinish={onFinish}
+              id="myForm"
+            >
+              <Form.Item label="Name" name="fullname">
+                <Input placeholder="" disabled />
               </Form.Item>
-              <Form.Item label="Email" name="email" style={labelStyle}>
-                <Input
-                  placeholder=""
-                  style={inputStyle}
-                  disabled
-                />
+              <Form.Item label="Email" name="email">
+                <Input placeholder="" disabled />
               </Form.Item>
-              <Form.Item label="Username" name="username" style={labelStyle}>
-                <Input placeholder="" style={inputStyle} disabled />
+              <Form.Item label="Username" name="username">
+                <Input placeholder="" disabled />
               </Form.Item>
-              <Row gutter={16}>
-                <Col span={8}>
-                <Form.Item label="DOB" style={labelStyle} name="dob">
-                  <DatePicker />
-                </Form.Item>
+              <Row gutter={[16, 0]}>
+                <Col span={12}>
+                  <Form.Item label="DOB" name="dob">
+                    <DatePicker />
+                  </Form.Item>
                 </Col>
-                <Col span={11}>
+                <Col span={12}>
                   <Form.Item label="Phone Number" name="phoneNumber">
                     <Input placeholder="" />
                   </Form.Item>
                 </Col>
               </Row>
-              <Form.Item label="Address" style={labelStyle} name="address">
-                <Input placeholder="" style={inputStyle} />
+              <Form.Item label="Address" name="address">
+                <Input placeholder="" />
               </Form.Item>
-              <Form.Item label="Role" name="role" style={labelStyle}>
+              <Form.Item label="Role" name="role">
                 {role.type === 'admin' ? (
-                  <Select placeholder="" style={inputStyle}>
+                  <Select placeholder="">
                     <Option value="admin">Admin</Option>
                     <Option value="user">User</Option>
                   </Select>
                 ) : (
-                  <Input placeholder="" style={inputStyle} disabled />
+                  <Input placeholder="" disabled />
                 )}
+              </Form.Item>
+              <hr class="hr-divider" />
+              <Form.Item className="Button">
+                <Button className="btn" htmlType="submit" id="save">
+                  Save
+                </Button>
+                <Button
+                  className="btn"
+                  id="cancel"
+                  onClick={() => handleCancel()}
+                >
+                  Cancel
+                </Button>
               </Form.Item>
             </Form>
           </div>
-        </div>
-        <div className="wrapper">
-        <Button className="btn" id="save" htmlType="submit" form="myForm">
-            Save
-          </Button>
-          <div style={{ width: '16px' }}></div>
-          <Button className="btn" id="cancel">
-            Cancel
-          </Button>
         </div>
       </div>
     </div>
   );
 }
-export default UpdateProfile
+export default UpdateProfile;

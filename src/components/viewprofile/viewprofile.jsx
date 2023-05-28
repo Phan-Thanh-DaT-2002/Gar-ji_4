@@ -37,8 +37,7 @@ function ViewProfile() {
         if (response.ok) {
           console.log(result);
           setData(result);
-          setUserId(result.id); // Lưu ID người dùng vào biến địa phương
-        } else {
+          setUserId(result.id); 
           console.error('Error:', result);
         }
       } catch (error) {
@@ -54,7 +53,7 @@ function ViewProfile() {
   };
 
   if (!data) {
-    return null; // Hiển thị một số gì đó trong quá trình tải dữ liệu
+    return null; 
   }
   return (
     <div

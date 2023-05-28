@@ -35,7 +35,9 @@ import {
   Divider,
   message,
 } from 'antd';
+import { useNavigate } from 'react-router-dom';
 export default function OwnerView() {
+    const navigate = useNavigate()
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     

@@ -93,6 +93,7 @@ function Create() {
   
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
+    
   };
   
   const { Option } = Select;
@@ -105,7 +106,21 @@ function Create() {
   const onChange = (e) => {
     console.log(`checked = ${e.target.checked}`);
   };
-  
+  const validatePassword = (rule, value, callback) => {
+  if (!value) {
+    callback('Please enter the password!');
+  } else if (value.length < 6) {
+    callback('Enter a password of 6 characters!');
+  } else if (!/[a-z]/.test(value)) {
+    callback('Enter a password with lowercase characters!');
+  } else if (!/[A-Z]/.test(value)) {
+    callback('Enter a password with uppercase characters!');
+  } else if (!/[!@#$%^&*]/.test(value)) {
+    callback('Enter a password with special characters!');
+  } else {
+    callback();
+  }
+};
 
   const [garagesData, setGaragesData] = useState([]);
     
@@ -251,10 +266,10 @@ function Create() {
               rules={[
                 {
                   required: true,
-                  message: 'Please input your password!',
+                  validator: validatePassword,
                 },
               ]}
-            >
+                    >
               <Input placeholder="Enter owner password" />
             </FormItem>
             <FormItem

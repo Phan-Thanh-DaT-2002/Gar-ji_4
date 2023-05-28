@@ -14,6 +14,7 @@ import Create from '../../components/GarageOwner/Garage-owner-create/Create.jsx'
 import OwnerUpdate from '../../components/GarageOwner/Garage-owner-update/OwnerUpdate.jsx';
 import UpdateMana from '../../components/GarageManagement/UpdateManagement/UpdateMana';
 import UpdateServices from '../../components/GarageServices/GarageServicesUpdate/UpdateServices';
+import OwnerView from '../../components/GarageOwner/Garage-owner-view/OwnerView';
 // import ProfileUpdate from '../../components/profile-update';
 // import ChangePassword from '../../components/changePassword/changePassword';
 
