@@ -38,6 +38,7 @@ import {
 
 
 function Create() {
+  
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   
@@ -57,7 +58,7 @@ function Create() {
       password: values.password,
       role: parseInt(values.role), 
       confirmed: true,
-      blocked: false,
+      blocked: values.status === 'inactive' ? true : false,
     });
   
     const requestOptions = {
@@ -70,7 +71,7 @@ function Create() {
       redirect: 'follow',
     };
 
-    const response = await fetch('https://edison-garage-api.savvycom.xyz/api/users', requestOptions);
+    const response = await fetch('http://localhost:1337/api/users', requestOptions);
     const data = await response.json();
 
     if (response.ok) {
@@ -104,32 +105,32 @@ function Create() {
   const onChange = (e) => {
     console.log(`checked = ${e.target.checked}`);
   };
-  
-
   const [garagesData, setGaragesData] = useState([]);
     
    
       const [searchTerm, setSearchTerm] = useState('');
       const [selectedGarages, setSelectedGarages] = useState([]);
     
-      
-      const handleSearchChange = (event) => {
-        setSearchTerm(event.target.value);
-      };
-      
-      const handleGarageChange = (garage) => {
-        const index = selectedGarages.findIndex((g) => g.id === garage.id);
-        if (index === -1) {
-          setSelectedGarages([...selectedGarages, garage]);
-        } else {
-          setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
-        }
-      };
-      
-      const handleRemoveGarage = (garage) => {
-        setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
-      };
-      
+      const [displayCount, setDisplayCount] = useState(5);
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+    setDisplayCount(5);
+  };
+
+  const handleGarageChange = (garage) => {
+    const index = selectedGarages.findIndex((g) => g.id === garage.id);
+    if (index === -1) {
+      setSelectedGarages([...selectedGarages, garage]);
+    } else {
+      setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
+    }
+  };
+
+  const handleRemoveGarage = (garage) => {
+    setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
+  };
+     
       useEffect(() => {
         const jwt = localStorage.getItem('jwt');
         const requestOptions = {
@@ -141,7 +142,7 @@ function Create() {
           redirect: 'follow'
         };
       
-        fetch("https://edison-garage-api.savvycom.xyz/api/garage-services", requestOptions)
+        fetch("http://localhost:1337/api/garage-services", requestOptions)
           .then(response => response.json())
           .then(result => {
             console.log(result);
@@ -153,15 +154,23 @@ function Create() {
      
       
       const getGarageNameById = (garageId) => {
-  const selectedGarage = garagesData.find((garage) => garage.id === garageId);
-  return selectedGarage ? selectedGarage.attributes.name : '';
-};
-
-const filteredGarages = garagesData.filter((garage) => {
-  const garageName = garage.attributes.name.toLowerCase();
-  const searchTermLower = searchTerm.toLowerCase();
-  return garage.id.toString().includes(searchTermLower) || garageName.includes(searchTermLower);
-});
+        const selectedGarage = garagesData.find((garage) => garage.id === garageId);
+        return selectedGarage ? selectedGarage.attributes.name : '';
+      };
+    
+      const filteredGarages = garagesData
+        ? garagesData
+            .filter((garage) => {
+              const garageName = garage.attributes.name.toLowerCase();
+              const searchTermLower = searchTerm.toLowerCase();
+              return (
+                garage.id.toString().includes(searchTermLower) ||
+                garageName.includes(searchTermLower)
+              );
+            })
+            .slice(0, displayCount)
+        : [];
+    
   return (
     <DivStyle>
     <AllDiv>
@@ -320,8 +329,8 @@ const filteredGarages = garagesData.filter((garage) => {
               ]}
             >
               <StyleSelect placeholder="Select a status" allowClear={false}>
-                <Option value="1">1</Option>
-                <Option value="2">2</Option>
+                <Option value="active">Active</Option>
+                <Option value="inactive">Inactive</Option>
               </StyleSelect>
             </FormItem>
           </SecondLine>

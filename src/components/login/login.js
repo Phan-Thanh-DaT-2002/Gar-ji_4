@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Button, Form } from 'antd';
+import { Button, Form,Input } from 'antd';
 export const DivStyle = styled.div`
   position: relative;
   width: 100%;
