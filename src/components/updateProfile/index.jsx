@@ -140,7 +140,7 @@ function UpdateProfile() {
                 <Input placeholder="" />
               </Form.Item>
               <Form.Item label="Role" name="role">
-                {role.type === 'admin' ? (
+                {data.role.type === 'admin' ? (
                   <Select placeholder="">
                     <Option value="admin">Admin</Option>
                     <Option value="user">User</Option>

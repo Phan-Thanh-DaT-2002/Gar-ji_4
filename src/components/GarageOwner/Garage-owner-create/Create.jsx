@@ -39,6 +39,8 @@ import {
 
 function Create() {
   
+
+  
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   
@@ -46,50 +48,47 @@ function Create() {
   const onFinish = async (values) => {
     try {
       const jwt = localStorage.getItem('jwt');
-
-      const raw = JSON.stringify({
-      username: values.username,
-      fullname: values.name,
-      email: values.email,
-      dob: values.dob.format('YYYY-MM-DD'), 
-      address: values.address,
-      phoneNumber: values.phone,
-      gender: values.gender,
-      password: values.password,
-      role: parseInt(values.role), 
-      confirmed: true,
-      blocked: values.status === 'inactive' ? true : false,
-    });
   
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${jwt}`,
-      },
-      body: raw,
-      redirect: 'follow',
-    };
-
-    const response = await fetch('http://localhost:1337/api/users', requestOptions);
-    const data = await response.json();
-
-    if (response.ok) {
-      console.log('Response:', data);
-      message.success('Form submitted successfully!');
-     
-    } else {
-      console.error('Error:', data);
-      message.error('Failed to submit form!');
-    
+      const raw = JSON.stringify({
+        username: values.username,
+        fullname: values.name,
+        email: values.email,
+        dob: values.dob.format('YYYY-MM-DD'),
+        address: values.address,
+        phoneNumber: values.phone,
+        gender: values.gender,
+        password: values.password,
+        role: parseInt(values.role),
+        confirmed: true,
+        blocked: values.status === 'inactive' ? true : false,
+        garages: selectedGarages.map((garage) => garage.id),
+      });
+  
+      const requestOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwt}`,
+        },
+        body: raw,
+        redirect: 'follow',
+      };
+  
+      const response = await fetch('http://localhost:1337/api/users', requestOptions);
+      const data = await response.json();
+  
+      if (response.ok) {
+        console.log('Response:', data);
+        message.success('Form submitted successfully!');
+      } else {
+        console.error('Error:', data);
+        message.error('Failed to submit form!');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      message.error('An error occurred');
     }
-  } catch (error) {
-    console.error('Error:', error);
-    message.error('An error occurred');
-   
-  }
-};
-
+  };
   
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
@@ -159,7 +158,7 @@ function Create() {
           redirect: 'follow'
         };
       
-        fetch("http://localhost:1337/api/garage-services", requestOptions)
+        fetch("http://localhost:1337/api/garages", requestOptions)
           .then(response => response.json())
           .then(result => {
             console.log(result);
@@ -332,8 +331,8 @@ function Create() {
                 name='role'
                 allowClear={false}
               >
-                <Option value="1">Admin</Option>
-                <Option value="2">User</Option>
+                <Option value="3">Admin</Option>
+                <Option value="1">User</Option>
               </StyleSelect>
             </FormItem>
             <FormItem
@@ -365,30 +364,30 @@ function Create() {
           onChange={handleSearchChange}
         />
         <SCheckbox>
-          {filteredGarages.map((garage) => (
-            <div key={garage.id}>
-              <StyleCheckBox
-                checked={selectedGarages.some((g) => g.id === garage.id)}
-                onChange={() => handleGarageChange(garage)}
-              >
-                {garage.attributes.name} 
-              </StyleCheckBox>
-            </div>
-          ))}
-        </SCheckbox>
+  {filteredGarages.map((garage) => (
+    <div key={garage.id}>
+      <StyleCheckBox
+        checked={selectedGarages.some((g) => g.id === garage.id)}
+        onChange={() => handleGarageChange(garage)}
+      >
+        {garage.attributes.name}
+      </StyleCheckBox>
+    </div>
+  ))}
+</SCheckbox>
       </LeftColumn>
       <MyDivider type="vertical" />
       <RightColumn>
         <div className="select_gara">Select garages ({selectedGarages.length})</div>
         {selectedGarages.map((garage) => (
-          <div className="select_remove" key={garage.id}>
-            <span>{getGarageNameById(garage.id)}</span>
-            <DeleteOutlined
-              style={{ fontSize: '24px' }}
-              onClick={() => handleRemoveGarage(garage)}
-            />
-          </div>
-        ))}
+  <div className="select_remove" key={garage.id}>
+    <span>{getGarageNameById(garage.id)}</span>
+    <DeleteOutlined
+      style={{ fontSize: '24px' }}
+      onClick={() => handleRemoveGarage(garage)}
+    />
+  </div>
+))}
       </RightColumn>
     </FormSearch>
   </ThreeLine>

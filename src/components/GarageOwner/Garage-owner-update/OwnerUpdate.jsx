@@ -36,112 +36,81 @@ import {
     ButtonStyle,
   } from './index.js';
   import { AudioOutlined, DeleteOutlined } from '@ant-design/icons';
+import { useLocation, useNavigate } from 'react-router-dom';
 export default function OwnerUpdate() {
     
-    const [form] = Form.useForm();
-    const [userData, setUserData] = useState({
-      fullname: '',
-      email: '',
-      username: '',
-      password: '',
-      phone: '',
-      gender: '',
-      dob: null,
-      role: '',
-      status: '',
-    });
+  const { Option } = Select;
+    
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+  const [totalGarages, setTotalGarages] = useState(0);
   
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { userId } = location.state || {};
+const [data, setData] = useState(null);
 
 
-    const [userId, setUserId] = useState(null);
 
-    const fetchData = async (userId) => {
-      try {
-        const jwt = localStorage.getItem('jwt');
-        const requestOptions = {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${jwt}`,
-          },
-          redirect: 'follow',
-        };
-    
-        const response = await fetch(
-          `http://localhost:1337/api/users/${userId}`,
-          requestOptions
-        );
-        const data = await response.json();
-    
-        if (response.ok) {
-          console.log(data);
-          form.setFieldsValue({
-            name: data?.fullname || '',
-            email: data?.email || '',
-            username: data?.username || '',
-            password: '***',
-            phone: data?.phoneNumber || '',
-            gender: data?.gender || '',
-            dob: data?.dob ? moment(data.dob, 'YYYY-MM-DD') : null,
-            role: '***',
-            status: data?.blocked ? 'inactive' : 'active',
-          });
-        } else {
-          console.error('Error:', data);
-        }
-      } catch (error) {
-        console.error('Error:', error);
+
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const jwt = localStorage.getItem('jwt');
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwt}`,
+        },
+        redirect: 'follow',
+      };
+
+      const response = await fetch(
+        `http://localhost:1337/api/users/${userId}?populate=garages`,
+        requestOptions
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log(result);
+        setData(result);
+        setGaragesData(result.garages)
+        setTotalGarages(result.garages.length);
+        form.setFieldsValue({
+          name: result.fullname,
+          email: result.email,
+          username: result.username,
+          password: '***',
+          phone: result.phoneNumber,
+          gender: result.gender,
+          dob: result?.dob ? moment(result.dob, 'YYYY-MM-DD') : null,
+          role: '***',
+          status: result?.blocked ? 'Inactive' : 'Active',
+          garages: result.garages.map((garage) => garage.id),
+        });
+      } else {
+        console.error('Error:', response.statusText);
       }
-    };
-    
-    const fetchUserList = async () => {
-      try {
-        const jwt = localStorage.getItem('jwt');
-        const requestOptions = {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${jwt}`,
-          },
-          redirect: 'follow',
-        };
-    
-        const response = await fetch(
-          'http://localhost:1337/api/users',
-          requestOptions
-        );
-        const userList = await response.json();
-    
-        if (response.ok) {
-          userList.forEach((user) => {
-            const userId = user.id;
-            console.log('User ID:', userId);
-            setUserId(userId); // Cập nhật giá trị userId trong state
-            fetchData(userId);
-          });
-        } else {
-          console.error('Error:', userList);
-        }
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    };
-    
-    useEffect(() => {
-      fetchUserList();
-    }, []);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  fetchData();
+}, [userId]);
     
     const onFinish = async (values) => {
       try {
         const jwt = localStorage.getItem('jwt');
-        const updatedUserId = userId; // Sử dụng giá trị userId hiện tại
+        const updatedUserId = userId; 
     
         const raw = JSON.stringify({
           fullname: values.name,
           dob: values.dob.format('YYYY-MM-DD'),
           address: values.address,
           phoneNumber: values.phone,
-          
+          garages: selectedGarages.map((garage) => garage.id),
           confirmed: true,
           blocked: false,
         });
@@ -180,7 +149,6 @@ export default function OwnerUpdate() {
       console.log('Failed:', errorInfo);
     };
     
-    const { Option } = Select;
     
     const onCancel = () => {
       form.resetFields();
@@ -229,7 +197,7 @@ export default function OwnerUpdate() {
           redirect: 'follow'
         };
       
-        fetch("http://localhost:1337/api/garage-services", requestOptions)
+        fetch("http://localhost:1337/api/garages", requestOptions)
           .then(response => response.json())
           .then(result => {
             console.log(result);
@@ -283,7 +251,7 @@ export default function OwnerUpdate() {
                 label="Name"
                 labelCol={{ span: 24 }}
                 name="name"
-                  initialValue={userData?.fullname}
+               
                 rules={[
                   {
                     required: true,
@@ -298,7 +266,7 @@ export default function OwnerUpdate() {
                 label="Email"
                 labelCol={{ span: 24 }}
                 name="email"
-                initialValue={userData?.email}
+                
                 rules={[
                   {
                     required: true,
@@ -435,30 +403,30 @@ export default function OwnerUpdate() {
           onChange={handleSearchChange}
         />
         <SCheckbox>
-          {filteredGarages.map((garage) => (
-            <div key={garage.id}>
-              <StyleCheckBox
-                checked={selectedGarages.some((g) => g.id === garage.id)}
-                onChange={() => handleGarageChange(garage)}
-              >
-                {garage.attributes.name} 
-              </StyleCheckBox>
-            </div>
-          ))}
-        </SCheckbox>
+  {filteredGarages.map((garage) => (
+    <div key={garage.id}>
+      <StyleCheckBox
+        checked={selectedGarages.some((g) => g.id === garage.id)}
+        onChange={() => handleGarageChange(garage)}
+      >
+        {garage.attributes.name}
+      </StyleCheckBox>
+    </div>
+  ))}
+</SCheckbox>
       </LeftColumn>
       <MyDivider type="vertical" />
       <RightColumn>
         <div className="select_gara">Select garages ({selectedGarages.length})</div>
         {selectedGarages.map((garage) => (
-          <div className="select_remove" key={garage.id}>
-            <span>{getGarageNameById(garage.id)}</span>
-            <DeleteOutlined
-              style={{ fontSize: '24px' }}
-              onClick={() => handleRemoveGarage(garage)}
-            />
-          </div>
-        ))}
+  <div className="select_remove" key={garage.id}>
+    <span>{getGarageNameById(garage.id)}</span>
+    <DeleteOutlined
+      style={{ fontSize: '24px' }}
+      onClick={() => handleRemoveGarage(garage)}
+    />
+  </div>
+))}
       </RightColumn>
     </FormSearch>
   </ThreeLine>
