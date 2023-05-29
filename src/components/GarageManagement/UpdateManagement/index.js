@@ -16,7 +16,6 @@ export const AllDiv = styled.div`
     align-items: flex-start;
     padding: 0px;
     gap: 32px;
-  
     position: absolute;
     
 `

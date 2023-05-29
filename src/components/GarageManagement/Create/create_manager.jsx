@@ -26,7 +26,6 @@ import { Form, Input, Select, Divider, message } from 'antd';
 import moment from 'moment';
 
 function CreateManager() {
-  
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [garageOwners, setGarageOwners] = useState([]); // Chỉnh sửa tên biến thành 'setGarageOwners'
@@ -37,12 +36,12 @@ function CreateManager() {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${jwt}`,
+        Authorization: `Bearer ${jwt}`,
       },
-      redirect: 'follow'
+      redirect: 'follow',
     };
-  
-    fetch("http://localhost:1337/api/users", requestOptions)
+
+    fetch('http://localhost:1337/api/users', requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
@@ -50,31 +49,29 @@ function CreateManager() {
       })
       .catch(error => console.log('error', error));
   }, []);
-  
-  const onFinish = async (values) => {
+
+  const onFinish = async values => {
     try {
-      
       const jwt = localStorage.getItem('jwt');
 
       const openTime = moment(values.openTime).format('HH:mm:ss');
-    const closeTime = moment(values.closeTime).format('HH:mm:ss');
+      const closeTime = moment(values.closeTime).format('HH:mm:ss');
 
-    const raw = JSON.stringify({
-      "data": {
-        name: values.name,
-        address: values.address,
-        status: values.status,
-        phoneNumber: values.phoneNumber,
-        email: values.email,
-        openTime: openTime,
-        closeTime: closeTime,
-        description: values.description,
-        policy: values.policy,
-        owner: values.owner,
-        services: [],
-      }
-    });
-
+      const raw = JSON.stringify({
+        data: {
+          name: values.name,
+          address: values.address,
+          status: values.status,
+          phoneNumber: values.phoneNumber,
+          email: values.email,
+          openTime: openTime,
+          closeTime: closeTime,
+          description: values.description,
+          policy: values.policy,
+          owner: values.owner,
+          services: [],
+        },
+      });
 
       const requestOptions = {
         method: 'POST',
@@ -106,7 +103,7 @@ function CreateManager() {
     }
   };
 
-  const onFinishFailed = (errorInfo) => {
+  const onFinishFailed = errorInfo => {
     console.log('Failed:', errorInfo);
   };
 
@@ -117,48 +114,47 @@ function CreateManager() {
     window.history.back();
   };
 
-  const onChange = (e) => {
+  const onChange = e => {
     console.log(`checked = ${e.target.checked}`);
   };
 
   const [garagesData, setGaragesData] = useState([]);
-    
-   
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGarages, setSelectedGarages] = useState([]);
 
   const [displayCount, setDisplayCount] = useState(5);
 
-const handleSearchChange = (event) => {
-setSearchTerm(event.target.value);
-setDisplayCount(5);
-};
+  const handleSearchChange = event => {
+    setSearchTerm(event.target.value);
+    setDisplayCount(5);
+  };
 
-const handleGarageChange = (garage) => {
-const index = selectedGarages.findIndex((g) => g.id === garage.id);
-if (index === -1) {
-  setSelectedGarages([...selectedGarages, garage]);
-} else {
-  setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
-}
-};
+  const handleGarageChange = garage => {
+    const index = selectedGarages.findIndex(g => g.id === garage.id);
+    if (index === -1) {
+      setSelectedGarages([...selectedGarages, garage]);
+    } else {
+      setSelectedGarages(selectedGarages.filter(g => g.id !== garage.id));
+    }
+  };
 
-const handleRemoveGarage = (garage) => {
-setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
-};
-  
+  const handleRemoveGarage = garage => {
+    setSelectedGarages(selectedGarages.filter(g => g.id !== garage.id));
+  };
+
   useEffect(() => {
     const jwt = localStorage.getItem('jwt');
     const requestOptions = {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${jwt}`,
+        Authorization: `Bearer ${jwt}`,
       },
-      redirect: 'follow'
+      redirect: 'follow',
     };
-  
-    fetch("http://localhost:1337/api/garage-services", requestOptions)
+
+    fetch('http://localhost:1337/api/garage-services', requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
@@ -166,17 +162,15 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
       })
       .catch(error => console.log('error', error));
   }, []);
-  
- 
-  
-  const getGarageNameById = (garageId) => {
-    const selectedGarage = garagesData.find((garage) => garage.id === garageId);
+
+  const getGarageNameById = garageId => {
+    const selectedGarage = garagesData.find(garage => garage.id === garageId);
     return selectedGarage ? selectedGarage.attributes.name : '';
   };
 
   const filteredGarages = garagesData
     ? garagesData
-        .filter((garage) => {
+        .filter(garage => {
           const garageName = garage.attributes.name.toLowerCase();
           const searchTermLower = searchTerm.toLowerCase();
           return (
@@ -186,7 +180,6 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
         })
         .slice(0, displayCount)
     : [];
-
 
   return (
     <DivStyle>
@@ -327,13 +320,16 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
                   },
                 ]}
               >
-                <StyleSelect placeholder="Select a garage owner" allowClear={false}>
-                {garageOwners.map((owner) => (
-      <Option key={owner.id} value={owner.id}>
-        {owner.name}
-      </Option>
-    ))}
-</StyleSelect>
+                <StyleSelect
+                  placeholder="Select a garage owner"
+                  allowClear={false}
+                >
+                  {garageOwners.map(owner => (
+                    <Option key={owner.id} value={owner.id}>
+                      {owner.name}
+                    </Option>
+                  ))}
+                </StyleSelect>
               </FormItem>
               <FormItem
                 name="status"
@@ -388,43 +384,47 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
             </StyleCommentBox>
 
             <ThreeLine>
-    <div className="title_formS">Garages</div>
-    <FormSearch>
-      <LeftColumn>
-        <StyleInput
-          placeholder="Search for garages..."
-          type="text"
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
-        <SCheckbox>
-          {filteredGarages.map((garage) => (
-            <div key={garage.id}>
-              <StyleCheckBox
-                checked={selectedGarages.some((g) => g.id === garage.id)}
-                onChange={() => handleGarageChange(garage)}
-              >
-                {garage.attributes.name} 
-              </StyleCheckBox>
-            </div>
-          ))}
-        </SCheckbox>
-      </LeftColumn>
-      <MyDivider type="vertical" />
-      <RightColumn>
-        <div className="select_gara">Select garages ({selectedGarages.length})</div>
-        {selectedGarages.map((garage) => (
-          <div className="select_remove" key={garage.id}>
-            <span>{getGarageNameById(garage.id)}</span>
-            <DeleteOutlined
-              style={{ fontSize: '24px' }}
-              onClick={() => handleRemoveGarage(garage)}
-            />
-          </div>
-        ))}
-      </RightColumn>
-    </FormSearch>
-  </ThreeLine>
+              <div className="title_formS">Garages</div>
+              <FormSearch>
+                <LeftColumn>
+                  <StyleInput
+                    placeholder="Search for garages..."
+                    type="text"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                  />
+                  <SCheckbox>
+                    {filteredGarages.map(garage => (
+                      <div key={garage.id}>
+                        <StyleCheckBox
+                          checked={selectedGarages.some(
+                            g => g.id === garage.id
+                          )}
+                          onChange={() => handleGarageChange(garage)}
+                        >
+                          {garage.attributes.name}
+                        </StyleCheckBox>
+                      </div>
+                    ))}
+                  </SCheckbox>
+                </LeftColumn>
+                <MyDivider type="vertical" />
+                <RightColumn>
+                  <div className="select_gara">
+                    Select garages ({selectedGarages.length})
+                  </div>
+                  {selectedGarages.map(garage => (
+                    <div className="select_remove" key={garage.id}>
+                      <span>{getGarageNameById(garage.id)}</span>
+                      <DeleteOutlined
+                        style={{ fontSize: '24px' }}
+                        onClick={() => handleRemoveGarage(garage)}
+                      />
+                    </div>
+                  ))}
+                </RightColumn>
+              </FormSearch>
+            </ThreeLine>
             <div className="Btns">
               <Divider style={{ border: '1px solid #DDE4EE', margin: 0 }} />
               <div className="btn-button">
