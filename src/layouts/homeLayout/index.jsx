@@ -1,4 +1,4 @@
-import { Layout, Menu, theme, Row, Col } from 'antd';
+import { Layout, Menu, theme, Row, Col, Breadcrumb } from 'antd';
 import { MenuOutlined, RightOutlined } from '@ant-design/icons';
 import { ReactComponent as Vector } from '../../assets/images/Vector.svg';
 import { useState } from 'react';
@@ -85,13 +85,13 @@ const HomeLayout = () => {
           }}
         >
           <Row>
-            <Col md={18}>
+            <Col md={21}>
               {React.createElement(collapsed ? MenuOutlined : MenuOutlined, {
                 className: 'trigger',
                 onClick: () => setCollapsed(!collapsed),
               })}
             </Col>
-            <Col md={6}>
+            <Col md={3}>
               <Profile></Profile>
             </Col>
           </Row>
@@ -106,14 +106,15 @@ const HomeLayout = () => {
               margin: '16px 0',
             }}
           >
-            <h1
+            <Breadcrumb
               style={{
-                fontWeight: 700,
-                fontSize: 32,
+                fontWeight: '700',
+                fontSize: '20px',
+                margin: '16px 0',
               }}
             >
-              My Profile
-            </h1>
+              <Breadcrumb.Item>My Profile</Breadcrumb.Item>
+            </Breadcrumb>
           </div>
           <Outlet />
         </Content>

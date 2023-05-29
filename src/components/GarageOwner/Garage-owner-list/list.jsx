@@ -50,6 +50,10 @@ const GarageOwnerList = () => {
   ];
   const optionStatus = [
     {
+      value: 'Status',
+      label: 'Status',
+    },
+    {
       value: 'Active',
       label: 'Active',
     },
@@ -104,7 +108,9 @@ const GarageOwnerList = () => {
       key: 'status',
       filteredValue: [isActived_2],
       onFilter: (value, record) => {
-        return record.status.includes(value);
+        if (value === 'Status') {
+          return record.status.includes('');
+        } else return record.status.includes(value);
       },
     },
     {
@@ -127,6 +133,174 @@ const GarageOwnerList = () => {
       email: 'abc.ab@gmail.com',
       phoneNumber: '0912 234 456',
       status: 'Active',
+    },
+    {
+      key: '2',
+      STT: '2',
+      name: 'John Doe',
+      email: 'abc.ab@gmail.com',
+      phoneNumber: '0912 234 456',
+      status: 'Inactive',
+    },
+    {
+      key: '2',
+      STT: '2',
+      name: 'John Doe',
+      email: 'abc.ab@gmail.com',
+      phoneNumber: '0912 234 456',
+      status: 'Inactive',
+    },
+    {
+      key: '2',
+      STT: '2',
+      name: 'John Doe',
+      email: 'abc.ab@gmail.com',
+      phoneNumber: '0912 234 456',
+      status: 'Inactive',
+    },
+    {
+      key: '2',
+      STT: '2',
+      name: 'John Doe',
+      email: 'abc.ab@gmail.com',
+      phoneNumber: '0912 234 456',
+      status: 'Inactive',
+    },
+    {
+      key: '2',
+      STT: '2',
+      name: 'John Doe',
+      email: 'abc.ab@gmail.com',
+      phoneNumber: '0912 234 456',
+      status: 'Inactive',
+    },
+    {
+      key: '2',
+      STT: '2',
+      name: 'John Doe',
+      email: 'abc.ab@gmail.com',
+      phoneNumber: '0912 234 456',
+      status: 'Inactive',
+    },
+    {
+      key: '2',
+      STT: '2',
+      name: 'John Doe',
+      email: 'abc.ab@gmail.com',
+      phoneNumber: '0912 234 456',
+      status: 'Inactive',
+    },
+    {
+      key: '2',
+      STT: '2',
+      name: 'John Doe',
+      email: 'abc.ab@gmail.com',
+      phoneNumber: '0912 234 456',
+      status: 'Inactive',
+    },
+    {
+      key: '2',
+      STT: '2',
+      name: 'John Doe',
+      email: 'abc.ab@gmail.com',
+      phoneNumber: '0912 234 456',
+      status: 'Inactive',
+    },
+    {
+      key: '2',
+      STT: '2',
+      name: 'John Doe',
+      email: 'abc.ab@gmail.com',
+      phoneNumber: '0912 234 456',
+      status: 'Inactive',
+    },
+    {
+      key: '2',
+      STT: '2',
+      name: 'John Doe',
+      email: 'abc.ab@gmail.com',
+      phoneNumber: '0912 234 456',
+      status: 'Inactive',
+    },
+    {
+      key: '2',
+      STT: '2',
+      name: 'John Doe',
+      email: 'abc.ab@gmail.com',
+      phoneNumber: '0912 234 456',
+      status: 'Inactive',
+    },
+    {
+      key: '2',
+      STT: '2',
+      name: 'John Doe',
+      email: 'abc.ab@gmail.com',
+      phoneNumber: '0912 234 456',
+      status: 'Inactive',
+    },
+    {
+      key: '2',
+      STT: '2',
+      name: 'John Doe',
+      email: 'abc.ab@gmail.com',
+      phoneNumber: '0912 234 456',
+      status: 'Inactive',
+    },
+    {
+      key: '2',
+      STT: '2',
+      name: 'John Doe',
+      email: 'abc.ab@gmail.com',
+      phoneNumber: '0912 234 456',
+      status: 'Inactive',
+    },
+    {
+      key: '2',
+      STT: '2',
+      name: 'John Doe',
+      email: 'abc.ab@gmail.com',
+      phoneNumber: '0912 234 456',
+      status: 'Inactive',
+    },
+    {
+      key: '2',
+      STT: '2',
+      name: 'John Doe',
+      email: 'abc.ab@gmail.com',
+      phoneNumber: '0912 234 456',
+      status: 'Inactive',
+    },
+    {
+      key: '2',
+      STT: '2',
+      name: 'John Doe',
+      email: 'abc.ab@gmail.com',
+      phoneNumber: '0912 234 456',
+      status: 'Inactive',
+    },
+    {
+      key: '2',
+      STT: '2',
+      name: 'John Doe',
+      email: 'abc.ab@gmail.com',
+      phoneNumber: '0912 234 456',
+      status: 'Inactive',
+    },
+    {
+      key: '2',
+      STT: '2',
+      name: 'John Doe',
+      email: 'abc.ab@gmail.com',
+      phoneNumber: '0912 234 456',
+      status: 'Inactive',
+    },
+    {
+      key: '2',
+      STT: '2',
+      name: 'John Doe',
+      email: 'abc.ab@gmail.com',
+      phoneNumber: '0912 234 456',
+      status: 'Inactive',
     },
     {
       key: '2',
@@ -198,6 +372,7 @@ const GarageOwnerList = () => {
               </Space.Compact>
             </Space>
             <Table
+              pageSize={3}
               columns={columns}
               dataSource={data}
               style={{ marginTop: 20 }}

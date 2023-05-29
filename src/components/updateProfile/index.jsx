@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import * as Yup from 'yup';
+// import * as Yup from 'yup';
 import {
   theme,
   Avatar as AntAvatar,
@@ -16,12 +16,12 @@ import { ReactComponent as Ellipse2 } from '../../assets/images/Ellipse 2.svg';
 import { ReactComponent as Camera } from '../../assets/images/Camera/undefined/Vector.svg';
 import './style.css';
 
-const schema = Yup.object().shape({
-  name: Yup.string().required('Name is required'),
-  dob: Yup.date().required('Date of birth is required'),
-  phone: Yup.string().required('Phone number is required'),
-  address: Yup.string().required('Address is required'),
-});
+// const schema = Yup.object().shape({
+//   name: Yup.string().required('Name is required'),
+//   dob: Yup.date().required('Date of birth is required'),
+//   phone: Yup.string().required('Phone number is required'),
+//   address: Yup.string().required('Address is required'),
+// });
 
 function UpdateProfile(props) {
   const AvatarContainer = styled.div`
