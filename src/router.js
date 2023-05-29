@@ -11,6 +11,8 @@ import GarageOwnerList from './components/GarageOwner/Garage-owner-list/list';
 import GarageServicesList from './components/GarageServices/GarageServicesList/GarageServicesList';
 import GarageManagementList from './components/GarageManagement/GarageList/GarageList';
 import Create from './components/GarageOwner/Garage-owner-create/Create.jsx';
+import OwnerView from './components/GarageOwner/Garage-owner-view/OwnerView.jsx';
+import OwnerUpdate from './components/GarageOwner/Garage-owner-update/OwnerUpdate';
 
 const router = createBrowserRouter([
   {
@@ -49,6 +51,15 @@ const router = createBrowserRouter([
         path: '/garage-owner-create',
         element: <Create />,
       },
+      {
+        path: '/owner-details',
+        element: <OwnerView />,
+      },
+      {
+        path: '/owner-update',
+        element: <OwnerUpdate />,
+      }
+      
     ],
   },
 ]);

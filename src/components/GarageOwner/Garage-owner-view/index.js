@@ -85,6 +85,15 @@ padding: 0px;
 gap: 8px;
 width: 339px;
 height: 88px;
+ &.formLet{
+
+     font-family: 'Poppins';
+     font-style: normal;
+     font-weight: 400;
+     font-size: 16px;
+     line-height: 24px;
+     color: #939393;
+ }
     & input{ 
         display: flex;
 flex-direction: row;
@@ -96,7 +105,17 @@ height: 56px;
 background: #FFFFFE;
 border: 1px solid #CBCBCB;
 border-radius: 8px;
+font-family: 'Poppins';
+font-style: normal;
+font-weight: 500;
+font-size: 16px;
+line-height: 24px;
+display: flex;
+align-items: center;
+color: #111111;
+
     }
+    
 `
 
 
@@ -143,6 +162,7 @@ font-size: 16px;
 line-height: 24px;
 color: #939393;
     }
+    
 `
 export const LeftColumn = styled.div`
     flex-basis: 50%;
@@ -161,6 +181,20 @@ display: flex;
 align-items: center;
 margin-top: 16px;
 }
+.content_formS{
+    width: 160px;
+height: 24px;
+margin-left: 20px ;
+font-family: 'Poppins';
+font-style: normal;
+font-weight: 500;
+font-size: 16px;
+line-height: 24px;
+display: flex;
+align-items: center;
+margin-top: 16px;
+color: #805EDF;
+    }
 & .select_remove{
     display: flex;
 flex-direction: row;
