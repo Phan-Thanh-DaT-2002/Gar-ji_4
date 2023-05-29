@@ -13,32 +13,38 @@ import {
 } from 'antd';
 import { ReactComponent as Ellipse3 } from '../../assets/images/Ellipse 3.svg';
 import { ReactComponent as Ellipse2 } from '../../assets/images/Ellipse 2.svg';
-import { DatePicker } from 'antd';
 import { ReactComponent as Camera } from '../../assets/images/Camera/undefined/Vector.svg';
-import './style.css';
+import { DatePicker } from 'antd';
+import dayjs from 'dayjs';
+import './updateProfile.css';
 
-function UpdateProfile(props) {
-  const AvatarContainer = styled.div`
-    position: relative;
-    width: 250px;
-    height: 250px;
-  `;
+const AvatarContainer = styled.div`
+  position: relative;
+  width: 250px;
+  height: 250px;
+`;
 
-  const Avatar = styled(AntAvatar)`
-    position: absolute;
-    top: 0;
-    left: 0;
-  `;
+const Avatar = styled(AntAvatar)`
+  position: absolute;
+  top: 0;
+  left: 0;
+`;
 
-  const CameraAvatar = styled(Avatar)`
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #eeeeee;
-    background: rgba(0, 0, 0, 0);
-  `;
+const CameraAvatar = styled(Avatar)`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #eeeeee;
+  background: rgba(0, 0, 0, 0);
+`;
 
+function UpdateProfile() {
+  const { Option } = Select;
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { data, role, userId } = location.state || {};
+  console.log(data);
   const [form] = Form.useForm();
 
   const onFinish = async values => {
@@ -85,7 +91,7 @@ function UpdateProfile(props) {
   const handleCancel = () => {
     navigate('/');
   };
-  
+
   return (
     <div className="wrapper">
       <div className="container">
@@ -100,55 +106,59 @@ function UpdateProfile(props) {
           <div className="infor">
             <Form
               form={form}
-              onFinish={onFinish}
-              initialValues={{}}
               layout="vertical"
+              initialValues={{
+                ...data,
+                dob: dayjs(data.dob),
+                role: role,
+              }}
+              onFinish={onFinish}
+              id="myForm"
             >
-              <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-                <Input placeholder="" />
+              <Form.Item label="Name" name="fullname">
+                <Input placeholder="" disabled />
               </Form.Item>
-              <Form.Item label="Email" name="email" rules={[{ type: 'email' }]}>
-                <Input placeholder="ha.nguyen@gmail.com" disabled />
+              <Form.Item label="Email" name="email">
+                <Input placeholder="" disabled />
               </Form.Item>
               <Form.Item label="Username" name="username">
-                <Input placeholder="ha.nguyen" disabled />
+                <Input placeholder="" disabled />
               </Form.Item>
               <Row gutter={[16, 0]}>
                 <Col span={12}>
-                  <Form.Item
-                    label="DOB"
-                    name="dob"
-                    rules={[{ required: true }]}
-                  >
+                  <Form.Item label="DOB" name="dob">
                     <DatePicker />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item
-                    label="Phone Number"
-                    name="phone"
-                    rules={[{ required: true }]}
-                  >
+                  <Form.Item label="Phone Number" name="phoneNumber">
                     <Input placeholder="" />
                   </Form.Item>
                 </Col>
               </Row>
-              <Form.Item
-                label="Address"
-                name="address"
-                rules={[{ required: true }]}
-              >
+              <Form.Item label="Address" name="address">
                 <Input placeholder="" />
               </Form.Item>
               <Form.Item label="Role" name="role">
-                <Input placeholder="Admin" disabled />
+                {data.role.type === 'admin' ? (
+                  <Select placeholder="">
+                    <Option value="admin">Admin</Option>
+                    <Option value="user">User</Option>
+                  </Select>
+                ) : (
+                  <Input placeholder="" disabled />
+                )}
               </Form.Item>
               <hr class="hr-divider" />
               <Form.Item className="Button">
                 <Button className="btn" htmlType="submit" id="save">
                   Save
                 </Button>
-                <Button className="btn" id="cancel">
+                <Button
+                  className="btn"
+                  id="cancel"
+                  onClick={() => handleCancel()}
+                >
                   Cancel
                 </Button>
               </Form.Item>
@@ -159,5 +169,4 @@ function UpdateProfile(props) {
     </div>
   );
 }
-
 export default UpdateProfile;

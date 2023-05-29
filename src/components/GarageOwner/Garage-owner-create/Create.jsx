@@ -101,8 +101,69 @@ function Create() {
   const onChange = e => {
     console.log(`checked = ${e.target.checked}`);
   };
+  const [garagesData, setGaragesData] = useState([]);
 
-  const onSearch = value => console.log(value);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedGarages, setSelectedGarages] = useState([]);
+
+  const [displayCount, setDisplayCount] = useState(5);
+
+  const handleSearchChange = event => {
+    setSearchTerm(event.target.value);
+    setDisplayCount(5);
+  };
+
+  const handleGarageChange = garage => {
+    const index = selectedGarages.findIndex(g => g.id === garage.id);
+    if (index === -1) {
+      setSelectedGarages([...selectedGarages, garage]);
+    } else {
+      setSelectedGarages(selectedGarages.filter(g => g.id !== garage.id));
+    }
+  };
+
+  const handleRemoveGarage = garage => {
+    setSelectedGarages(selectedGarages.filter(g => g.id !== garage.id));
+  };
+
+  useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwt}`,
+      },
+      redirect: 'follow',
+    };
+
+    fetch('http://localhost:1337/api/garage-services', requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        setGaragesData(result.data);
+      })
+      .catch(error => console.log('error', error));
+  }, []);
+
+  const getGarageNameById = garageId => {
+    const selectedGarage = garagesData.find(garage => garage.id === garageId);
+    return selectedGarage ? selectedGarage.attributes.name : '';
+  };
+
+  const filteredGarages = garagesData
+    ? garagesData
+        .filter(garage => {
+          const garageName = garage.attributes.name.toLowerCase();
+          const searchTermLower = searchTerm.toLowerCase();
+          return (
+            garage.id.toString().includes(searchTermLower) ||
+            garageName.includes(searchTermLower)
+          );
+        })
+        .slice(0, displayCount)
+    : [];
+
   return (
     <DivStyle>
       <AllDiv>
