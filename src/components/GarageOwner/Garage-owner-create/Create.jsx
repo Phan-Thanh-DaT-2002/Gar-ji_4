@@ -305,8 +305,8 @@ function Create() {
                   name="role"
                   allowClear={false}
                 >
-                  <Option value="1">Admin</Option>
-                  <Option value="2">User</Option>
+                  <Option value="3">Admin</Option>
+                  <Option value="1">User</Option>
                 </StyleSelect>
               </FormItem>
               <FormItem
