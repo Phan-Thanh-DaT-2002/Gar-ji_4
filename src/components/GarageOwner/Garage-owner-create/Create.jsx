@@ -36,16 +36,14 @@ import {
   message,
 } from 'antd';
 
-
 function Create() {
   
 
   
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  
-  
-  const onFinish = async (values) => {
+
+  const onFinish = async values => {
     try {
       const jwt = localStorage.getItem('jwt');
   
@@ -94,15 +92,15 @@ function Create() {
     console.log('Failed:', errorInfo);
     
   };
-  
+
   const { Option } = Select;
-  
+
   const onCancel = () => {
     form.resetFields();
     window.history.back();
   };
-  
-  const onChange = (e) => {
+
+  const onChange = e => {
     console.log(`checked = ${e.target.checked}`);
   };
   const validatePassword = (rule, value, callback) => {
@@ -122,29 +120,28 @@ function Create() {
 };
 
   const [garagesData, setGaragesData] = useState([]);
-    
-   
-      const [searchTerm, setSearchTerm] = useState('');
-      const [selectedGarages, setSelectedGarages] = useState([]);
-    
-      const [displayCount, setDisplayCount] = useState(5);
 
-  const handleSearchChange = (event) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedGarages, setSelectedGarages] = useState([]);
+
+  const [displayCount, setDisplayCount] = useState(5);
+
+  const handleSearchChange = event => {
     setSearchTerm(event.target.value);
     setDisplayCount(5);
   };
 
-  const handleGarageChange = (garage) => {
-    const index = selectedGarages.findIndex((g) => g.id === garage.id);
+  const handleGarageChange = garage => {
+    const index = selectedGarages.findIndex(g => g.id === garage.id);
     if (index === -1) {
       setSelectedGarages([...selectedGarages, garage]);
     } else {
-      setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
+      setSelectedGarages(selectedGarages.filter(g => g.id !== garage.id));
     }
   };
 
-  const handleRemoveGarage = (garage) => {
-    setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
+  const handleRemoveGarage = garage => {
+    setSelectedGarages(selectedGarages.filter(g => g.id !== garage.id));
   };
       
       useEffect(() => {

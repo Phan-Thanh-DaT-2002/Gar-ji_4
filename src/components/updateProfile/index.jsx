@@ -16,7 +16,7 @@ import { ReactComponent as Ellipse2 } from '../../assets/images/Ellipse 2.svg';
 import { ReactComponent as Camera } from '../../assets/images/Camera/undefined/Vector.svg';
 import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
-import './style.css';
+import './updateProfile.css';
 
 const AvatarContainer = styled.div`
   position: relative;
