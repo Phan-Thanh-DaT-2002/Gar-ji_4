@@ -109,9 +109,7 @@ padding: 16px;
 gap: 16px;
 width: 339px;
 height: 56px;
-/* Neutral Light/6 */
 background: #FFFFFE;
-/* Neutral Light/3 */
 border: 1px solid #CBCBCB;
 border-radius: 8px;
 `

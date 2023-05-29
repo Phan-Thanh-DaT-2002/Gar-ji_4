@@ -250,12 +250,14 @@ border-radius: 8px;
 & span{
     width: 77px;
 height: 24px;
+/* Paragraph 3/Medium */
 font-family: 'Poppins';
 font-style: normal;
 font-weight: 500;
 font-size: 16px;
 line-height: 24px;
-
+/* identical to box height, or 150% */
 text-align: center;
+/* Neutral Dark/6 */
 }
 `
