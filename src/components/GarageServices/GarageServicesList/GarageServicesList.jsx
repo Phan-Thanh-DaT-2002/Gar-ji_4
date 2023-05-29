@@ -155,7 +155,7 @@ const GarageServicesList = () => {
                   border: '1px solid #d9d9d9',
                 }}
               >
-                <SearchOutlined style={{ width: '20%' }}></SearchOutlined>
+                <SearchOutlined style={{ width: '100%' }}></SearchOutlined>
               </Space>
               <Input style={{ width: '80%' }} placeholder="Search by name" />
             </Space.Compact>

@@ -52,7 +52,6 @@ function UpdateProfile() {
       const jwt = localStorage.getItem('jwt');
       console.log(values);
       const raw = JSON.stringify({
-        fullname: values.fullname,
         dob: values.dob.format('YYYY-MM-DD'),
         address: values.address,
         phoneNumber: values.phoneNumber,
@@ -110,7 +109,6 @@ function UpdateProfile() {
               layout="vertical"
               initialValues={{
                 ...data,
-                name: data.fullname,
                 dob: dayjs(data.dob),
                 role: role,
               }}
@@ -118,7 +116,7 @@ function UpdateProfile() {
               id="myForm"
             >
               <Form.Item label="Name" name="fullname">
-                <Input placeholder="" />
+                <Input placeholder="" disabled />
               </Form.Item>
               <Form.Item label="Email" name="email">
                 <Input placeholder="" disabled />
@@ -142,7 +140,7 @@ function UpdateProfile() {
                 <Input placeholder="" />
               </Form.Item>
               <Form.Item label="Role" name="role">
-                {role.type === 'admin' ? (
+                {data.role.type === 'admin' ? (
                   <Select placeholder="">
                     <Option value="admin">Admin</Option>
                     <Option value="user">User</Option>
