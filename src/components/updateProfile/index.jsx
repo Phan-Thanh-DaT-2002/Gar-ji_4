@@ -38,10 +38,6 @@ function UpdateProfile(props) {
     token: { colorBgContainer },
   } = theme.useToken();
   const [form] = Form.useForm();
-
-  const onFinish = values => {
-    console.log('form values:', values);
-  };
   const onFinish = async values => {
     try {
       const jwt = localStorage.getItem('jwt');
