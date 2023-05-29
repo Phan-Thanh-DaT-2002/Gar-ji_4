@@ -55,6 +55,7 @@ function UpdateProfile() {
         dob: values.dob.format('YYYY-MM-DD'),
         address: values.address,
         phoneNumber: values.phoneNumber,
+        role: values.role === 'user' ? 1 : 3,
       });
 
       const requestOptions = {
