@@ -7,7 +7,7 @@ import styled from 'styled-components';
 export const DivStyle = styled.div `
     position: relative;
     width: 100%;
-    height: 155vh;
+    height: 100vh;
     background: #F6F6F6;  
 `
 export const AllDiv = styled.div`
@@ -96,6 +96,14 @@ height: 56px;
 background: #FFFFFE;
 border: 1px solid #CBCBCB;
 border-radius: 8px;
+font-family: 'Poppins';
+font-style: normal;
+font-weight: 500;
+font-size: 16px;
+line-height: 24px;
+display: flex;
+align-items: center;
+color: #111111;
     }
     
 `
@@ -162,6 +170,20 @@ display: flex;
 align-items: center;
 margin-top: 16px;
 }
+.content_formS{
+    width: 160px;
+height: 24px;
+margin-left: 20px ;
+font-family: 'Poppins';
+font-style: normal;
+font-weight: 500;
+font-size: 16px;
+line-height: 24px;
+display: flex;
+align-items: center;
+margin-top: 16px;
+color: #805EDF;
+    }
 & .select_remove{
     display: flex;
 flex-direction: row;
@@ -185,7 +207,7 @@ export const FormSearch = styled.div`
 width: 100%;
 display: flex;
 flex-direction: row;
-height: 45vh;
+height: 28vh;
 background: #FFFFFE;
 border: 1px solid #DDE4EE;
 border-radius: 8px;

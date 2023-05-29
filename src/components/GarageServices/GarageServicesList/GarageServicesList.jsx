@@ -4,7 +4,7 @@ import {
   DeleteOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Form,
   theme,
@@ -19,7 +19,20 @@ import {
 import '../../GarageServices/GarageServicesList/style.css';
 import { useState } from 'react';
 import '../GarageServicesList/style.css';
+import { useLocation, useNavigate } from 'react-router-dom';
 const GarageServicesList = () => {
+  const location = useLocation(); // Sử dụng useLocation từ react-router-dom
+  const navigate = useNavigate();
+  const [userId, setUserId] = useState(null)
+  const handleAdd = () => {
+    navigate('/create-services');
+  };
+  const handleView = (userId) => {
+    navigate('/owner-details', { state: { userId: userId } });
+  };
+  const handleUpdate = (userId) => {
+    navigate('/owner-update', { state: { userId: userId } });
+  };
   const [searchText, setSearchText] = useState('');
   const [isActived_1, setIsActived_1] = useState('');
   const { Search } = Input;
@@ -49,8 +62,8 @@ const GarageServicesList = () => {
   const columns = [
     {
       title: '#',
-      dataIndex: 'STT',
-      key: 'STT',
+      dataIndex: 'id',
+      key: 'id',
     },
     {
       title: 'Name',
@@ -95,24 +108,29 @@ const GarageServicesList = () => {
       ),
     },
   ];
-  const data = [
-    {
-      key: '1',
-      STT: '1',
-      name: 'John a',
-      description: 'This is description',
-      minPrice: '30000',
-      maxPrice: '200000',
-    },
-    {
-      key: '2',
-      STT: '2',
-      name: 'John Doe',
-      description: 'This is description',
-      minPrice: '10000',
-      maxPrice: '200000',
-    },
-  ];
+  
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwt}`,
+      },
+      redirect: 'follow',
+    };
+
+    fetch("http://localhost:1337/api/garage-services?populate=garages", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        const arrayNew = result.data.map(item => ({...item.attributes, id : item.id, }))
+       
+        setData(arrayNew);
+      })
+      .catch(error => console.log('error', error));
+  }, []);
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -135,7 +153,9 @@ const GarageServicesList = () => {
               style={{
                 background: '#8767E1',
                 marginRight: '10px',
+                
               }}
+              onClick={handleAdd}
             >
               Add services
             </Button>

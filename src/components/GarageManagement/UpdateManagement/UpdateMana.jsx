@@ -24,31 +24,99 @@ import {
 } from './index.js';
 import { Form, Input, Select, Divider, message } from 'antd';
 import moment from 'moment';
+import { useLocation } from 'react-router-dom';
 
 function UpdateMana() {
   const [form] = Form.useForm();
+  const location = useLocation();
   const [loading, setLoading] = useState(false);
+  const [garageOwners, setGarageOwners] = useState([]);
 
+  const { userId } = location.state || {};
+  const [data, setData] = useState(null);
+ 
+  
+  const [owner, setOwner] = useState(null);
+
+  const [serviceValues, setServiceValues] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const jwt = localStorage.getItem('jwt');
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+          redirect: 'follow',
+        };
+
+        const response = await fetch(
+          `http://localhost:1337/api/garages/${userId}?populate=owner, services`,
+          requestOptions
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+          console.log(result);
+          setData(result);
+          setSelectedGarages(result.data.attributes.services.data || []);
+          console.log(garagesData);
+          console.log(owner);
+          form.setFieldsValue({
+            name: result.data.attributes.name,
+            address: result.data.attributes.address,
+            status: result.data.attributes.status,
+            phoneNumber: result.data.attributes.phoneNumber,
+            email: result.data.attributes.email,
+            description: result.data.attributes.description,
+            policy: result.data.attributes.policy,
+            owner: result.data.attributes.owner,
+            openTime: moment(result.data.attributes.openTime, 'HH:mm'),
+            closeTime: moment(result.data.attributes.closeTime, 'HH:mm'),
+            // services: result.data.attributes.services.map((services)=>services),
+          });
+        } else {
+          console.error('Error:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    fetchData();
+  }, [userId]);
   const onFinish = async (values) => {
     try {
+      
       const jwt = localStorage.getItem('jwt');
 
-      const raw = JSON.stringify({
+      const openTime = values.openTime.format('HH:mm:ss');
+    const closeTime = values.closeTime.format('HH:mm:ss');
+    const selectedServices = selectedGarages.map((garage) => ({
+      id: garage.id,
+      name: getGarageNameById(garage.id),
+    }));
+    const raw = JSON.stringify({
+      "data": {
         name: values.name,
         address: values.address,
-        status: values.status,
+        blocked: values.status === 'inactive' ? true : false,
         phoneNumber: values.phoneNumber,
         email: values.email,
-        openTime: values.openTime,
-        closeTime: values.closeTime,
+        openTime: openTime,
+        closeTime: closeTime,
         description: values.description,
         policy: values.policy,
         owner: values.owner,
-        services: [],
-      });
+        services: selectedServices,
+      }
+    });
+
 
       const requestOptions = {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${jwt}`,
@@ -58,7 +126,7 @@ function UpdateMana() {
       };
 
       const response = await fetch(
-        'http://localhost:1337/api/garages',
+        `http://localhost:1337/api/garages/${userId}`,
         requestOptions
       );
       const data = await response.json();
@@ -76,21 +144,30 @@ function UpdateMana() {
       message.error('An error occurred');
     }
   };
+
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
   };
+
   const { Option } = Select;
+
   const onCancel = () => {
     form.resetFields();
     window.history.back();
   };
+
   const onChange = (e) => {
     console.log(`checked = ${e.target.checked}`);
   };
+
   const [garagesData, setGaragesData] = useState([]);
+    
+   
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGarages, setSelectedGarages] = useState([]);
+
   const [displayCount, setDisplayCount] = useState(5);
+
 const handleSearchChange = (event) => {
 setSearchTerm(event.target.value);
 setDisplayCount(5);
@@ -290,10 +367,12 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
                 ]}
               >
                 <StyleSelect placeholder="Select a garage owner" allowClear={false}>
-                  <Option value="1">1</Option>
-                  <Option value="2">2</Option>
-                  <Option value="3">3</Option>
-                </StyleSelect>
+                {garageOwners.map((owner) => (
+      <Option key={owner.id} value={owner.id}>
+        {owner.name}
+      </Option>
+    ))}
+</StyleSelect>
               </FormItem>
               <FormItem
                 name="status"

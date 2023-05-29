@@ -52,7 +52,7 @@ const [data, setData] = useState(null);
 const [garages, setGarages] = useState([])
 
 
-
+const [selectedGarages, setSelectedGarages] = useState([]);
 useEffect(() => {
   const fetchData = async () => {
     try {
@@ -75,7 +75,7 @@ useEffect(() => {
         const result = await response.json();
         console.log(result);
         setData(result);
-        setGaragesData(result.garages)
+        setSelectedGarages(result.garages)
         setTotalGarages(result.garages.length);
         form.setFieldsValue({
           name: result.fullname,
@@ -85,9 +85,9 @@ useEffect(() => {
           phone: result.phoneNumber,
           gender: result.gender,
           dob: result?.dob ? moment(result.dob, 'YYYY-MM-DD') : null,
-          role: result.role.name,
+          role: result.role.id,
           status: result?.blocked ? 'Inactive' : 'Active',
-          garages: result.garages.name,
+          // garages: result.garages?.name,
         });
       } else {
         console.error('Error:', response.statusText);
@@ -166,10 +166,10 @@ useEffect(() => {
     
    
       const [searchTerm, setSearchTerm] = useState('');
-      const [selectedGarages, setSelectedGarages] = useState([]);
+    
     
       const [displayCount, setDisplayCount] = useState(5);
-
+      
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
     setDisplayCount(5);
@@ -456,13 +456,14 @@ useEffect(() => {
                 ]}
               >
                 <StyleSelect
+                  size='large'
                   className="selectStyle"
                   placeholder="Select a role"
                   name='role'
                   allowClear={false}
                 >
-                  <Option value="3">Admin</Option>
-                  <Option value="1">User</Option>
+                  <Option value={3}>Admin</Option>
+                  <Option value={1}>User</Option>
                 </StyleSelect>
               </FormItem>
               <FormItem

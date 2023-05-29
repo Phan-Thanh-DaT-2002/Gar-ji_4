@@ -29,21 +29,19 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function ManagerDetails() {
     const [form] = Form.useForm();
-    
     const [garageOwners, setGarageOwners] = useState([]);
-
-    
-   
-    
-    
     const navigate = useNavigate();
+    const handleView = (userId) => {
+      navigate('/manager-update', { state: { userId: userId } });
+    };
     const location = useLocation();
     const { userId } = location.state || {};
   const [data, setData] = useState(null);
  
+  
+  const [owner, setOwner] = useState(null);
 
-
-
+  const [serviceValues, setServiceValues] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -58,7 +56,7 @@ export default function ManagerDetails() {
         };
 
         const response = await fetch(
-          `http://localhost:1337/api/garages/1`,
+          `http://localhost:1337/api/garages/${userId}?populate=owner, services`,
           requestOptions
         );
 
@@ -66,7 +64,9 @@ export default function ManagerDetails() {
           const result = await response.json();
           console.log(result);
           setData(result);
-
+          setServiceValues(result.data.attributes.services.data || []);
+          
+          console.log(owner);
           form.setFieldsValue({
             name: result.data.attributes.name,
             address: result.data.attributes.address,
@@ -78,7 +78,7 @@ export default function ManagerDetails() {
             owner: result.data.attributes.owner,
             openTime: moment(result.data.attributes.openTime, 'HH:mm'),
             closeTime: moment(result.data.attributes.closeTime, 'HH:mm'),
-            services: [],
+            // services: result.data.attributes.services.map((services)=>services),
           });
         } else {
           console.error('Error:', response.statusText);
@@ -90,7 +90,6 @@ export default function ManagerDetails() {
 
     fetchData();
   }, [userId]);
-
     const onFinishFailed = (errorInfo) => {
       console.log('Failed:', errorInfo);
     };
@@ -154,24 +153,10 @@ export default function ManagerDetails() {
     
    
     
-    const getGarageNameById = (garageId) => {
-      const selectedGarage = garagesData.find((garage) => garage.id === garageId);
-      return selectedGarage ? selectedGarage.attributes.name : '';
+    const getServiceNameById = (serviceId) => {
+      const selectedService = garagesData.find((service) => service.id === serviceId);
+      return selectedService ? selectedService.attributes.name : '';
     };
-  
-    const filteredGarages = garagesData
-      ? garagesData
-          .filter((garage) => {
-            const garageName = garage.attributes.name.toLowerCase();
-            const searchTermLower = searchTerm.toLowerCase();
-            return (
-              garage.id.toString().includes(searchTermLower) ||
-              garageName.includes(searchTermLower)
-            );
-          })
-          .slice(0, displayCount)
-      : [];
-  
   
     return (
       <DivStyle>
@@ -195,99 +180,131 @@ export default function ManagerDetails() {
             <FirstInfo>
               <FirstLine>
                 <FormItem
-                  label="Name"
+                  label={
+              <span style={{
+                marginLeft:'15px',
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Name
+              </span>
+            }
                   labelCol={{ span: 24 }}
                   name="name"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Please input your name!',
-                    },
-                  ]}
                 >
-                  <Input placeholder="Enter owner name" />
+                  <Input placeholder="Enter owner name" style={{ border: "none", cursor:"default" }} readOnly/>
                 </FormItem>
                 <FormItem
-                  label="Email"
+                  label={
+              <span style={{
+                marginLeft:'15px',
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Email
+              </span>
+            }
                   labelCol={{ span: 24 }}
                   name="email"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Please input your email!',
-                    },
-                    {
-                      type: 'email',
-                      message: 'Please enter a valid email',
-                    },
-                  ]}
+                  
                 >
-                  <Input placeholder="Enter owner email" />
+                  <Input placeholder="Enter owner email" style={{ border: "none", cursor:"default" }} readOnly/>
                 </FormItem>
   
                 <FormItem
-                  label="Phone number"
+                  label={
+              <span style={{
+                marginLeft:'15px',
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Phone number
+              </span>
+            }
                   labelCol={{ span: 24 }}
                   name="phoneNumber"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Please input your phone number!',
-                    },
-                    {
-                      pattern: /^[0-9]{10,}$/,
-                      message: 'Please input a valid phone number!',
-                    },
-                  ]}
+                  
                 >
-                  <Input placeholder="Enter owner phone number" />
+                  <Input placeholder="Enter owner phone number" style={{ border: "none", cursor:"default" }} readOnly/>
                 </FormItem>
               </FirstLine>
   
               <FirstLine>
                 <FormItem
-                  label="Address"
+                  label={
+              <span style={{
+                marginLeft:'15px',
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Address
+              </span>
+            }
                   labelCol={{ span: 24 }}
                   name="address"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Please input garage address!',
-                    },
-                  ]}
+
                 >
-                  <Input placeholder="Enter garage address" />
+                  <Input placeholder="Enter garage address" style={{ border: "none", cursor:"default" }} readOnly/>
                 </FormItem>
                 <FormItem
                   name="openTime"
-                  label="Open time"
+                  label={
+              <span style={{
+                marginLeft:'15px',
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Open time
+              </span>
+            }
                   labelCol={{ span: 24 }}
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Please select time!',
-                    },
-                  ]}
                 >
                   <StyledTimePicker
                     picker="time"
-                    dropdownClassName="my-dropdown-class"
                     className="ant-select.ant-select-in-form-item"
                     placeholder="Select open time"
                     format="HH:mm:ss"
                     defaultValue={''}
+                    style={{ border: "none", cursor:"default" }} inputReadOnly suffixIcon={null} readOnly
                   />
                 </FormItem>
                 <FormItem
                   name="closeTime"
-                  label="Close time"
+                  label={
+              <span style={{
+                marginLeft:'15px',
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Close Time
+              </span>
+            }
                   labelCol={{ span: 24 }}
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Please select time!',
-                    },
-                  ]}
+                  
                 >
                   <StyledTimePicker
                     dropdownClassName="my-dropdown-class"
@@ -295,128 +312,77 @@ export default function ManagerDetails() {
                     placeholder="Select close time"
                     format="HH:mm:ss"
                     defaultValue={''}
+                    style={{ border: "none", cursor:"default" }} inputReadOnly suffixIcon={null} readOnly
                   />
                 </FormItem>
               </FirstLine>
               <SecondLine>
                 <FormItem
                   name="owner"
-                  label="Select a garage owner"
+                  label={
+              <span style={{
+                marginLeft:'15px',
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Garage owner
+              </span>
+            }
                   labelCol={{ span: 24 }}
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Please select a garage owner!',
-                    },
-                  ]}
                 >
-                  <StyleSelect placeholder="Select a garage owner" allowClear={false}>
-                  {garageOwners.map((owner) => (
-        <Option key={owner.id} value={owner.id}>
-          {owner.name}
-        </Option>
-      ))}
-  </StyleSelect>
+                  <Input
+    placeholder="Enter owner name"
+    style={{ border: "none", cursor:"default" }}
+    readOnly
+    value={data?.attributes?.owner?.data?.attributes?.name} // Lấy tên chủ sở hữu
+  />
                 </FormItem>
                 <FormItem
                   name="status"
-                  label="Status"
+                  label={
+              <span style={{
+                marginLeft:'15px',
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Status
+              </span>
+            }
                   labelCol={{ span: 24 }}
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Please select a status!',
-                    },
-                  ]}
+                  
                 >
-                  <StyleSelect placeholder="Select a status" allowClear={false}>
-                    <Option value="active">Active</Option>
-                    <Option value="inactive">Inactive</Option>
-                  </StyleSelect>
+                  <Input style={{ border: "none", cursor:"default" }} readOnly/>
                 </FormItem>
               </SecondLine>
-              <StyleCommentBox>
-                <FormItem
-                  label="Description"
-                  labelCol={{ span: 24 }}
-                  name="description"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Please input description',
-                    },
-                  ]}
-                >
-                  <StyledTextArea
-                    autoSize={{ minRows: 4, maxRows: 30 }}
-                    placeholder="Enter a description"
-                  />
-                </FormItem>
-                <FormItem
-                  label="Policy"
-                  labelCol={{ span: 24 }}
-                  name="policy"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Please input policy',
-                    },
-                  ]}
-                >
-                  <StyledTextArea
-                    autoSize={{ minRows: 4, maxRows: 30 }}
-                    placeholder="Enter a policy"
-                  />
-                </FormItem>
-              </StyleCommentBox>
-  
               <ThreeLine>
-      <div className="title_formS">Garages</div>
-      <FormSearch>
-        <LeftColumn>
-          <StyleInput
-            placeholder="Search for garages..."
-            type="text"
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-          <SCheckbox>
-            {filteredGarages.map((garage) => (
-              <div key={garage.id}>
-                <StyleCheckBox
-                  checked={selectedGarages.some((g) => g.id === garage.id)}
-                  onChange={() => handleGarageChange(garage)}
-                >
-                  {garage.attributes.name} 
-                </StyleCheckBox>
-              </div>
-            ))}
-          </SCheckbox>
-        </LeftColumn>
-        <MyDivider type="vertical" />
-        <RightColumn>
-          <div className="select_gara">Select garages ({selectedGarages.length})</div>
-          {selectedGarages.map((garage) => (
-            <div className="select_remove" key={garage.id}>
-              <span>{getGarageNameById(garage.id)}</span>
-              <DeleteOutlined
-                style={{ fontSize: '24px' }}
-                onClick={() => handleRemoveGarage(garage)}
-              />
-            </div>
-          ))}
-        </RightColumn>
-      </FormSearch>
-    </ThreeLine>
+  <div className="title_formS">Garages</div>
+  <FormSearch>
+    <RightColumn style={{}}>
+     
+      {Array.isArray(serviceValues) &&
+  serviceValues.map((service, index) => (
+    <div className='content_formS'  key={index}>{getServiceNameById(service.id)}</div>
+  ))}
+    </RightColumn>
+  </FormSearch>
+</ThreeLine>
               <div className="Btns">
                 <Divider style={{ border: '1px solid #DDE4EE', margin: 0 }} />
                 <div className="btn-button">
                   <ButtonStyle
                     type="primary"
                     style={{ background: '#8767E1' }}
-                    htmlType="submit"
+                    onClick={() => handleView(userId)}
                   >
-                    <span>Save</span>
+                    <span>Edit</span>
                   </ButtonStyle>
                   <ButtonStyle htmlType="button" onClick={onCancel}>
                     <span>Cancel</span>
