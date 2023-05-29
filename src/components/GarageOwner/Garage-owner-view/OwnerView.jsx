@@ -67,7 +67,7 @@ export default function OwnerView() {
         };
   
         const response = await fetch(
-          `http://localhost:1337/api/users/${userId}?populate=garages`,
+          `http://localhost:1337/api/users/${userId}?populate=garages,role`,
           requestOptions
         );
   
@@ -81,11 +81,10 @@ export default function OwnerView() {
             name: result.fullname,
             email: result.email,
             username: result.username,
-          
             phone: result.phoneNumber,
             gender: result.gender,
             dob: result?.dob ? moment(result.dob, 'YYYY-MM-DD') : null,
-            role: result.role,
+            role: result.role.name,
             garages: result.garages.map((garage) => garage.id),
           });
         } else {
@@ -99,7 +98,7 @@ export default function OwnerView() {
     fetchData();
   }, [userId]);
   const handleCancel = () => {
-    navigate(-1); // Quay lại phía trước
+    navigate(-1); 
   };
    
       
@@ -165,12 +164,6 @@ export default function OwnerView() {
                 style={{}}
                 labelCol={{ span: 24 }}
                 name="name"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please input your name!',
-                  },
-                ]}
               >
                 <Input placeholder="Enter owner name" style={{ border: "none", cursor:"default" }} readOnly />
               </FormItem>
@@ -190,16 +183,6 @@ export default function OwnerView() {
             }
                 labelCol={{ span: 24 }}
                 name="email"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please input your email!',
-                  },
-                  {
-                    type: 'email',
-                    message: 'Please enter a valid email address',
-                  },
-                ]}
               >
                 <Input  placeholder="Enter owner email"  style={{ border: "none", cursor:"default" }} readOnly/>
               </FormItem>
@@ -219,12 +202,6 @@ export default function OwnerView() {
             }
                 name="username"
                 labelCol={{ span: 24 }}
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please input your username!',
-                  },
-                ]}
               >
                 <Input placeholder="Enter owner username" style={{ border: "none", cursor:"default" }} readOnly />
               </FormItem>
@@ -260,16 +237,7 @@ export default function OwnerView() {
             }
                 labelCol={{ span: 24 }}
                 name="phone"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please input your phone number!',
-                  },
-                  {
-                    pattern: /^[0-9]{10,}$/,
-                    message: 'Please input a valid phone number!',
-                  },
-                ]}
+                
               >
                 <Input placeholder="Enter owner phone number" style={{ border: "none", cursor:"default" }} readOnly/>
               </FormItem>
@@ -288,12 +256,7 @@ export default function OwnerView() {
               </span>
             }
                 labelCol={{ span: 24 }}
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please select gender!',
-                  },
-                ]}
+                
               >
                 
                 
@@ -310,9 +273,29 @@ export default function OwnerView() {
               </FormItem>
             </FirstLine>
             <SecondLine>
+                  <FormItem
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Role
+              </span>
+            }
+                labelCol={{ span: 24 }}
+                name="role"
+                
+              >
+                <Input style={{ border: "none", cursor:"default" }} readOnly/>
+              </FormItem>
             
             </SecondLine>
-                  <Form></Form>
+              
+                
                   <ThreeLine>
       <div className="title_formS">Garages</div>
       <FormSearch>

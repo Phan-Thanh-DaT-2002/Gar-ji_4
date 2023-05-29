@@ -49,7 +49,7 @@ export default function OwnerUpdate() {
   const location = useLocation();
   const { userId } = location.state || {};
 const [data, setData] = useState(null);
-
+const [garages, setGarages] = useState([])
 
 
 
@@ -67,7 +67,7 @@ useEffect(() => {
       };
 
       const response = await fetch(
-        `http://localhost:1337/api/users/${userId}?populate=garages`,
+        `http://localhost:1337/api/users/${userId}?populate=role, garages`,
         requestOptions
       );
 
@@ -81,13 +81,13 @@ useEffect(() => {
           name: result.fullname,
           email: result.email,
           username: result.username,
-          password: '***',
+          password: '******',
           phone: result.phoneNumber,
           gender: result.gender,
           dob: result?.dob ? moment(result.dob, 'YYYY-MM-DD') : null,
-          role: '***',
+          role: result.role.name,
           status: result?.blocked ? 'Inactive' : 'Active',
-          garages: result.garages.map((garage) => garage.id),
+          garages: result.garages.name,
         });
       } else {
         console.error('Error:', response.statusText);
@@ -99,6 +99,7 @@ useEffect(() => {
 
   fetchData();
 }, [userId]);
+
     
     const onFinish = async (values) => {
       try {
@@ -110,6 +111,7 @@ useEffect(() => {
           dob: values.dob.format('YYYY-MM-DD'),
           address: values.address,
           phoneNumber: values.phone,
+          role: values.role,
           garages: selectedGarages.map((garage) => garage.id),
           confirmed: true,
           blocked: false,
@@ -248,7 +250,18 @@ useEffect(() => {
           <FirstInfo>
             <FirstLine>
               <FormItem
-                label="Name"
+               label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Name
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="name"
                
@@ -263,7 +276,18 @@ useEffect(() => {
                 <Input placeholder="Enter owner name" />
               </FormItem>
               <FormItem
-                label="Email"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Email
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="email"
                 
@@ -282,7 +306,18 @@ useEffect(() => {
               </FormItem>
   
               <FormItem
-                label="Username"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Username
+              </span>
+            }
                 name="username"
                 labelCol={{ span: 24 }}
                 rules={[
@@ -298,7 +333,18 @@ useEffect(() => {
   
             <FirstLine>
               <FormItem
-                label="Password"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Password
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="password"
                 rules={[
@@ -311,7 +357,18 @@ useEffect(() => {
                 <Input placeholder="Enter owner password" />
               </FormItem>
               <FormItem
-                label="Phone number"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Phone Number
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="phone"
                 rules={[
@@ -329,7 +386,18 @@ useEffect(() => {
               </FormItem>
               <FormItem
                 name="gender"
-                label="Gender"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Gender
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 rules={[
                   {
@@ -342,6 +410,7 @@ useEffect(() => {
                   className="style_select"
                   placeholder="Select owner gender"
                   allowClear={false}
+                  style={{}}
                 >
                   <Select.Option value="male">Male</Select.Option>
                   <Select.Option value="female">Female</Select.Option>
@@ -350,12 +419,34 @@ useEffect(() => {
               </FormItem>
             </FirstLine>
             <SecondLine>
-              <FormItem label="DOB" labelCol={{ span: 24 }} name="dob">
+              <FormItem label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                DOB
+              </span>
+            } labelCol={{ span: 24 }} name="dob">
                 <StyledDOB />
               </FormItem>
               <FormItem
               name='role'
-                label="Role"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Role
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 rules={[
                   {
@@ -370,13 +461,24 @@ useEffect(() => {
                   name='role'
                   allowClear={false}
                 >
-                  <Option value="1">Admin</Option>
-                  <Option value="2">User</Option>
+                  <Option value="3">Admin</Option>
+                  <Option value="1">User</Option>
                 </StyleSelect>
               </FormItem>
               <FormItem
               name="status"
-              label="Status"
+              label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Status
+              </span>
+            }
               labelCol={{ span: 24 }}
               rules={[
                 {

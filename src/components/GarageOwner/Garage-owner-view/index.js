@@ -110,13 +110,8 @@ font-style: normal;
 font-weight: 500;
 font-size: 16px;
 line-height: 24px;
-/* identical to box height, or 150% */
-
 display: flex;
 align-items: center;
-
-/* Neutral Dark/1 */
-
 color: #111111;
 
     }

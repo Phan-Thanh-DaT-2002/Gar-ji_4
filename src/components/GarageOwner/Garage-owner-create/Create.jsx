@@ -212,7 +212,18 @@ function Create() {
         <FirstInfo>
           <FirstLine>
             <FormItem
-              label="Name"
+              label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Name
+              </span>
+            }
               labelCol={{ span: 24 }}
               name="name"
               rules={[
@@ -225,7 +236,18 @@ function Create() {
               <Input placeholder="Enter owner name" />
             </FormItem>
             <FormItem
-              label="Email"
+             label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Email
+              </span>
+            }
               labelCol={{ span: 24 }}
               name="email"
               rules={[
@@ -243,7 +265,18 @@ function Create() {
             </FormItem>
 
             <FormItem
-              label="Username"
+             label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Username
+              </span>
+            }
               name="username"
               labelCol={{ span: 24 }}
               rules={[
@@ -259,7 +292,18 @@ function Create() {
 
           <FirstLine>
             <FormItem
-              label="Password"
+              label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Password
+              </span>
+            }
               labelCol={{ span: 24 }}
               name="password"
               rules={[
@@ -272,7 +316,18 @@ function Create() {
               <Input placeholder="Enter owner password" />
             </FormItem>
             <FormItem
-              label="Phone number"
+              label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Phone number
+              </span>
+            }
               labelCol={{ span: 24 }}
               name="phone"
               rules={[
@@ -290,7 +345,18 @@ function Create() {
             </FormItem>
             <FormItem
               name="gender"
-              label="Gender"
+              label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Gender
+              </span>
+            }
               labelCol={{ span: 24 }}
               rules={[
                 {
@@ -311,12 +377,34 @@ function Create() {
             </FormItem>
           </FirstLine>
           <SecondLine>
-            <FormItem label="DOB" labelCol={{ span: 24 }} name="dob">
+            <FormItem label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                DOB
+              </span>
+            } labelCol={{ span: 24 }} name="dob">
               <StyledDOB />
             </FormItem>
             <FormItem
             name='role'
-              label="Role"
+            label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Role
+              </span>
+            }
               labelCol={{ span: 24 }}
               rules={[
                 {
@@ -337,7 +425,18 @@ function Create() {
             </FormItem>
             <FormItem
               name="status"
-              label="Status"
+              label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Status
+              </span>
+            }
               labelCol={{ span: 24 }}
               rules={[
                 {
