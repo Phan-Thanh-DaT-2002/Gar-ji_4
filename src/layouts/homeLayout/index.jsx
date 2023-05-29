@@ -8,7 +8,7 @@ import './style.css';
 
 import Profile from '../../components/avatar/profile';
 import { Outlet } from 'react-router-dom';
-import CreateManager from '../../components/GarageManagement/Create/Create_manager.jsx';
+import CreateManager from '../../components/GarageManagement/Create/create_manager.jsx';
 import CreateServices from '../../components/GarageServices/GarageServicesCreate/Create_services';
 import Create from '../../components/GarageOwner/Garage-owner-create/Create.jsx';
 import OwnerUpdate from '../../components/GarageOwner/Garage-owner-update/OwnerUpdate.jsx';
@@ -30,23 +30,19 @@ function getItem(label, key, icon, children) {
 const items = [
   getItem('Garage', '1', <Vector />),
   getItem('Garage owner', '2', <Vector />),
-  getItem('Garage staff', '3', <Vector />),
-  getItem('Garage services', '4', <Vector />),
+  getItem('Garage services', '3', <Vector />),
 ];
 const useProfileClick = () => {
   const navigate = useNavigate();
   const onClick = ({ key }) => {
     switch (key) {
       case '1':
-        navigate('/');
+        navigate('/garage');
         break;
       case '2':
         navigate('/garage-owner');
         break;
       case '3':
-        navigate('/garage-staff');
-        break;
-      case '4':
         navigate('/garage-services');
         break;
       default:
@@ -77,7 +73,6 @@ const HomeLayout = () => {
         </div>
         <Menu
           theme="light"
-          defaultSelectedKeys={['1']}
           mode="inline"
           items={items}
           onClick={useProfileClick()}
@@ -91,13 +86,13 @@ const HomeLayout = () => {
           }}
         >
           <Row>
-            <Col md={18}>
+            <Col md={21}>
               {React.createElement(collapsed ? MenuOutlined : MenuOutlined, {
                 className: 'trigger',
                 onClick: () => setCollapsed(!collapsed),
               })}
             </Col>
-            <Col md={6}>
+            <Col md={3}>
               <Profile></Profile>
             </Col>
           </Row>
@@ -121,7 +116,7 @@ const HomeLayout = () => {
               My Profile
             </h1>
           </div>
-          <Outlet/>
+          <Outlet />
         </Content>
       </Layout>
     </Layout>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { theme, Button, Avatar, Typography } from 'antd';
 import { ReactComponent as Ellipse2 } from '../../assets/images/Ellipse 2.svg';
 import './style.css';
-import { useNavigate,useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const { Text } = Typography;
 
@@ -10,7 +10,7 @@ function ViewProfile() {
   const navigate = useNavigate();
   const location = useLocation(); // Sử dụng useLocation từ react-router-dom
   const [data, setData] = useState(null);
-  const [userId, setUserId] = useState(null)
+  const [userId, setUserId] = useState(null);
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -29,7 +29,7 @@ function ViewProfile() {
         };
 
         const response = await fetch(
-          "http://localhost:1337/api/users/me?populate=role",
+          'http://localhost:1337/api/users/me?populate=role',
           requestOptions
         );
         const result = await response.json();
@@ -50,7 +50,9 @@ function ViewProfile() {
   }, []);
 
   const handleClick = () => {
-    navigate('/update-profile', { state: { data, role: data.role.name, userId: userId } });
+    navigate('/update-profile', {
+      state: { data, role: data.role.name, userId: userId },
+    });
   };
 
   if (!data) {
