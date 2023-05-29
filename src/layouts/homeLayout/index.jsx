@@ -8,7 +8,7 @@ import './style.css';
 
 import Profile from '../../components/avatar/profile';
 import { Outlet } from 'react-router-dom';
-// import CreateManager from '../../components/GarageManagement/Create/Create_manager.jsx';
+import CreateManager from '../../components/GarageManagement/Create/Create_manager.jsx';
 import CreateServices from '../../components/GarageServices/GarageServicesCreate/Create_services';
 import Create from '../../components/GarageOwner/Garage-owner-create/Create.jsx';
 import OwnerUpdate from '../../components/GarageOwner/Garage-owner-update/OwnerUpdate.jsx';
