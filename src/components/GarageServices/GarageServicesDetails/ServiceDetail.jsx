@@ -27,11 +27,11 @@ import {
 } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-export default function UpdateServices() {
-    const [form] = Form.useForm();
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
- 
+
+export default function ServiceDetail() {
+  const [form] = Form.useForm();
+  const navigate = useNavigate();
+  const { Option } = Select;
   const handleView = (userId) => {
     navigate('/services-update', { state: { userId: userId } });
   };
@@ -84,59 +84,11 @@ useEffect(() => {
 
   fetchData();
 }, [userId]);
-    const onFinish = async (values) => {
-      try {
-        const jwt = localStorage.getItem('jwt')
-        const minPrice = parseInt(values.minPrice);
-        const maxPrice = parseInt(values.maxPrice);
-        if (minPrice >= maxPrice) {
-          message.error('Min price must be lower than max price');
-          return;
-        }
-        const raw = JSON.stringify({
-          "data": {
-            name: values.name,
-            description: values.description,
-            minPrice: minPrice,
-            maxPrice: maxPrice
-          }
-        });
-        const requestOptions = {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwt}`,
-          },
-          body: raw,
-          redirect: 'follow',
-        };
-    
-        const response = await fetch(`http://localhost:1337/api/garage-services/${userId}`, requestOptions);
-        const data = await response.json();
-    
-        if (response.ok) {
-          console.log('Response:', data);
-          message.success('Form submitted successfully!');
-         
-        } else {
-          console.error('Error:', data);
-          message.error('Failed to submit form!');
-        
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        message.error('An error occurred');
-       
-      }
-    };
+  const onCancel = () => {
+    form.resetFields();
+  };
+
   
-    const onFinishFailed = errorInfo => {
-      console.log('Failed:', errorInfo);
-    };
-    const { Option } = Select;
-    const onCancel = () => {
-      form.resetFields();
-    };
   return (
     <DivStyle>
       <AllDiv>
@@ -152,80 +104,101 @@ useEffect(() => {
           initialValues={{
             remember: true,
           }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
+          
           autoComplete="off"
           form={form}
         >
           <FirstInfo>
             <FirstLine>
               <FormItem
-                label="Name"
+                label={
+              <span style={{
+                marginLeft:'15px',
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Name
+              </span>}
                 labelCol={{ span: 24 }}
                 name="name"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please input your services name!',
-                  },
-                ]}
               >
-                <Input placeholder="Enter services name" />
+                <Input placeholder="Enter services name" style={{ border: "none", cursor:"default" }} readOnly/>
               </FormItem>
               <FormItem
-                label="Min price"
+              
+              label={
+              <span style={{
+                marginLeft:'15px',
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Min price
+              </span>}
                 labelCol={{ span: 24 }}
                 name="minPrice"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please input min price!',
-                  },
-                  {
-                    pattern: /^[0-9]*$/,
-                    message: 'Please input a valid price!',
-                  },
-                  
-                ]}
+               
               >
-                <Input placeholder="Enter min price" />
+                <Input placeholder="Enter min price" style={{ border: "none", cursor:"default" }} readOnly />
               </FormItem>
 
               <FormItem
-                label="Max price"
+                label={
+              <span style={{
+                marginLeft:'15px',
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Max price
+              </span>}
                 labelCol={{ span: 24 }}
                 name="maxPrice"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please input max price',
-                  },
-                  {
-                    pattern: /^[0-9]*$/,
-                    message: 'Please input a valid price!',
-                  },
-                ]}
               >
-                <Input placeholder="Enter max price" />
+                <Input placeholder="Enter max price" style={{ border: "none", cursor:"default" }} readOnly/>
               </FormItem>
             </FirstLine>
             <StyleCommentBox>
             <FormItem
-                label="Description"
+                label={
+              <span style={{
+                marginLeft:'15px',
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Description
+              </span>}
                 labelCol={{ span: 24 }}
                 name="description"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please input description',
-                  },
-                 
-                ]}
-                
               >
                 <StyledTextArea 
-                autoSize={{ minRows: 4, maxRows: 30 }}
-                placeholder="Enter a description" 
+                autoSize={{ minRows: 4, maxRows: 30 } }
+                style={{
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 500,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    border: "none", 
+                    cursor:"default",
+                    color: '#111111',
+                    
+                }}  
+                readOnly
                 />
               </FormItem>
             </StyleCommentBox>
@@ -237,9 +210,9 @@ useEffect(() => {
                 <ButtonStyle
                   type="primary"
                   style={{ background: '#8767E1' }}
-                  htmlType="submit"
+                  onClick={() => handleView(userId)}
                 >
-                  <span>Save</span>
+                  <span>Edit</span>
                 </ButtonStyle>
                 <ButtonStyle htmlType="button" onClick={onCancel}>
                   <span>Cancel</span>
@@ -250,5 +223,6 @@ useEffect(() => {
         </DivForm>
       </AllDiv>
     </DivStyle>
-  )
+  );
 }
+

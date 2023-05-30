@@ -13,6 +13,12 @@ import GarageManagementList from './components/GarageManagement/GarageList/Garag
 import Create from './components/GarageOwner/Garage-owner-create/Create.jsx';
 import OwnerView from './components/GarageOwner/Garage-owner-view/OwnerView.jsx';
 import OwnerUpdate from './components/GarageOwner/Garage-owner-update/OwnerUpdate';
+import ManagerDetails from './components/GarageManagement/Details/ManagerDetails';
+import UpdateMana from './components/GarageManagement/UpdateManagement/UpdateMana';
+import CreateServices from './components/GarageServices/GarageServicesCreate/Create_services';
+import CreateManager from './components/GarageManagement/Create/create_manager';
+import ServiceDetail from './components/GarageServices/GarageServicesDetails/ServiceDetail';
+import UpdateServices from './components/GarageServices/GarageServicesUpdate/UpdateServices';
 
 const router = createBrowserRouter([
   {
@@ -58,8 +64,31 @@ const router = createBrowserRouter([
       {
         path: '/owner-update',
         element: <OwnerUpdate />,
+      },
+      {
+        path: '/manager-details',
+        element: <ManagerDetails/>
+      },
+      {
+        path: '/manager-update',
+        element: <UpdateMana/>
+      },
+      {
+        path: '/create-services',
+        element:<CreateServices/>
+      },
+      {
+        path: '/create-manager',
+        element: <CreateManager/>
+      },
+      {
+        path: '/services-detail',
+        element: <ServiceDetail/>
+      },
+      {
+        path: '/services-update',
+        element:<UpdateServices/>
       }
-      
     ],
   },
 ]);
