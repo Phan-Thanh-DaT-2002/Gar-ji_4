@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   
@@ -25,10 +25,65 @@ import {
   message,
   
 } from 'antd';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function UpdateServices() {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+ 
+  const handleView = (userId) => {
+    navigate('/services-update', { state: { userId: userId } });
+  };
+  const location = useLocation();
+  const { userId } = location.state || {};
+const [data, setData] = useState(null);
+
+
+const [owner, setOwner] = useState(null);
+
+const [serviceValues, setServiceValues] = useState([]);
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const jwt = localStorage.getItem('jwt');
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwt}`,
+        },
+        redirect: 'follow',
+      };
+
+      const response = await fetch(
+        `http://localhost:1337/api/garage-services/${userId}`,
+        requestOptions
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log(result);
+        setData(result);
+        form.setFieldsValue({
+          name: result.data.attributes.name,
+          description:result.data.attributes.description,
+          minPrice:result.data.attributes.minPrice,
+          maxPrice:result.data.attributes.maxPrice,
+        
+
+          
+        });
+      } else {
+        console.error('Error:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  fetchData();
+}, [userId]);
     const onFinish = async (values) => {
       try {
         const jwt = localStorage.getItem('jwt')
@@ -47,7 +102,7 @@ export default function UpdateServices() {
           }
         });
         const requestOptions = {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${jwt}`,
@@ -56,7 +111,7 @@ export default function UpdateServices() {
           redirect: 'follow',
         };
     
-        const response = await fetch('http://localhost:1337/api/garage-services', requestOptions);
+        const response = await fetch(`http://localhost:1337/api/garage-services/${userId}`, requestOptions);
         const data = await response.json();
     
         if (response.ok) {

@@ -28,10 +28,10 @@ const GarageServicesList = () => {
     navigate('/create-services');
   };
   const handleView = (userId) => {
-    navigate('/owner-details', { state: { userId: userId } });
+    navigate('/services-detail', { state: { userId: userId } });
   };
   const handleUpdate = (userId) => {
-    navigate('/owner-update', { state: { userId: userId } });
+    navigate('/services-update', { state: { userId: userId } });
   };
   const [searchText, setSearchText] = useState('');
   const [isActived_1, setIsActived_1] = useState('');
@@ -101,8 +101,8 @@ const GarageServicesList = () => {
       key: 'actions',
       render: (_, record) => (
         <Space size="middle">
-          <EyeOutlined></EyeOutlined>
-          <EditOutlined></EditOutlined>
+           <EyeOutlined onClick={() => handleView(record.id)} />
+           <EditOutlined onClick={() => handleUpdate(record.id)} />
           <DeleteOutlined></DeleteOutlined>
         </Space>
       ),

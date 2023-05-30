@@ -17,6 +17,8 @@ import ManagerDetails from './components/GarageManagement/Details/ManagerDetails
 import UpdateMana from './components/GarageManagement/UpdateManagement/UpdateMana';
 import CreateServices from './components/GarageServices/GarageServicesCreate/Create_services';
 import CreateManager from './components/GarageManagement/Create/create_manager';
+import ServiceDetail from './components/GarageServices/GarageServicesDetails/ServiceDetail';
+import UpdateServices from './components/GarageServices/GarageServicesUpdate/UpdateServices';
 
 const router = createBrowserRouter([
   {
@@ -78,6 +80,14 @@ const router = createBrowserRouter([
       {
         path: '/create-manager',
         element: <CreateManager/>
+      },
+      {
+        path: '/services-detail',
+        element: <ServiceDetail/>
+      },
+      {
+        path: '/services-update',
+        element:<UpdateServices/>
       }
     ],
   },

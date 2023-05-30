@@ -13,7 +13,7 @@ const handleView = (userId) => {
     navigate('/manager-details', { state: { userId: userId } });
   };
   const handleUpdate = (userId) => {
-    navigate('/owner-update', { state: { userId: userId } });
+    navigate('/manager-update', { state: { userId: userId } });
   };
   const { Search } = Input;
   const options = [
