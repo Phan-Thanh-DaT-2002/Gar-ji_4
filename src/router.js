@@ -3,7 +3,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import HomeLayout from './layouts/homeLayout';
 
 import ViewProfile from './components/viewprofile/viewprofile';
-import UpdateProfile from './components/updateProfile';
+import UpdateProfile from './components/updateProfile/updateProfile';
 import ChangePassword from './components/changePassword/changePassword';
 import Login from './components/login/login.jsx';
 import GarageOwnerList from './components/GarageOwner/Garage-owner-list/list';

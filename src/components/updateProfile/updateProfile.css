@@ -26,14 +26,18 @@
 .wrapper .container .profile .infor {
   width: 40%;
 }
+.ant-form-item.css-dev-only-do-not-override-w8mnev {
+  margin-bottom: 0;
+}
+.ant-col.ant-form-item-label.css-dev-only-do-not-override-w8mnev {
+  padding: 0px;
+}
 .wrapper .container .profile .infor .Button {
-  position: absolute;
-  bottom: 0;
-  left: 0;
+  position: relative;
+  transform: translate(-125%, 0%);
 }
 .wrapper .container .profile .infor .Button .btn {
-  width: 120px;
-  height: 32px;
+  padding: 0 60px;
   margin-left: 20px;
 }
 .wrapper .container .profile .infor .Button .btn#save {
@@ -44,9 +48,8 @@
   color: #8767e1;
 }
 .hr-divider {
-  position: absolute;
-  bottom: 12%;
-  left: 2%;
+  position: relative;
+  transform: translate(-50%, 0%);
   border-top: 1px solid #dde4ee;
-  width: 96%;
+  width: 242%;
 }
