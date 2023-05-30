@@ -1,25 +1,24 @@
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import React, { useState } from 'react';
-import {
-  Form,
-  theme,
-  Button,
-  Row,
-  Col,
-  Input,
-  Select,
-  Space,
-  Table,
-} from 'antd';
-import '../../GarageManagement/GarageList/style.css';
+import React, { useEffect, useState } from 'react';
+import { Form, Button, Row, Col, Input, Select, Space, Table } from 'antd';
+import './style.css';
+import { useNavigate } from 'react-router';
+
 const GarageManagementList = () => {
   const [searchText, setSearchText] = useState('');
-  const [isActived_1, setIsActived_1] = useState('');
-  const [isActived_2, setIsActived_2] = useState('');
+  const navigate = useNavigate();
+  const [searchCategory, setSearchCategory] = useState('Name');
+  const [statusFilter, setStatusFilter] = useState('');
+const handleView = (userId) => {
+    navigate('/manager-details', { state: { userId: userId } });
+  };
+  const handleUpdate = (userId) => {
+    navigate('/manager-update', { state: { userId: userId } });
+  };
   const { Search } = Input;
   const options = [
     {
-      value: 'Name',
+      value: 'name',
       label: 'Name',
     },
     {
@@ -48,36 +47,15 @@ const GarageManagementList = () => {
   const columns = [
     {
       title: '#',
-      dataIndex: 'STT',
-      key: 'STT',
+      dataIndex: 'id',
+      key: 'id',
     },
     {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      filteredValue: [searchText],
-      onFilter: (value, record) => {
-        if (String(isActived_1).toLowerCase().includes('name')) {
-          return String(record.name)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-        } else if (String(isActived_1).toLowerCase().includes('email')) {
-          return String(record.email)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-        } else if (String(isActived_1).toLowerCase().includes('phone')) {
-          return String(record.phoneNumber)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-        } else if (String(isActived_1).toLowerCase().includes('owner')) {
-          return String(record.GarageOwner)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-        } else
-          return String(record.name)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-      },
+      filteredValue: searchText ? [searchText] : null,
+      onFilter: (value, record) => record.name.toLowerCase().includes(value.toLowerCase()),
     },
     {
       title: 'Email',
@@ -91,84 +69,85 @@ const GarageManagementList = () => {
     },
     {
       title: 'Garage owner',
-      dataIndex: 'GarageOwner',
-      key: 'GarageOwner',
+      dataIndex: 'owner',
+      key: 'owner,',
+      render: (data) => {
+
+        console.log({
+          data
+        })
+        return <span > {data.data.attributes.fullname} </span>
+      },
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
-      filteredValue: [isActived_2],
-      onFilter: (value, record) => {
-        return record.status.includes(value);
-      },
+      filteredValue: statusFilter ? [statusFilter] : null,
+      filters: optionStatus,
+      onFilter: (value, record) => record.status === value,
     },
     {
       title: 'Actions',
       key: 'actions',
       render: (_, record) => (
         <Space size="middle">
-          <EyeOutlined></EyeOutlined>
-          <EditOutlined></EditOutlined>
-          <DeleteOutlined></DeleteOutlined>
+          <EyeOutlined onClick={() => handleView(record.id)} />
+          <EditOutlined onClick={() => handleUpdate(record.id)} />
+          <DeleteOutlined />
         </Space>
       ),
     },
   ];
-  const data = [
-    {
-      key: '1',
-      STT: '1',
-      name: 'John A',
-      email: 'abc.ab@gmail.com',
-      phoneNumber: '0912 234 456',
-      GarageOwner: 'Quang Minh Tran',
-      status: 'Active',
-    },
-    {
-      key: '2',
-      STT: '2',
-      name: 'John Doe',
-      email: 'abc.ab@gmail.com',
-      phoneNumber: '0812 234 456',
-      GarageOwner: 'Quang Minh Tran',
-      status: 'Inactive',
-    },
-    {
-      key: '3',
-      STT: '3',
-      name: 'John A',
-      email: 'abc.ab@gmail.com',
-      phoneNumber: '0912 234 456',
-      GarageOwner: 'Phung Ba Cong',
-      status: 'Active',
-    },
-  ];
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
+ 
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwt}`,
+      },
+      redirect: 'follow',
+    };
+
+    fetch("http://localhost:1337/api/garages?populate=owner", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        const arrayNew = result.data.map(item => ({...item.attributes, id : item.id}))
+       
+        setData(arrayNew);
+      })
+      .catch(error => console.log('error', error));
+  }, []);
+
+  const handleSearch = value => {
+    setSearchText(value);
+  };
+
+  const handleCategoryChange = value => {
+    setSearchCategory(value);
+  };
+
+  const handleStatusFilter = value => {
+    setStatusFilter(value);
+  };
+
   return (
-    <div
-      style={{
-        padding: 24,
-        minHeight: 360,
-        background: colorBgContainer,
-      }}
-    >
+    <div style={{ padding: 24, minHeight: 360, background: '#F0F2F5' }}>
       <div>
         <Row>
           <Col md={22}>
-            <h1>All Garage</h1>
+            <h1>All Garages</h1>
           </Col>
           <Col md={2}>
             <Button
               type="primary"
-              style={{
-                background: '#8767E1',
-                marginRight: '10px',
-              }}
+              style={{ background: '#8767E1', marginRight: '10px' }}
             >
-              Add garage
+              Add Garage
             </Button>
           </Col>
         </Row>
@@ -178,18 +157,14 @@ const GarageManagementList = () => {
               <Space.Compact size="large">
                 <Select
                   style={{ width: '100px' }}
-                  defaultValue="Name"
+                  defaultValue={searchCategory}
                   options={options}
-                  onChange={value => {
-                    setIsActived_1(value);
-                  }}
+                  onChange={handleCategoryChange}
                 />
                 <Search
                   placeholder="Search"
                   allowClear
-                  onSearch={value => {
-                    setSearchText(value);
-                  }}
+                  onSearch={handleSearch}
                 />
               </Space.Compact>
               <Space.Compact size="large">
@@ -197,9 +172,7 @@ const GarageManagementList = () => {
                   style={{ width: 224 }}
                   placeholder="Status"
                   options={optionStatus}
-                  onChange={value => {
-                    setIsActived_2(value);
-                  }}
+                  onChange={handleStatusFilter}
                 />
               </Space.Compact>
             </Space>
@@ -207,11 +180,12 @@ const GarageManagementList = () => {
               columns={columns}
               dataSource={data}
               style={{ marginTop: 20 }}
-            ></Table>
+            />
           </Form>
         </div>
       </div>
     </div>
   );
 };
+
 export default GarageManagementList;

@@ -56,6 +56,7 @@ function Create() {
         role: parseInt(values.role),
         confirmed: true,
         blocked: values.status === 'inactive' ? true : false,
+        garages: selectedGarages.map(garage => garage.id),
       });
 
       const requestOptions = {
@@ -101,6 +102,22 @@ function Create() {
   const onChange = e => {
     console.log(`checked = ${e.target.checked}`);
   };
+  const validatePassword = (rule, value, callback) => {
+    if (!value) {
+      callback('Please enter the password!');
+    } else if (value.length < 6) {
+      callback('Enter a password of 6 characters!');
+    } else if (!/[a-z]/.test(value)) {
+      callback('Enter a password with lowercase characters!');
+    } else if (!/[A-Z]/.test(value)) {
+      callback('Enter a password with uppercase characters!');
+    } else if (!/[!@#$%^&*]/.test(value)) {
+      callback('Enter a password with special characters!');
+    } else {
+      callback();
+    }
+  };
+
   const [garagesData, setGaragesData] = useState([]);
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -137,7 +154,7 @@ function Create() {
       redirect: 'follow',
     };
 
-    fetch('http://localhost:1337/api/garage-services', requestOptions)
+    fetch('http://localhost:1337/api/garages', requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
@@ -187,7 +204,20 @@ function Create() {
           <FirstInfo>
             <FirstLine>
               <FormItem
-                label="Name"
+                label={
+                  <span
+                    style={{
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
+                    Name
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 name="name"
                 rules={[
@@ -200,7 +230,20 @@ function Create() {
                 <Input placeholder="Enter owner name" />
               </FormItem>
               <FormItem
-                label="Email"
+                label={
+                  <span
+                    style={{
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
+                    Email
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 name="email"
                 rules={[
@@ -218,7 +261,20 @@ function Create() {
               </FormItem>
 
               <FormItem
-                label="Username"
+                label={
+                  <span
+                    style={{
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
+                    Username
+                  </span>
+                }
                 name="username"
                 labelCol={{ span: 24 }}
                 rules={[
@@ -234,20 +290,46 @@ function Create() {
 
             <FirstLine>
               <FormItem
-                label="Password"
+                label={
+                  <span
+                    style={{
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
+                    Password
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 name="password"
                 rules={[
                   {
                     required: true,
-                    message: 'Please input your password!',
+                    validator: validatePassword,
                   },
                 ]}
               >
                 <Input placeholder="Enter owner password" />
               </FormItem>
               <FormItem
-                label="Phone number"
+                label={
+                  <span
+                    style={{
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
+                    Phone number
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 name="phone"
                 rules={[
@@ -265,7 +347,20 @@ function Create() {
               </FormItem>
               <FormItem
                 name="gender"
-                label="Gender"
+                label={
+                  <span
+                    style={{
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
+                    Gender
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 rules={[
                   {
@@ -285,12 +380,42 @@ function Create() {
               </FormItem>
             </FirstLine>
             <SecondLine>
-              <FormItem label="DOB" labelCol={{ span: 24 }} name="dob">
+              <FormItem
+                label={
+                  <span
+                    style={{
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
+                    DOB
+                  </span>
+                }
+                labelCol={{ span: 24 }}
+                name="dob"
+              >
                 <StyledDOB />
               </FormItem>
               <FormItem
                 name="role"
-                label="Role"
+                label={
+                  <span
+                    style={{
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
+                    Role
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 rules={[
                   {
@@ -311,7 +436,20 @@ function Create() {
               </FormItem>
               <FormItem
                 name="status"
-                label="Status"
+                label={
+                  <span
+                    style={{
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
+                    Status
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 rules={[
                   {

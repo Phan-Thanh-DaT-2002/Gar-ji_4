@@ -36,112 +36,83 @@ import {
     ButtonStyle,
   } from './index.js';
   import { AudioOutlined, DeleteOutlined } from '@ant-design/icons';
+import { useLocation, useNavigate } from 'react-router-dom';
 export default function OwnerUpdate() {
     
-    const [form] = Form.useForm();
-    const [userData, setUserData] = useState({
-      fullname: '',
-      email: '',
-      username: '',
-      password: '',
-      phone: '',
-      gender: '',
-      dob: null,
-      role: '',
-      status: '',
-    });
+  const { Option } = Select;
+    
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+  const [totalGarages, setTotalGarages] = useState(0);
   
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { userId } = location.state || {};
+const [data, setData] = useState(null);
+const [garages, setGarages] = useState([])
 
 
-    const [userId, setUserId] = useState(null);
+const [selectedGarages, setSelectedGarages] = useState([]);
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const jwt = localStorage.getItem('jwt');
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwt}`,
+        },
+        redirect: 'follow',
+      };
 
-    const fetchData = async (userId) => {
-      try {
-        const jwt = localStorage.getItem('jwt');
-        const requestOptions = {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${jwt}`,
-          },
-          redirect: 'follow',
-        };
-    
-        const response = await fetch(
-          `http://localhost:1337/api/users/${userId}`,
-          requestOptions
-        );
-        const data = await response.json();
-    
-        if (response.ok) {
-          console.log(data);
-          form.setFieldsValue({
-            name: data?.fullname || '',
-            email: data?.email || '',
-            username: data?.username || '',
-            password: '***',
-            phone: data?.phoneNumber || '',
-            gender: data?.gender || '',
-            dob: data?.dob ? moment(data.dob, 'YYYY-MM-DD') : null,
-            role: '***',
-            status: data?.blocked ? 'inactive' : 'active',
-          });
-        } else {
-          console.error('Error:', data);
-        }
-      } catch (error) {
-        console.error('Error:', error);
+      const response = await fetch(
+        `http://localhost:1337/api/users/${userId}?populate=role, garages`,
+        requestOptions
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log(result);
+        setData(result);
+        setSelectedGarages(result.garages)
+        setTotalGarages(result.garages.length);
+        form.setFieldsValue({
+          name: result.fullname,
+          email: result.email,
+          username: result.username,
+          password: '******',
+          phone: result.phoneNumber,
+          gender: result.gender,
+          dob: result?.dob ? moment(result.dob, 'YYYY-MM-DD') : null,
+          role: result.role.id,
+          status: result?.blocked ? 'Inactive' : 'Active',
+          // garages: result.garages?.name,
+        });
+      } else {
+        console.error('Error:', response.statusText);
       }
-    };
-    
-    const fetchUserList = async () => {
-      try {
-        const jwt = localStorage.getItem('jwt');
-        const requestOptions = {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${jwt}`,
-          },
-          redirect: 'follow',
-        };
-    
-        const response = await fetch(
-          'http://localhost:1337/api/users',
-          requestOptions
-        );
-        const userList = await response.json();
-    
-        if (response.ok) {
-          userList.forEach((user) => {
-            const userId = user.id;
-            console.log('User ID:', userId);
-            setUserId(userId); // Cập nhật giá trị userId trong state
-            fetchData(userId);
-          });
-        } else {
-          console.error('Error:', userList);
-        }
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    };
-    
-    useEffect(() => {
-      fetchUserList();
-    }, []);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  fetchData();
+}, [userId]);
+
     
     const onFinish = async (values) => {
       try {
         const jwt = localStorage.getItem('jwt');
-        const updatedUserId = userId; // Sử dụng giá trị userId hiện tại
+        const updatedUserId = userId; 
     
         const raw = JSON.stringify({
           fullname: values.name,
           dob: values.dob.format('YYYY-MM-DD'),
           address: values.address,
           phoneNumber: values.phone,
-          
+          role: values.role,
+          garages: selectedGarages.map((garage) => garage.id),
           confirmed: true,
           blocked: false,
         });
@@ -180,7 +151,6 @@ export default function OwnerUpdate() {
       console.log('Failed:', errorInfo);
     };
     
-    const { Option } = Select;
     
     const onCancel = () => {
       form.resetFields();
@@ -196,10 +166,10 @@ export default function OwnerUpdate() {
     
    
       const [searchTerm, setSearchTerm] = useState('');
-      const [selectedGarages, setSelectedGarages] = useState([]);
+    
     
       const [displayCount, setDisplayCount] = useState(5);
-
+      
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
     setDisplayCount(5);
@@ -229,7 +199,7 @@ export default function OwnerUpdate() {
           redirect: 'follow'
         };
       
-        fetch("http://localhost:1337/api/garage-services", requestOptions)
+        fetch("http://localhost:1337/api/garages", requestOptions)
           .then(response => response.json())
           .then(result => {
             console.log(result);
@@ -280,10 +250,21 @@ export default function OwnerUpdate() {
           <FirstInfo>
             <FirstLine>
               <FormItem
-                label="Name"
+               label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Name
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="name"
-                  initialValue={userData?.fullname}
+               
                 rules={[
                   {
                     required: true,
@@ -295,10 +276,21 @@ export default function OwnerUpdate() {
                 <Input placeholder="Enter owner name" />
               </FormItem>
               <FormItem
-                label="Email"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Email
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="email"
-                initialValue={userData?.email}
+                
                 rules={[
                   {
                     required: true,
@@ -314,7 +306,18 @@ export default function OwnerUpdate() {
               </FormItem>
   
               <FormItem
-                label="Username"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Username
+              </span>
+            }
                 name="username"
                 labelCol={{ span: 24 }}
                 rules={[
@@ -330,7 +333,18 @@ export default function OwnerUpdate() {
   
             <FirstLine>
               <FormItem
-                label="Password"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Password
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="password"
                 rules={[
@@ -343,7 +357,18 @@ export default function OwnerUpdate() {
                 <Input placeholder="Enter owner password" />
               </FormItem>
               <FormItem
-                label="Phone number"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Phone Number
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="phone"
                 rules={[
@@ -361,7 +386,18 @@ export default function OwnerUpdate() {
               </FormItem>
               <FormItem
                 name="gender"
-                label="Gender"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Gender
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 rules={[
                   {
@@ -374,6 +410,7 @@ export default function OwnerUpdate() {
                   className="style_select"
                   placeholder="Select owner gender"
                   allowClear={false}
+                  style={{}}
                 >
                   <Select.Option value="male">Male</Select.Option>
                   <Select.Option value="female">Female</Select.Option>
@@ -382,12 +419,34 @@ export default function OwnerUpdate() {
               </FormItem>
             </FirstLine>
             <SecondLine>
-              <FormItem label="DOB" labelCol={{ span: 24 }} name="dob">
+              <FormItem label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                DOB
+              </span>
+            } labelCol={{ span: 24 }} name="dob">
                 <StyledDOB />
               </FormItem>
               <FormItem
               name='role'
-                label="Role"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Role
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 rules={[
                   {
@@ -397,18 +456,30 @@ export default function OwnerUpdate() {
                 ]}
               >
                 <StyleSelect
+                  size='large'
                   className="selectStyle"
                   placeholder="Select a role"
                   name='role'
                   allowClear={false}
                 >
-                  <Option value="1">Admin</Option>
-                  <Option value="2">User</Option>
+                  <Option value={3}>Admin</Option>
+                  <Option value={1}>User</Option>
                 </StyleSelect>
               </FormItem>
               <FormItem
               name="status"
-              label="Status"
+              label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Status
+              </span>
+            }
               labelCol={{ span: 24 }}
               rules={[
                 {
@@ -435,30 +506,30 @@ export default function OwnerUpdate() {
           onChange={handleSearchChange}
         />
         <SCheckbox>
-          {filteredGarages.map((garage) => (
-            <div key={garage.id}>
-              <StyleCheckBox
-                checked={selectedGarages.some((g) => g.id === garage.id)}
-                onChange={() => handleGarageChange(garage)}
-              >
-                {garage.attributes.name} 
-              </StyleCheckBox>
-            </div>
-          ))}
-        </SCheckbox>
+  {filteredGarages.map((garage) => (
+    <div key={garage.id}>
+      <StyleCheckBox
+        checked={selectedGarages.some((g) => g.id === garage.id)}
+        onChange={() => handleGarageChange(garage)}
+      >
+        {garage.attributes.name}
+      </StyleCheckBox>
+    </div>
+  ))}
+</SCheckbox>
       </LeftColumn>
       <MyDivider type="vertical" />
       <RightColumn>
         <div className="select_gara">Select garages ({selectedGarages.length})</div>
         {selectedGarages.map((garage) => (
-          <div className="select_remove" key={garage.id}>
-            <span>{getGarageNameById(garage.id)}</span>
-            <DeleteOutlined
-              style={{ fontSize: '24px' }}
-              onClick={() => handleRemoveGarage(garage)}
-            />
-          </div>
-        ))}
+  <div className="select_remove" key={garage.id}>
+    <span>{getGarageNameById(garage.id)}</span>
+    <DeleteOutlined
+      style={{ fontSize: '24px' }}
+      onClick={() => handleRemoveGarage(garage)}
+    />
+  </div>
+))}
       </RightColumn>
     </FormSearch>
   </ThreeLine>

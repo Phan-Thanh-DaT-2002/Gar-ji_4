@@ -27,7 +27,7 @@ import {
 } from 'antd';
 
 
-export default function CreateManager() {
+export default function CreateServices() {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const onFinish = async (values) => {
