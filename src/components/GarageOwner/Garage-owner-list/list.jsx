@@ -11,6 +11,8 @@ import {
   Space,
   Table,
   theme,
+  Modal,
+  Pagination,
 } from 'antd';
 import '../../GarageOwner/Garage-owner-list/style.css';
 
@@ -38,10 +40,6 @@ const GarageOwnerList = () => {
     {
       value: 'Phone',
       label: 'Phone',
-    },
-    {
-      value: 'Actions',
-      label: 'Actions',
     },
   ];
   const optionStatus = [
@@ -104,17 +102,23 @@ const GarageOwnerList = () => {
       key: 'blocked',
       filteredValue: [isActived_2],
       onFilter: (value, record) => {
-        return record.blocked.includes(value);
+        if (value === 'Status') {
+          return record.blocked.includes('');
+        } else return record.blocked.includes(value);
       },
     },
     {
       title: 'Actions',
       key: 'actions',
-      render: (_, record) => (
+      render: record => (
         <Space size="middle">
           <EyeOutlined />
           <EditOutlined />
-          <DeleteOutlined />
+          <DeleteOutlined
+            onClick={() => {
+              handleDelete(record);
+            }}
+          />
         </Space>
       ),
     },
@@ -149,6 +153,36 @@ const GarageOwnerList = () => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+
+  const handleDelete = record => {
+    Modal.confirm({
+      title: 'Are you sure about that?',
+      onOk: () => {
+        setUserData(prevData => {
+          return prevData.filter(data => data.id !== record.id);
+        });
+
+        const jwt = localStorage.getItem('jwt');
+        const requestOptions = {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+          redirect: 'follow',
+        };
+
+        fetch(`http://localhost:1337/api/users/${record.id}`, requestOptions)
+          .then(response => response.json())
+          .then(result => {
+            if (!result.success) {
+              console.log('Error deleting user');
+            }
+          })
+          .catch(error => console.log('Error deleting user', error));
+      },
+    });
+  };
 
   return (
     <div
@@ -207,9 +241,11 @@ const GarageOwnerList = () => {
                 />
               </Space.Compact>
             </Space>
-
             <Table
               columns={columns}
+              pagination={{
+                pageSize: '5',
+              }}
               dataSource={
                 userData &&
                 userData.map((user, id) => {

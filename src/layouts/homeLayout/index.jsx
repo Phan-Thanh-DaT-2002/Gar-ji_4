@@ -1,4 +1,4 @@
-import { Layout, Menu, theme, Row, Col, Breadcrumb } from 'antd';
+import { Layout, Menu, theme, Row, Col } from 'antd';
 import { MenuOutlined, RightOutlined } from '@ant-design/icons';
 import { ReactComponent as Vector } from '../../assets/images/Vector.svg';
 import { useState } from 'react';
@@ -30,23 +30,19 @@ function getItem(label, key, icon, children) {
 const items = [
   getItem('Garage', '1', <Vector />),
   getItem('Garage owner', '2', <Vector />),
-  getItem('Garage staff', '3', <Vector />),
-  getItem('Garage services', '4', <Vector />),
+  getItem('Garage services', '3', <Vector />),
 ];
 const useProfileClick = () => {
   const navigate = useNavigate();
   const onClick = ({ key }) => {
     switch (key) {
       case '1':
-        navigate('/');
+        navigate('/garage');
         break;
       case '2':
         navigate('/garage-owner');
         break;
       case '3':
-        navigate('/garage-staff');
-        break;
-      case '4':
         navigate('/garage-services');
         break;
       default:
@@ -77,7 +73,6 @@ const HomeLayout = () => {
         </div>
         <Menu
           theme="light"
-          defaultSelectedKeys={['1']}
           mode="inline"
           items={items}
           onClick={useProfileClick()}
@@ -112,17 +107,16 @@ const HomeLayout = () => {
               margin: '16px 0',
             }}
           >
-            <Breadcrumb
+            <h1
               style={{
-                fontWeight: '700',
-                fontSize: '20px',
-                margin: '16px 0',
+                fontWeight: 700,
+                fontSize: 32,
               }}
             >
-              <Breadcrumb.Item>My Profile</Breadcrumb.Item>
-            </Breadcrumb>
+              My Profile
+            </h1>
           </div>
-          <Outlet/>
+          <Outlet />
         </Content>
       </Layout>
     </Layout>

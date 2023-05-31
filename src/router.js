@@ -26,6 +26,10 @@ const router = createBrowserRouter([
         element: <ViewProfile />,
       },
       {
+        path: '/garage',
+        element: <GarageManagementList />,
+      },
+      {
         path: '/update-profile',
         element: <UpdateProfile />,
       },
@@ -36,10 +40,6 @@ const router = createBrowserRouter([
       {
         path: '/garage-owner',
         element: <GarageOwnerList />,
-      },
-      {
-        path: '/garage-staff',
-        element: <GarageManagementList />,
       },
       {
         path: '/garage-services',

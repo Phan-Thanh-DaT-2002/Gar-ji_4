@@ -1,8 +1,8 @@
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import styled from 'styled-components';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  theme,
-  Avatar,
+  Avatar as AntAvatar,
   Form,
   Input,
   Button,
@@ -13,35 +13,45 @@ import {
 } from 'antd';
 import { ReactComponent as Ellipse3 } from '../../assets/images/Ellipse 3.svg';
 import { ReactComponent as Ellipse2 } from '../../assets/images/Ellipse 2.svg';
-import { DatePicker } from 'antd';
 import { ReactComponent as Camera } from '../../assets/images/Camera/undefined/Vector.svg';
-
+import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
-import './style.css';
-import moment from 'moment';
+import './updateProfile.css';
+import { BorderTopOutlined } from '@ant-design/icons';
 
-// const schema = Yup.object().shape({
-//   name: Yup.string().required('Name is required'),
-//   dob: Yup.date().required('Date of birth is required'),
-//   phone: Yup.string().required('Phone number is required'),
-//   address: Yup.string().required('Address is required'),
-// });
+const AvatarContainer = styled.div`
+  position: relative;
+  width: 250px;
+  height: 250px;
+`;
 
-function UpdateProfile(props) {
+const Avatar = styled(AntAvatar)`
+  position: absolute;
+  top: 0;
+  left: 0;
+`;
+
+const CameraAvatar = styled(Avatar)`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #eeeeee;
+  background: rgba(0, 0, 0, 0);
+`;
+
+function UpdateProfile() {
   const { Option } = Select;
+  const navigate = useNavigate();
   const location = useLocation();
   const { data, role, userId } = location.state || {};
   console.log(data);
-
-  const navigate = useNavigate();
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
   const [form] = Form.useForm();
+
   const onFinish = async values => {
     try {
       const jwt = localStorage.getItem('jwt');
-
+      console.log(values);
       const raw = JSON.stringify({
         dob: values.dob.format('YYYY-MM-DD'),
         address: values.address,
@@ -67,6 +77,7 @@ function UpdateProfile(props) {
       if (response.ok) {
         console.log('Response:', data);
         message.success('Form submitted successfully!');
+        navigate('/');
       } else {
         console.error('Error:', data);
         message.error('Failed to submit form!');
@@ -76,6 +87,10 @@ function UpdateProfile(props) {
       console.error('Error:', error);
       message.error('An error occurred');
     }
+  };
+
+  const handleCancel = () => {
+    navigate('/');
   };
 
   return (
@@ -93,55 +108,70 @@ function UpdateProfile(props) {
             <Form
               form={form}
               layout="vertical"
-              initialValues={{ ...data, dob: dayjs(data.dob), role: role }}
+              initialValues={{
+                ...data,
+                dob: dayjs(data.dob),
+                role: role,
+              }}
               onFinish={onFinish}
               id="myForm"
+              size="large"
             >
-              <Form.Item label="Name" name="fullname" style={labelStyle}>
-                <Input placeholder="" style={inputStyle} disabled />
+              <Form.Item label="Name" name="fullname">
+                <Input placeholder="" disabled />
               </Form.Item>
-              <Form.Item label="Email" name="email" style={labelStyle}>
-                <Input placeholder="" style={inputStyle} disabled />
+              <Form.Item label="Email" name="email">
+                <Input placeholder="" disabled />
               </Form.Item>
-              <Form.Item label="Username" name="username" style={labelStyle}>
-                <Input placeholder="" style={inputStyle} disabled />
+              <Form.Item label="Username" name="username">
+                <Input placeholder="" disabled />
               </Form.Item>
-              <Row gutter={16}>
-                <Col span={8}>
-                  <Form.Item label="DOB" style={labelStyle} name="dob">
+              <Row gutter={[16, 0]}>
+                <Col span={12}>
+                  <Form.Item label="DOB" name="dob">
                     <DatePicker />
                   </Form.Item>
                 </Col>
-                <Col span={11}>
+                <Col span={12}>
                   <Form.Item label="Phone Number" name="phoneNumber">
                     <Input placeholder="" />
                   </Form.Item>
                 </Col>
               </Row>
-              <Form.Item label="Address" style={labelStyle} name="address">
-                <Input placeholder="" style={inputStyle} />
+              <Form.Item label="Address" name="address">
+                <Input placeholder="" />
               </Form.Item>
-              <Form.Item label="Role" name="role" style={labelStyle}>
-                {role.type === 'admin' ? (
-                  <Select placeholder="" style={inputStyle}>
+              <Form.Item label="Role" name="role">
+                {data.role.type === 'admin' ? (
+                  <Select placeholder="">
                     <Option value="admin">Admin</Option>
                     <Option value="user">User</Option>
                   </Select>
                 ) : (
-                  <Input placeholder="" style={inputStyle} disabled />
+                  <Input placeholder="" disabled />
                 )}
+              </Form.Item>
+              <hr class="hr-divider" />
+              <Form.Item className="Button">
+                <Button
+                  className="btn"
+                  htmlType="submit"
+                  id="save"
+                  size="large"
+                >
+                  Save
+                </Button>
+                <Button
+                  className="btn"
+                  id="cancel"
+                  size="large"
+                  onClick={() => handleCancel()}
+                >
+                  Cancel
+                </Button>
               </Form.Item>
             </Form>
           </div>
-        </div>
-        <div className="wrapper">
-          <Button className="btn" id="save" htmlType="submit" form="myForm">
-            Save
-          </Button>
-          <div style={{ width: '16px' }}></div>
-          <Button className="btn" id="cancel">
-            Cancel
-          </Button>
         </div>
       </div>
     </div>
