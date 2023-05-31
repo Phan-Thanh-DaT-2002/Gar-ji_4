@@ -6,8 +6,7 @@ import '../../GarageOwner/Garage-owner-list/style.css';
 
 
 const GarageOwnerList = () => {
-  const [filterField, setFilterField] = useState('Name');
-const [filterValue, setFilterValue] = useState('');
+  
   const location = useLocation(); 
   const [data, setData] = useState(null);
   const [userId, setUserId] = useState(null)
@@ -56,9 +55,20 @@ const [filterValue, setFilterValue] = useState('');
       title: 'Name',
       dataIndex: 'username',
       key: 'username',
-      filteredValue: [filterValue],
+      filteredValue: [searchText],
       onFilter: (value, record) => {
-        return String(record.username).toLowerCase().includes(value.toLowerCase());
+        if (String(isActived_1).toLowerCase().includes('username')) {
+          return String(record.username)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+        } else if (String(isActived_1).toLowerCase().includes('email')) {
+          return String(record.email)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+        } else
+          return String(record.username)
+            .toLowerCase()
+            .includes(value.toLowerCase());
       },
     },
     {
@@ -109,22 +119,15 @@ const [filterValue, setFilterValue] = useState('');
       },
       redirect: 'follow',
     };
-  
-    let url = 'http://localhost:1337/api/users';
-    if (filterField === 'Name') {
-      url += `?username=${filterValue}`;
-    } else if (filterField === 'Email') {
-      url += `?email=${filterValue}`;
-    }
-  
-    fetch(url, requestOptions)
+
+    fetch("http://localhost:1337/api/users", requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
         setUserData(result);
       })
       .catch(error => console.log('error', error));
-  }, [filterField, filterValue]);
+  }, []);
 
   const handleAdd = () => {
     navigate('/garage-owner-create');
@@ -158,39 +161,6 @@ const [filterValue, setFilterValue] = useState('');
       },
     });
   };
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const jwt = localStorage.getItem('jwt');
-        const requestOptions = {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${jwt}`,
-          },
-          redirect: 'follow',
-        };
-
-        const response = await fetch(
-          'http://localhost:1337/api/users/me?populate=role',
-          requestOptions
-        );
-        const result = await response.json();
-
-        if (response.ok) {
-          console.log(result);
-          setData(result);
-          setUserId(result.id); 
-          console.error('Error:', result);
-        }
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
   return (
     <div
       style={{
@@ -244,14 +214,14 @@ const [filterValue, setFilterValue] = useState('');
                   defaultValue="Name"
                   options={options}
                   onChange={value => {
-                    setFilterField(value);
+                    setIsActived_1(value);
                   }}
                 />
                 <Search
                   placeholder="Search"
                   allowClear
                   onSearch={value => {
-                    setFilterValue(value);
+                    setSearchText(value);
                   }}
                 />
               </Space.Compact>

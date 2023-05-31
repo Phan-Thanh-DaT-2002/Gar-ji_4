@@ -72,7 +72,7 @@ function UpdateMana() {
             email: result.data.attributes.email,
             description: result.data.attributes.description,
             policy: result.data.attributes.policy,
-            owner: result.data.attributes.owner.data.attributes.fullname,
+            owner: result.data.attributes.owner.attributes.id,
             openTime: moment(result.data.attributes.openTime, 'HH:mm'),
             closeTime: moment(result.data.attributes.closeTime, 'HH:mm'),
             // services: result.data.attributes.services.map((services)=>services),
