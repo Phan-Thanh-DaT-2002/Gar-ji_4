@@ -1,12 +1,12 @@
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { Form, Button, Row, Col, Input, Select, Space, Table, theme, Modal } from 'antd';
+import { Form, Button, Row, Col, Input, Select, Space, Table, theme, Modal, message } from 'antd';
 import '../../GarageOwner/Garage-owner-list/style.css';
 
 
 const GarageOwnerList = () => {
-  
+
   const location = useLocation(); 
   const [data, setData] = useState(null);
   const [userId, setUserId] = useState(null)
@@ -48,8 +48,9 @@ const GarageOwnerList = () => {
   const columns = [
     {
       title: '#',
-      dataIndex: 'STT',
-      key: 'STT',
+      dataIndex: 'id',
+      key: 'id',
+      render: (_, __, index) => index + 1,
     },
     {
       title: 'Name',
@@ -136,31 +137,71 @@ const GarageOwnerList = () => {
     Modal.confirm({
       title: 'Are you sure about that?',
       onOk: () => {
-        setUserData(prevData => {
-          return prevData.filter(data => data.id !== record.id);
-        });
-
+        if (isAdmin) {
+          setUserData(prevData => {
+            return prevData.filter(data => data.id !== record.id);
+          });
+  
+          const jwt = localStorage.getItem('jwt');
+          const requestOptions = {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${jwt}`,
+            },
+            redirect: 'follow',
+          };
+  
+          fetch(`http://localhost:1337/api/users/${record.id}`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+              if (!result.success) {
+                console.log('Error deleting user');
+              }
+            })
+            .catch(error => console.log('Error deleting user', error));
+        } else {
+          message.error('You do not have permission to delete.');
+        }
+      },
+    });
+  };
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
         const jwt = localStorage.getItem('jwt');
         const requestOptions = {
-          method: 'DELETE',
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${jwt}`,
           },
           redirect: 'follow',
         };
-
-        fetch(`http://localhost:1337/api/users/${record.id}`, requestOptions)
-          .then(response => response.json())
-          .then(result => {
-            if (!result.success) {
-              console.log('Error deleting user');
-            }
-          })
-          .catch(error => console.log('Error deleting user', error));
-      },
-    });
-  };
+  
+        const response = await fetch(
+          'http://localhost:1337/api/users/me?populate=role,avatar',
+          requestOptions
+        );
+        const result = await response.json();
+  
+        if (response.ok) {
+          console.log(result);
+          setData(result.role);
+          console.log(result.role);
+      
+          console.error('Error:', result);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
+  const isAdmin = data && data.type === 'admin'; 
   return (
     <div
       style={{
@@ -172,15 +213,18 @@ const GarageOwnerList = () => {
       <div>
         <Row>
           <Col md={22}>
-            <h1 style={{
-              fontFamily: 'Poppins',
-              fontStyle: 'normal',
-              fontWeight: 500,
-              fontSize: '24px',
-              lineHeight: '32px',
-              color: '#111111',
-
-            }}>All Garage Owners</h1>
+            <h1
+              style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                fontSize: '24px',
+                lineHeight: '32px',
+                color: '#111111',
+              }}
+            >
+              All Garage Owners
+            </h1>
           </Col>
           <Col md={2}>
             <Button
@@ -207,7 +251,7 @@ const GarageOwnerList = () => {
         </Row>
         <div>
           <Form>
-            <Space >
+            <Space>
               <Space.Compact size="large">
                 <Select
                   style={{ width: '100px' }}
@@ -236,23 +280,33 @@ const GarageOwnerList = () => {
                 />
               </Space.Compact>
             </Space>
-            
-            <Table pagination={{pageSize: 5}} columns={columns} dataSource={userData && userData.map((user, id) => {
-              return { ...user, STT: id + 1, blocked:user.blocked?'Inactive':'Active' }
-            })} style={{
-                    fontFamily: 'Poppins',
-                  fontStyle: 'normal',
-                  fontWeight: '500',
-                  fontSize: '13px',
-                  lineHeight: '24px',
-                  color: '#2F3A4C',
-                  marginTop:'20px'
-                  }} />
+  
+            <Table
+              pagination={{ pageSize: 5 }}
+              columns={columns}
+              dataSource={
+                userData &&
+                userData.map((user, id) => {
+                  return {
+                    ...user,
+                    STT: id + 1,
+                    blocked: user.blocked ? 'Inactive' : 'Active',
+                  };
+                })
+              }
+              style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: '500',
+                fontSize: '13px',
+                lineHeight: '24px',
+                color: '#2F3A4C',
+                marginTop: '20px',
+              }}
+            />
           </Form>
         </div>
       </div>
     </div>
-  );
-};
-
+  );}
 export default GarageOwnerList;

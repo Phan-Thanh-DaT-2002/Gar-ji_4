@@ -22,7 +22,7 @@ import {
   StyleCommentBox,
   StyledTextArea,
 } from './index.js';
-import { Form, Input, Select, Divider, message } from 'antd';
+import { Form, Input, Select, Divider, message, Modal } from 'antd';
 import moment from 'moment';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -75,7 +75,7 @@ export default function ManagerDetails() {
             email: result.data.attributes.email,
             description: result.data.attributes.description,
             policy: result.data.attributes.policy,
-            owner: result.data.attributes.owner,
+            owner: result.data.attributes.owner.data.attributes.fullname,
             openTime: moment(result.data.attributes.openTime, 'HH:mm'),
             closeTime: moment(result.data.attributes.closeTime, 'HH:mm'),
             // services: result.data.attributes.services.map((services)=>services),
@@ -90,6 +90,9 @@ export default function ManagerDetails() {
 
     fetchData();
   }, [userId]);
+ 
+  
+  const [canDeleteFlag, setCanDeleteFlag] = useState(false);
     const onFinishFailed = (errorInfo) => {
       console.log('Failed:', errorInfo);
     };
@@ -157,7 +160,64 @@ export default function ManagerDetails() {
       const selectedService = garagesData.find((service) => service.id === serviceId);
       return selectedService ? selectedService.attributes.name : '';
     };
+
+    const [userData, setUserData] = useState([])
+    useEffect(() => {
+      const jwt = localStorage.getItem('jwt');
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwt}`,
+        },
+        redirect: 'follow',
+      };
   
+      fetch("http://localhost:1337/api/users", requestOptions)
+        .then(response => response.json())
+        .then(result => {
+          console.log(result);
+          setUserData(result);
+        })
+        .catch(error => console.log('error', error));
+    }, []);
+    const isAdmin = data && data.type === 'admin'; 
+    const handleAdd = () => {
+      navigate('/garage-owner-create');
+    };
+    const handleDelete = record => {
+      Modal.confirm({
+        title: 'Are you sure about that?',
+        onOk: () => {
+          if (isAdmin) {
+            setUserData(prevData => {
+              return prevData.filter(data => data.id !== record.id);
+            });
+    
+            const jwt = localStorage.getItem('jwt');
+            const requestOptions = {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${jwt}`,
+              },
+              redirect: 'follow',
+            };
+    
+            fetch(`http://localhost:1337/api/users/${record.id}`, requestOptions)
+              .then(response => response.json())
+              .then(result => {
+                if (!result.success) {
+                  console.log('Error deleting user');
+                }
+              })
+              .catch(error => console.log('Error deleting user', error));
+          } else {
+            message.error('You do not have permission to delete.');
+          }
+        },
+      });
+    };
     return (
       <DivStyle>
         <AllDiv>

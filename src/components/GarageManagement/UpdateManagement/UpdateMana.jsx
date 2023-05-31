@@ -35,10 +35,33 @@ function UpdateMana() {
   const { userId } = location.state || {};
   const [data, setData] = useState(null);
  
-  
+  const [userData, setUserData] = useState([])
   const [owner, setOwner] = useState(null);
 
   const [serviceValues, setServiceValues] = useState([]);
+  useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwt}`,
+      },
+      redirect: 'follow',
+      
+    };
+    
+
+    fetch("http://localhost:1337/api/users", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        setUserData(result);
+        setGarageOwners(result)
+      })
+      .catch(error => console.log('error', error));
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -62,8 +85,7 @@ function UpdateMana() {
           console.log(result);
           setData(result);
           setSelectedGarages(result.data.attributes.services.data || []);
-          console.log(garagesData);
-          console.log(owner);
+          
           form.setFieldsValue({
             name: result.data.attributes.name,
             address: result.data.attributes.address,
@@ -72,7 +94,7 @@ function UpdateMana() {
             email: result.data.attributes.email,
             description: result.data.attributes.description,
             policy: result.data.attributes.policy,
-            owner: result.data.attributes.owner.attributes.id,
+            owner: result.data.attributes.owner.data.attributes.fullname,
             openTime: moment(result.data.attributes.openTime, 'HH:mm'),
             closeTime: moment(result.data.attributes.closeTime, 'HH:mm'),
             // services: result.data.attributes.services.map((services)=>services),
@@ -443,11 +465,14 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
                   },
                 ]}
               >
-                <StyleSelect placeholder="Select a garage owner" allowClear={false}>
-                {garageOwners.map((owner) => (
-      <Option key={owner.id} value={owner.id}>
-        {owner.id}
+                <StyleSelect placeholder="Select a garage owner" allowClear={false}> 
+                
+                {Array.isArray(garageOwners)&&garageOwners.map((owner) => (
+      <Option key={owner.id} value={owner.name}>
+        {owner.fullname}
+      
       </Option>
+      
     ))}
 </StyleSelect>
               </FormItem>

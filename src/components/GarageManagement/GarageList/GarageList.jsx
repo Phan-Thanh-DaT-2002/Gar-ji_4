@@ -1,6 +1,6 @@
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
-import { Form, Button, Row, Col, Input, Select, Space, Table, theme, Modal } from 'antd';
+import { Form, Button, Row, Col, Input, Select, Space, Table, theme, Modal, message } from 'antd';
 import './style.css';
 import { useNavigate } from 'react-router';
 
@@ -50,6 +50,7 @@ const handleView = (userId) => {
       title: '#',
       dataIndex: 'id',
       key: 'id',
+      render: (_, __, index) => index + 1,
     },
     {
       title: 'Name',
@@ -84,9 +85,12 @@ const handleView = (userId) => {
     {
       title: 'Garage owner',
       dataIndex: 'owner',
-      key: 'owner,',
+      key: 'owner',
       render: (data) => {
-        return <span > {data.data.attributes.fullname} </span>
+        if (data && data.data && data.data.attributes && data.data.attributes.fullname) {
+          return <span>{data.data.attributes.fullname}</span>;
+        }
+        return null;
       },
     },
     {
@@ -138,35 +142,62 @@ const handleView = (userId) => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
-  const handleDelete = record => {
-    Modal.confirm({
-      title: 'Are you sure about that?',
-      onOk: () => {
-        setData(prevData => {
-          return prevData.filter(data => data.id !== record.id);
-        });
-
-        const jwt = localStorage.getItem('jwt');
-        const requestOptions = {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${jwt}`,
-          },
-          redirect: 'follow',
-        };
-
-        fetch(`http://localhost:1337/api/garages/${record.id}`, requestOptions)
-          .then(response => response.json())
-          .then(result => {
-            if (!result.success) {
-              console.log('Error deleting user');
-            }
-          })
-          .catch(error => console.log('Error deleting user', error));
-      },
-    });
-  };
+  const [userData, setUserData] = useState([])
+    useEffect(() => {
+      const jwt = localStorage.getItem('jwt');
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwt}`,
+        },
+        redirect: 'follow',
+      };
+  
+      fetch("http://localhost:1337/api/users", requestOptions)
+        .then(response => response.json())
+        .then(result => {
+          console.log(result);
+          setUserData(result);
+        })
+        .catch(error => console.log('error', error));
+    }, []);
+    const isAdmin = data && data.type === 'admin'; 
+   
+    const handleDelete = record => {
+      Modal.confirm({
+        title: 'Are you sure about that?',
+        onOk: () => {
+          if (isAdmin) {
+            setUserData(prevData => {
+              return prevData.filter(data => data.id !== record.id);
+            });
+    
+            const jwt = localStorage.getItem('jwt');
+            const requestOptions = {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${jwt}`,
+              },
+              redirect: 'follow',
+            };
+    
+            fetch(`http://localhost:1337/api/users/${record.id}`, requestOptions)
+              .then(response => response.json())
+              .then(result => {
+                if (!result.success) {
+                  console.log('Error deleting user');
+                }
+              })
+              .catch(error => console.log('Error deleting user', error));
+          } else {
+            message.error('You do not have permission to delete.');
+          }
+        },
+      });
+    };
+  
   return (
     <div style={{ padding: 24, minHeight: 360, background: colorBgContainer }}>
       <div>
