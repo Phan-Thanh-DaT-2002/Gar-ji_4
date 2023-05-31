@@ -3,7 +3,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import HomeLayout from './layouts/homeLayout';
 
 import ViewProfile from './components/viewprofile/viewprofile';
-import UpdateProfile from './components/updateProfile';
+import UpdateProfile from './components/updateProfile/updateProfile';
 import ChangePassword from './components/changePassword/changePassword';
 import Login from './components/login/login.jsx';
 import GarageOwnerList from './components/GarageOwner/Garage-owner-list/list';
@@ -67,23 +67,23 @@ const router = createBrowserRouter([
       },
       {
         path: '/manager-details',
-        element: <ManagerDetails/>
+        element: <ManagerDetails />,
       },
       {
         path: '/manager-update',
-        element: <UpdateMana/>
+        element: <UpdateMana />,
       },
       {
         path: '/create-services',
-        element:<CreateServices/>
+        element: <CreateServices />,
       },
       {
         path: '/create-manager',
-        element: <CreateManager/>
+        element: <CreateManager />,
       },
       {
         path: '/services-detail',
-        element: <ServiceDetail/>
+        element: <ServiceDetail />,
       },
       {
         path: '/services-update',

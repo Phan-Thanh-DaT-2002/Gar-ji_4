@@ -1,7 +1,11 @@
-import { Button, Form, Input, theme } from 'antd';
-import { useState } from 'react';
+import { Button, Form, Input, theme, message } from 'antd';
+import { useEffect, useState } from 'react';
 import React from 'react';
 import './style.css';
+import { useNavigate } from 'react-router-dom';
+
+
+
 
 const tailLayout = {
   wrapperCol: {
@@ -9,21 +13,72 @@ const tailLayout = {
     span: 16,
   },
 };
+
+const validatePassword = (rule, value, callback) => {
+  if (!value) {
+    callback('Please enter the password!');
+  } else if (value.length < 6) {
+    callback('Enter a password of 6 characters!');
+  } else if (!/[a-z]/.test(value)) {
+    callback('Enter a password with lowercase characters!');
+  } else if (!/[A-Z]/.test(value)) {
+    callback('Enter a password with uppercase characters!');
+  } else if (!/[!@#$%^&*]/.test(value)) {
+    callback('Enter a password with special characters!');
+  } else {
+    callback();
+  }
+};
+
 const ChangePassword = () => {
-  // const labelStyle = {
-  //   /* Now you can create a new password for your acconut */
 
-  //   fontFamily: 'Poppins',
-  //   fontStyle: 'normal',
-  //   fontWeight: 500,
-  //   fontSize: 16,
-  //   lineHeight: 24,
+  const navigate = useNavigate();
+  const handCancel = () => {
+    navigate('/');
+  }
 
-  //   color: '#939393',
-  // };
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+
   const [form] = Form.useForm();
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const onFinish = (values) => {
+    const { currentPassword, newPassword, confirmPassword } = values;
+    if (newPassword === confirmPassword) {
+      var raw = JSON.stringify({
+        currentPassword: currentPassword,
+        password: newPassword,
+        passwordConfirmation: confirmPassword,
+      });
+
+      const jwt = localStorage.getItem('jwt');
+      var myHeaders = new Headers();
+      myHeaders.append('Content-Type', 'application/json');
+      myHeaders.append('Authorization', `Bearer ${jwt}`);
+
+      const requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow',
+      };
+
+      console.log(jwt);
+      console.log(raw);
+
+      fetch('http://localhost:1337/api/auth/change-password', requestOptions)
+        .then(response => { if (response.ok) { message.success('change password successfully!'); } })
+        .then(result => {
+          alert(`error ${result}`);
+          setUserData(result);
+        })
+        .catch(error => console.log('error', error));
+    }
+    else alert("mật khâủ mới nhập vào không khớp")
+
+    navigate('/garage');
+
+  }
+
+  const [userData, setUserData] = useState([]);
+
   const [requiredMark, setRequiredMarkType] = useState('');
   const onRequiredTypeChange = ({ requiredMarkValue }) => {
     setRequiredMarkType(requiredMarkValue);
@@ -49,21 +104,55 @@ const ChangePassword = () => {
         }}
         onValuesChange={onRequiredTypeChange}
         requiredMark={requiredMark}
+        onFinish={onFinish}
       >
         <p className="text">
           Now you can create a new password for your acconut
         </p>
         <p className="text-btn">Current Password</p>
-        <Form.Item>
-          <Input placeholder="Enter current password" />
+        <Form.Item
+          name="currentPassword"
+          rules={[
+            {
+              required: true,
+              validator: validatePassword,
+            },
+          ]}>
+          <Input
+            label='currentPassword'
+            placeholder="Enter current password"
+
+          />
         </Form.Item>
         <p className="text-btn">New Password</p>
-        <Form.Item>
-          <Input.Password Input placeholder="Enter new password" />
+        <Form.Item
+          name="newPassword"
+          rules={[
+            {
+              required: true,
+              validator: validatePassword,
+            },
+          ]}>
+          <Input
+            label='newPassword'
+            placeholder="Enter new password"
+
+          />
         </Form.Item>
         <p className="text-btn">Confirm Password</p>
-        <Form.Item>
-          <Input.Password placeholder="Enter confirm password" />
+        <Form.Item
+          name="confirmPassword"
+          rules={[
+            {
+              required: true,
+              validator: validatePassword,
+            },
+          ]}>
+          <Input
+            label='confirmPassword'
+            placeholder="Enter confirm password"
+
+          />
         </Form.Item>
         <div className="line"></div>
         <Form.Item {...tailLayout}>
@@ -74,6 +163,7 @@ const ChangePassword = () => {
                 background: '#8767E1',
                 marginRight: '10px',
               }}
+              htmlType="submit"
             >
               Save
             </Button>
@@ -81,6 +171,7 @@ const ChangePassword = () => {
               style={{
                 color: '#8767E1',
               }}
+              onClick={handCancel}
             >
               Cancel
             </Button>
@@ -91,3 +182,4 @@ const ChangePassword = () => {
   );
 };
 export default ChangePassword;
+

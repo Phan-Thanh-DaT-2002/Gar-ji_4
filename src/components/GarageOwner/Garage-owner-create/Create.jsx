@@ -37,16 +37,13 @@ import {
 } from 'antd';
 
 function Create() {
-  
-
-  
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
   const onFinish = async values => {
     try {
       const jwt = localStorage.getItem('jwt');
-  
+
       const raw = JSON.stringify({
         username: values.username,
         fullname: values.name,
@@ -59,22 +56,25 @@ function Create() {
         role: parseInt(values.role),
         confirmed: true,
         blocked: values.status === 'inactive' ? true : false,
-        garages: selectedGarages.map((garage) => garage.id),
+        garages: selectedGarages.map(garage => garage.id),
       });
-  
+
       const requestOptions = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${jwt}`,
+          Authorization: `Bearer ${jwt}`,
         },
         body: raw,
         redirect: 'follow',
       };
-  
-      const response = await fetch('http://localhost:1337/api/users', requestOptions);
+
+      const response = await fetch(
+        'http://localhost:1337/api/users',
+        requestOptions
+      );
       const data = await response.json();
-  
+
       if (response.ok) {
         console.log('Response:', data);
         message.success('Form submitted successfully!');
@@ -87,10 +87,9 @@ function Create() {
       message.error('An error occurred');
     }
   };
-  
-  const onFinishFailed = (errorInfo) => {
+
+  const onFinishFailed = errorInfo => {
     console.log('Failed:', errorInfo);
-    
   };
 
   const { Option } = Select;
@@ -104,20 +103,20 @@ function Create() {
     console.log(`checked = ${e.target.checked}`);
   };
   const validatePassword = (rule, value, callback) => {
-  if (!value) {
-    callback('Please enter the password!');
-  } else if (value.length < 6) {
-    callback('Enter a password of 6 characters!');
-  } else if (!/[a-z]/.test(value)) {
-    callback('Enter a password with lowercase characters!');
-  } else if (!/[A-Z]/.test(value)) {
-    callback('Enter a password with uppercase characters!');
-  } else if (!/[!@#$%^&*]/.test(value)) {
-    callback('Enter a password with special characters!');
-  } else {
-    callback();
-  }
-};
+    if (!value) {
+      callback('Please enter the password!');
+    } else if (value.length < 6) {
+      callback('Enter a password of 6 characters!');
+    } else if (!/[a-z]/.test(value)) {
+      callback('Enter a password with lowercase characters!');
+    } else if (!/[A-Z]/.test(value)) {
+      callback('Enter a password with uppercase characters!');
+    } else if (!/[!@#$%^&*]/.test(value)) {
+      callback('Enter a password with special characters!');
+    } else {
+      callback();
+    }
+  };
 
   const [garagesData, setGaragesData] = useState([]);
 
@@ -143,149 +142,151 @@ function Create() {
   const handleRemoveGarage = garage => {
     setSelectedGarages(selectedGarages.filter(g => g.id !== garage.id));
   };
-      
-      useEffect(() => {
-        const jwt = localStorage.getItem('jwt');
-        const requestOptions = {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwt}`,
-          },
-          redirect: 'follow'
-        };
-      
-        fetch("http://localhost:1337/api/garages", requestOptions)
-          .then(response => response.json())
-          .then(result => {
-            console.log(result);
-            setGaragesData(result.data);
-          })
-          .catch(error => console.log('error', error));
-      }, []);
-      
-     
-      
-      const getGarageNameById = (garageId) => {
-        const selectedGarage = garagesData.find((garage) => garage.id === garageId);
-        return selectedGarage ? selectedGarage.attributes.name : '';
-      };
-    
-      const filteredGarages = garagesData
-        ? garagesData
-            .filter((garage) => {
-              const garageName = garage.attributes.name.toLowerCase();
-              const searchTermLower = searchTerm.toLowerCase();
-              return (
-                garage.id.toString().includes(searchTermLower) ||
-                garageName.includes(searchTermLower)
-              );
-            })
-            .slice(0, displayCount)
-        : [];
-    
-      
-    
+
+  useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwt}`,
+      },
+      redirect: 'follow',
+    };
+
+    fetch('http://localhost:1337/api/garages', requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        setGaragesData(result.data);
+      })
+      .catch(error => console.log('error', error));
+  }, []);
+
+  const getGarageNameById = garageId => {
+    const selectedGarage = garagesData.find(garage => garage.id === garageId);
+    return selectedGarage ? selectedGarage.attributes.name : '';
+  };
+
+  const filteredGarages = garagesData
+    ? garagesData
+        .filter(garage => {
+          const garageName = garage.attributes.name.toLowerCase();
+          const searchTermLower = searchTerm.toLowerCase();
+          return (
+            garage.id.toString().includes(searchTermLower) ||
+            garageName.includes(searchTermLower)
+          );
+        })
+        .slice(0, displayCount)
+    : [];
+
   return (
     <DivStyle>
-    <AllDiv>
-      <DivForm
-        name="basic"
-        labelCol={{
-          span: 8,
-        }}
-        wrapperCol={{
-          span: 16,
-        }}
-        style={{}}
-        initialValues={{
-          remember: true,
-        }}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
-        autoComplete="off"
-        form={form}
-      >
-        <FirstInfo>
-          <FirstLine>
-            <FormItem
-              label={
-              <span style={{
-                fontFamily: 'Poppins',
-                fontStyle: 'normal',
-                fontWeight: 400,
-                fontSize: '16px',
-                lineHeight: '24px',
-                color: '#939393',
-              }}>
-                Name
-              </span>
-            }
-              labelCol={{ span: 24 }}
-              name="name"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your name!',
-                },
-              ]}
-            >
-              <Input placeholder="Enter owner name" />
-            </FormItem>
-            <FormItem
-             label={
-              <span style={{
-                fontFamily: 'Poppins',
-                fontStyle: 'normal',
-                fontWeight: 400,
-                fontSize: '16px',
-                lineHeight: '24px',
-                color: '#939393',
-              }}>
-                Email
-              </span>
-            }
-              labelCol={{ span: 24 }}
-              name="email"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your email!',
-                },
-                {
-                  type: 'email',
-                  message: 'Please enter a valid email address',
-                },
-              ]}
-            >
-              <Input placeholder="Enter owner email" />
-            </FormItem>
+      <AllDiv>
+        <DivForm
+          name="basic"
+          labelCol={{
+            span: 8,
+          }}
+          wrapperCol={{
+            span: 16,
+          }}
+          style={{}}
+          initialValues={{
+            remember: true,
+          }}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+          autoComplete="off"
+          form={form}
+        >
+          <FirstInfo>
+            <FirstLine>
+              <FormItem
+                label={
+                  <span
+                    style={{
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
+                    Name
+                  </span>
+                }
+                labelCol={{ span: 24 }}
+                name="name"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your name!',
+                  },
+                ]}
+              >
+                <Input placeholder="Enter owner name" />
+              </FormItem>
+              <FormItem
+                label={
+                  <span
+                    style={{
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
+                    Email
+                  </span>
+                }
+                labelCol={{ span: 24 }}
+                name="email"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your email!',
+                  },
+                  {
+                    type: 'email',
+                    message: 'Please enter a valid email address',
+                  },
+                ]}
+              >
+                <Input placeholder="Enter owner email" />
+              </FormItem>
 
-            <FormItem
-             label={
-              <span style={{
-                fontFamily: 'Poppins',
-                fontStyle: 'normal',
-                fontWeight: 400,
-                fontSize: '16px',
-                lineHeight: '24px',
-                color: '#939393',
-              }}>
-                Username
-              </span>
-            }
-              name="username"
-              labelCol={{ span: 24 }}
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your username!',
-                },
-              ]}
-            >
-              <Input placeholder="Enter owner username" />
-            </FormItem>
-          </FirstLine>
+              <FormItem
+                label={
+                  <span
+                    style={{
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
+                    Username
+                  </span>
+                }
+                name="username"
+                labelCol={{ span: 24 }}
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your username!',
+                  },
+                ]}
+              >
+                <Input placeholder="Enter owner username" />
+              </FormItem>
+            </FirstLine>
 
           <FirstLine>
             <FormItem

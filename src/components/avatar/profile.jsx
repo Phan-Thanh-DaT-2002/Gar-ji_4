@@ -1,5 +1,4 @@
 import { Dropdown, Space, Avatar, Typography, theme } from 'antd';
-import { ReactComponent as Ellipse1 } from '../../assets/images/Ellipse 1.svg';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -26,11 +25,12 @@ const items = [
   },
 ];
 
-function Profile() {
+function Profile({}) {
   const navigate = useNavigate();
   const location = useLocation();
   const [data, setData] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [avatar, setAvatar] = useState(null);
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -49,7 +49,7 @@ function Profile() {
         };
 
         const response = await fetch(
-          'http://localhost:1337/api/users/me?populate=role',
+          'http://localhost:1337/api/users/me?populate=role,avatar',
           requestOptions
         );
         const result = await response.json();
@@ -58,6 +58,7 @@ function Profile() {
           console.log(result);
           setData(result);
           setUserId(result.id);
+          setAvatar(result.avatar.url);
         } else {
           console.error('Error:', result);
         }
@@ -109,7 +110,10 @@ function Profile() {
             }}
           >
             <div>
-              <Avatar size="default" icon={<Ellipse1 />} />
+              <Avatar
+                size={32}
+                src={avatar ? `http://localhost:1337${avatar}` : ''}
+              />
             </div>
             <div
               style={{

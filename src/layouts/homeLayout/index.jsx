@@ -86,7 +86,7 @@ const HomeLayout = () => {
               })}
             </Col>
             <Col md={3}>
-              <Profile></Profile>
+              <Profile />
             </Col>
           </Row>
         </Header>
