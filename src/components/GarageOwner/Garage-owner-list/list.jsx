@@ -1,6 +1,6 @@
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import {
   Form,
   Button,
@@ -11,19 +11,20 @@ import {
   Space,
   Table,
   theme,
-  Modal,
-  Pagination,
 } from 'antd';
 import '../../GarageOwner/Garage-owner-list/style.css';
 
-const useHandleAdd = () => {
-  const navigate = useNavigate();
-  return () => {
-    navigate('/garage-owner-create');
-  };
-};
-
 const GarageOwnerList = () => {
+  const location = useLocation(); // Sử dụng useLocation từ react-router-dom
+  const [data, setData] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const handleView = userId => {
+    navigate('/owner-details', { state: { userId: userId } });
+  };
+  const handleUpdate = userId => {
+    navigate('/owner-update', { state: { userId: userId } });
+  };
+
   const [searchText, setSearchText] = useState('');
   const [isActived_1, setIsActived_1] = useState('');
   const [isActived_2, setIsActived_2] = useState('');
@@ -112,13 +113,9 @@ const GarageOwnerList = () => {
       key: 'actions',
       render: record => (
         <Space size="middle">
-          <EyeOutlined />
-          <EditOutlined />
-          <DeleteOutlined
-            onClick={() => {
-              handleDelete(record);
-            }}
-          />
+          <EyeOutlined onClick={() => handleView(record.id)} />
+          <EditOutlined onClick={() => handleUpdate(record.id)} />
+          <DeleteOutlined />
         </Space>
       ),
     },

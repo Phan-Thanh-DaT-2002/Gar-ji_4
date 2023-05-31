@@ -54,14 +54,17 @@ function CreateManager() {
     try {
       const jwt = localStorage.getItem('jwt');
 
-      const openTime = moment(values.openTime).format('HH:mm:ss');
-      const closeTime = moment(values.closeTime).format('HH:mm:ss');
-
+      const openTime = values.openTime.format('HH:mm:ss');
+      const closeTime = values.closeTime.format('HH:mm:ss');
+      const selectedServices = selectedGarages.map(garage => ({
+        id: garage.id,
+        name: getGarageNameById(garage.id),
+      }));
       const raw = JSON.stringify({
         data: {
           name: values.name,
           address: values.address,
-          status: values.status,
+          blocked: values.status === 'inactive' ? true : false,
           phoneNumber: values.phoneNumber,
           email: values.email,
           openTime: openTime,
@@ -69,7 +72,7 @@ function CreateManager() {
           description: values.description,
           policy: values.policy,
           owner: values.owner,
-          services: [],
+          services: selectedServices,
         },
       });
 
