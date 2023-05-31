@@ -1,6 +1,7 @@
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import axiosInstance from '../../../shared/services/http-client';
 import React, { useEffect, useState } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Form,
   Button,
@@ -11,23 +12,27 @@ import {
   Space,
   Table,
   theme,
+  Modal,
+  Pagination,
 } from 'antd';
 import '../../GarageOwner/Garage-owner-list/style.css';
+import { async } from 'q';
+
+const useHandleAdd = () => {
+  const navigate = useNavigate();
+  return () => {
+    navigate('/garage-owner-create');
+  };
+};
 
 const GarageOwnerList = () => {
-  const location = useLocation(); // Sử dụng useLocation từ react-router-dom
-  const [data, setData] = useState(null);
-  const [userId, setUserId] = useState(null);
-  const handleView = userId => {
-    navigate('/owner-details', { state: { userId: userId } });
-  };
-  const handleUpdate = userId => {
-    navigate('/owner-update', { state: { userId: userId } });
-  };
-
   const [searchText, setSearchText] = useState('');
-  const [isActived_1, setIsActived_1] = useState('');
-  const [isActived_2, setIsActived_2] = useState('');
+  const [isActived_1, setIsActived_1] = useState('Name');
+  const [isActived_2, setIsActived_2] = useState('Status');
+  const [pagination, setPagination] = useState({
+    page: 1,
+    pageSize: 10,
+  });
   const { Search } = Input;
   const options = [
     {
@@ -37,10 +42,6 @@ const GarageOwnerList = () => {
     {
       value: 'Email',
       label: 'Email',
-    },
-    {
-      value: 'Phone',
-      label: 'Phone',
     },
   ];
   const optionStatus = [
@@ -67,25 +68,6 @@ const GarageOwnerList = () => {
       title: 'Name',
       dataIndex: 'username',
       key: 'username',
-      filteredValue: [searchText],
-      onFilter: (value, record) => {
-        if (String(isActived_1).toLowerCase().includes('username')) {
-          return String(record.username)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-        } else if (String(isActived_1).toLowerCase().includes('email')) {
-          return String(record.email)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-        } else if (String(isActived_1).toLowerCase().includes('phone')) {
-          return String(record.phoneNumber)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-        } else
-          return String(record.username)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-      },
     },
     {
       title: 'Email',
@@ -101,21 +83,19 @@ const GarageOwnerList = () => {
       title: 'Status',
       dataIndex: 'blocked',
       key: 'blocked',
-      filteredValue: [isActived_2],
-      onFilter: (value, record) => {
-        if (value === 'Status') {
-          return record.blocked.includes('');
-        } else return record.blocked.includes(value);
-      },
     },
     {
       title: 'Actions',
       key: 'actions',
       render: record => (
         <Space size="middle">
-          <EyeOutlined onClick={() => handleView(record.id)} />
-          <EditOutlined onClick={() => handleUpdate(record.id)} />
-          <DeleteOutlined />
+          <EyeOutlined />
+          <EditOutlined />
+          <DeleteOutlined
+            onClick={() => {
+              handleDelete(record);
+            }}
+          />
         </Space>
       ),
     },
@@ -133,16 +113,45 @@ const GarageOwnerList = () => {
       },
       redirect: 'follow',
     };
+    let filterParams = {};
 
-    fetch('http://localhost:1337/api/users', requestOptions)
+    if (isActived_2 === 'Status') {
+      filterParams = {};
+    } else if (isActived_2 === 'Active') {
+      filterParams['blocked'] = false;
+    } else if (isActived_2 === 'Inactive') {
+      filterParams['blocked'] = true;
+    }
+
+    if (isActived_1 === 'Name') {
+      filterParams['fullname][$contains]'] = searchText;
+    } else if (isActived_1 === 'Email') {
+      filterParams['email][$contains]'] = searchText;
+    }
+
+    const filters = Object.entries(filterParams)
+      .map(([key, value]) => `filters[${key}]=${encodeURIComponent(value)}`)
+      .join('&');
+    const paginationParams = `pagination[page]=${pagination.page}&pagination[pageSize]=${pagination.pageSize}`;
+
+    const apiUrl = `http://localhost:1337/api/users?${filters}&${paginationParams}`;
+    console.log(filters);
+
+    fetch(apiUrl, requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
         setUserData(result);
       })
       .catch(error => console.log('error', error));
-  }, []);
-
+  }, [searchText, isActived_1, isActived_2, pagination]);
+  const handlePagination = (page, pageSize) => {
+    setPagination(prevPagination => ({
+      ...prevPagination,
+      page,
+      pageSize,
+    }));
+  };
   const handleAdd = () => {
     navigate('/garage-owner-create');
   };
@@ -241,18 +250,16 @@ const GarageOwnerList = () => {
             <Table
               columns={columns}
               pagination={{
-                pageSize: '5',
+                current: pagination.page,
+                pageSize: pagination.pageSize,
+                total: userData.length,
+                onChange: handlePagination,
               }}
-              dataSource={
-                userData &&
-                userData.map((user, id) => {
-                  return {
-                    ...user,
-                    STT: id + 1,
-                    blocked: user.blocked ? 'Inactive' : 'Active',
-                  };
-                })
-              }
+              dataSource={userData.map((user, index) => ({
+                ...user,
+                STT: index + 1,
+                blocked: user.blocked ? 'Inactive' : 'Active',
+              }))}
               style={{ marginTop: 20 }}
             />
           </Form>
