@@ -89,20 +89,18 @@ const GarageOwnerList = () => {
       key: 'actions',
       render: record => (
         <Space size="middle">
-          <EyeOutlined />
-          <EditOutlined />
-          <DeleteOutlined
-            onClick={() => {
-              handleDelete(record);
-            }}
-          />
-        </Space>
+  <EyeOutlined onClick={() => handleView(record.id)} />
+  <EditOutlined onClick={() => handleUpdate(record.id)} />
+  <DeleteOutlined onClick={()=> handleDelete(record)}/>
+</Space>
       ),
     },
   ];
   const [userData, setUserData] = useState([]);
   const navigate = useNavigate();
-
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
   useEffect(() => {
     const jwt = localStorage.getItem('jwt');
     const requestOptions = {
@@ -156,9 +154,15 @@ const GarageOwnerList = () => {
     navigate('/garage-owner-create');
   };
 
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
+        fetch(`http://localhost:1337/api/users/${record.id}`, requestOptions)
+          .then(response => response.json())
+          .then(result => {
+            if (!result.success) {
+              console.log('Error deleting user');
+            }
+          })
+          .catch(error => console.log('Error deleting user', error));
+      },
 
   const handleDelete = record => {
     Modal.confirm({
@@ -201,7 +205,15 @@ const GarageOwnerList = () => {
       <div>
         <Row>
           <Col md={22}>
-            <h1>All Garage Owners</h1>
+            <h1 style={{
+              fontFamily: 'Poppins',
+              fontStyle: 'normal',
+              fontWeight: 500,
+              fontSize: '24px',
+              lineHeight: '32px',
+              color: '#111111',
+
+            }}>All Garage Owners</h1>
           </Col>
           <Col md={2}>
             <Button
@@ -210,6 +222,16 @@ const GarageOwnerList = () => {
               style={{
                 background: '#8767E1',
                 marginRight: '10px',
+                width: '105px',
+                height: '48px',
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: '500',
+                fontSize: '13px',
+                lineHeight: '24px',
+                alignItems: 'center',
+                textAlign: 'center',
+                color: '#F1F4F9',
               }}
             >
               Add owner
@@ -218,21 +240,21 @@ const GarageOwnerList = () => {
         </Row>
         <div>
           <Form>
-            <Space>
+            <Space >
               <Space.Compact size="large">
                 <Select
                   style={{ width: '100px' }}
                   defaultValue="Name"
                   options={options}
                   onChange={value => {
-                    setIsActived_1(value);
+                    setFilterField(value);
                   }}
                 />
                 <Search
                   placeholder="Search"
                   allowClear
                   onSearch={value => {
-                    setSearchText(value);
+                    setFilterValue(value);
                   }}
                 />
               </Space.Compact>

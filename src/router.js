@@ -67,27 +67,30 @@ const router = createBrowserRouter([
       },
       {
         path: '/manager-details',
-        element: <ManagerDetails/>
+        element: <ManagerDetails />,
       },
       {
         path: '/manager-update',
-        element: <UpdateMana/>
+        element: <UpdateMana />,
       },
       {
         path: '/create-services',
-        element:<CreateServices/>
+        element: <CreateServices />,
       },
       {
         path: '/create-manager',
-        element: <CreateManager/>
+        element: <CreateManager />,
       },
       {
         path: '/services-detail',
-        element: <ServiceDetail/>
+        element: <ServiceDetail />,
       },
       {
         path: '/services-update',
         element:<UpdateServices/>
+      },{
+        path:'/manager-create',
+        element:<CreateManager/>
       }
     ],
   },

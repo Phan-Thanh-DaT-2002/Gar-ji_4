@@ -7,7 +7,7 @@ import styled from 'styled-components';
 export const DivStyle = styled.div `
     position: relative;
     width: 100%;
-    height: 1000px;
+    height: 115vh;
     background: #F6F6F6;  
 `
 export const AllDiv = styled.div`
@@ -123,14 +123,24 @@ border-radius: 8px;
 `
 
 export const StyleSelect = styled(Select)`
+&.ant-select-single .ant-select-selector {
+    width: 100%;
+    height: 56px;
+    padding: 0 11px;
+    align-items: center;
+    font-family: 'Poppins';
+font-style: normal;
+font-weight: 500;
+font-size: 16px;
+line-height: 24px;
+color: #111111;
+
+}
  &.ant-select.ant-select-in-form-item{
     width: 339px !important;
-}
-&:where(.css-dev-only-do-not-override-15rg2km).ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
-    width: 100%;
     height: 56px !important;
-    padding: 11px 11px !important;
 }
+
 `
 export const ThreeLine = styled.div`
     display: flex;

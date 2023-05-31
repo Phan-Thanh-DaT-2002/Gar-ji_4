@@ -31,7 +31,7 @@ export default function ManagerDetails() {
     const [form] = Form.useForm();
     const [garageOwners, setGarageOwners] = useState([]);
     const navigate = useNavigate();
-    const handleView = (userId) => {
+    const handleUpdate = (userId) => {
       navigate('/manager-update', { state: { userId: userId } });
     };
     const location = useLocation();
@@ -196,7 +196,7 @@ export default function ManagerDetails() {
                   labelCol={{ span: 24 }}
                   name="name"
                 >
-                  <Input placeholder="Enter owner name" style={{ border: "none", cursor:"default" }} readOnly/>
+                  <Input placeholder="Enter owner name" style={{ border: "none", cursor:"default",pointerEvents: 'none' }} readOnly/>
                 </FormItem>
                 <FormItem
                   label={
@@ -216,7 +216,7 @@ export default function ManagerDetails() {
                   name="email"
                   
                 >
-                  <Input placeholder="Enter owner email" style={{ border: "none", cursor:"default" }} readOnly/>
+                  <Input placeholder="Enter owner email" style={{ border: "none", cursor:"default",pointerEvents: 'none' }} readOnly/>
                 </FormItem>
   
                 <FormItem
@@ -237,7 +237,7 @@ export default function ManagerDetails() {
                   name="phoneNumber"
                   
                 >
-                  <Input placeholder="Enter owner phone number" style={{ border: "none", cursor:"default" }} readOnly/>
+                  <Input placeholder="Enter owner phone number" style={{ border: "none", cursor:"default",pointerEvents: 'none' }} readOnly/>
                 </FormItem>
               </FirstLine>
   
@@ -260,7 +260,7 @@ export default function ManagerDetails() {
                   name="address"
 
                 >
-                  <Input placeholder="Enter garage address" style={{ border: "none", cursor:"default" }} readOnly/>
+                  <Input placeholder="Enter garage address" style={{ border: "none", cursor:"default",pointerEvents: 'none' }} readOnly/>
                 </FormItem>
                 <FormItem
                   name="openTime"
@@ -285,7 +285,7 @@ export default function ManagerDetails() {
                     placeholder="Select open time"
                     format="HH:mm:ss"
                     defaultValue={''}
-                    style={{ border: "none", cursor:"default" }} inputReadOnly suffixIcon={null} readOnly
+                    style={{ border: "none", cursor:"default",pointerEvents: 'none' }} inputReadOnly suffixIcon={null} readOnly
                   />
                 </FormItem>
                 <FormItem
@@ -312,7 +312,7 @@ export default function ManagerDetails() {
                     placeholder="Select close time"
                     format="HH:mm:ss"
                     defaultValue={''}
-                    style={{ border: "none", cursor:"default" }} inputReadOnly suffixIcon={null} readOnly
+                    style={{ border: "none", cursor:"default",pointerEvents: 'none' }} inputReadOnly suffixIcon={null} readOnly
                   />
                 </FormItem>
               </FirstLine>
@@ -336,7 +336,7 @@ export default function ManagerDetails() {
                 >
                   <Input
     placeholder="Enter owner name"
-    style={{ border: "none", cursor:"default" }}
+    style={{ border: "none", cursor:"default",pointerEvents: 'none' }}
     readOnly
     value={data?.attributes?.owner?.data?.attributes?.name} // Lấy tên chủ sở hữu
   />
@@ -359,7 +359,7 @@ export default function ManagerDetails() {
                   labelCol={{ span: 24 }}
                   
                 >
-                  <Input style={{ border: "none", cursor:"default" }} readOnly/>
+                  <Input style={{ border: "none", cursor:"default",pointerEvents: 'none' }} readOnly/>
                 </FormItem>
               </SecondLine>
               <ThreeLine>
@@ -380,12 +380,12 @@ export default function ManagerDetails() {
                   <ButtonStyle
                     type="primary"
                     style={{ background: '#8767E1' }}
-                    onClick={() => handleView(userId)}
+                    onClick={() => handleUpdate(userId)}
                   >
                     <span>Edit</span>
                   </ButtonStyle>
                   <ButtonStyle htmlType="button" onClick={onCancel}>
-                    <span>Cancel</span>
+                    <span>Delete</span>
                   </ButtonStyle>
                 </div>
               </div>

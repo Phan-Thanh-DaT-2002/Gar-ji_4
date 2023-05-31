@@ -13,7 +13,6 @@ import {
   Modal,
 } from 'antd';
 import { ReactComponent as Ellipse3 } from '../../assets/images/Ellipse 3.svg';
-import { ReactComponent as Ellipse2 } from '../../assets/images/Ellipse 2.svg';
 import { ReactComponent as Camera } from '../../assets/images/Camera/Vector.svg';
 import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
@@ -89,15 +88,18 @@ function UpdateProfile() {
         };
 
         const response = await fetch(
-          'http://localhost:1337/api/users/me?populate=role,avatar',
+          'http://localhost:1337/api/users/me?populate=avatar',
           requestOptions
         );
         const result = await response.json();
 
         if (response.ok) {
           console.log('Avatar:', result.avatar);
-          console.log('url:', result.avatar.formats.thumbnail);
-          setAvatar(result.avatar.formats.thumbnail);
+          console.log('url:', result.avatar.url);
+          setAvatar(result.avatar.url);
+          console.log('avatar:', `http://localhost:1337${avatar}`);
+
+          // Gọi callback function để thông báo về việc thay đổi ảnh
         } else {
           console.error('Failed to fetch profile:', result);
         }
@@ -177,7 +179,7 @@ function UpdateProfile() {
       // console.error('Error:', error);
       message.error('An error occurred');
     }
-    console.log(uploadedImage);
+    console.log('Upload:', uploadedImage);
   };
 
   const handleCancelForm = () => {
@@ -213,7 +215,9 @@ function UpdateProfile() {
                   alt="Avatar"
                 />
               ) : (
-                <img src={avatar?.url} alt={avatar?.name} />
+                <AvatarImage
+                  src={avatar ? `http://localhost:1337${avatar}` : ''}
+                />
               )}
               <Modal
                 title="Update Avatar"
