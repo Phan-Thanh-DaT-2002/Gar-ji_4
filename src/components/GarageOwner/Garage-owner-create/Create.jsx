@@ -313,6 +313,7 @@ function Create() {
               <Input placeholder="Enter owner password" />
             </FormItem>
             <FormItem
+            
               label={
               <span style={{
                 fontFamily: 'Poppins',
@@ -361,11 +362,13 @@ function Create() {
                   message: 'Please select gender!',
                 },
               ]}
+              
             >
               <StyleSelect
                 className="style_select"
                 placeholder="Select owner gender"
                 allowClear={false}
+                
               >
                 <Select.Option value="male">Male</Select.Option>
                 <Select.Option value="female">Female</Select.Option>

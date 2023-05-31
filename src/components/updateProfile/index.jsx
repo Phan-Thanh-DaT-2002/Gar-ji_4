@@ -17,6 +17,7 @@ import { ReactComponent as Camera } from '../../assets/images/Camera/undefined/V
 import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import './updateProfile.css';
+import { BorderTopOutlined } from '@ant-design/icons';
 
 const AvatarContainer = styled.div`
   position: relative;
@@ -114,6 +115,7 @@ function UpdateProfile() {
               }}
               onFinish={onFinish}
               id="myForm"
+              size="large"
             >
               <Form.Item label="Name" name="fullname">
                 <Input placeholder="" disabled />
@@ -151,12 +153,18 @@ function UpdateProfile() {
               </Form.Item>
               <hr class="hr-divider" />
               <Form.Item className="Button">
-                <Button className="btn" htmlType="submit" id="save">
+                <Button
+                  className="btn"
+                  htmlType="submit"
+                  id="save"
+                  size="large"
+                >
                   Save
                 </Button>
                 <Button
                   className="btn"
                   id="cancel"
+                  size="large"
                   onClick={() => handleCancel()}
                 >
                   Cancel

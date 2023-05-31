@@ -39,6 +39,9 @@ import {
 
 import moment from 'moment';
 export default function OwnerView() {
+  const handleUpdate = (userId) => {
+    navigate('/owner-update', { state: { userId: userId } });
+  };
     const { Option } = Select;
     
     const [form] = Form.useForm();
@@ -100,33 +103,20 @@ export default function OwnerView() {
   const handleCancel = () => {
     navigate(-1); 
   };
-   
-      
-     
-        const [searchTerm, setSearchTerm] = useState('');
-        const [selectedGarages, setSelectedGarages] = useState([]);
-      
-        const [displayCount, setDisplayCount] = useState(5);
-  
-    const handleSearchChange = (event) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedGarages, setSelectedGarages] = useState([]);
+  const [displayCount, setDisplayCount] = useState(5);
+  const handleSearchChange = (event) => {
       setSearchTerm(event.target.value);
       setDisplayCount(5);
-    };
-  
-    
-  
-    const handleRemoveGarage = (garage) => {
+  };
+  const handleRemoveGarage = (garage) => {
       setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
-    };
-      
-       
-        
-        const getGarageNameById = (garageId) => {
+  };
+  const getGarageNameById = (garageId) => {
           const selectedGarage = garagesData.find((garage) => garage.id === garageId);
           return selectedGarage ? selectedGarage.attributes.name : '';
-        };
-        
-
+  };
     return (
       <DivStyle>
       <AllDiv>
@@ -151,6 +141,7 @@ export default function OwnerView() {
               <FormItem
                 label={
               <span style={{
+                marginLeft:'15px',
                 fontFamily: 'Poppins',
                 fontStyle: 'normal',
                 fontWeight: 400,
@@ -165,12 +156,13 @@ export default function OwnerView() {
                 labelCol={{ span: 24 }}
                 name="name"
               >
-                <Input placeholder="Enter owner name" style={{ border: "none", cursor:"default" }} readOnly />
+                <Input placeholder="Enter owner name" style={{ border: "none", cursor:"default" ,pointerEvents: 'none'}} readOnly />
               </FormItem>
               <FormItem
             
                 label={
               <span style={{
+                marginLeft:'15px',
                 fontFamily: 'Poppins',
                 fontStyle: 'normal',
                 fontWeight: 400,
@@ -184,12 +176,13 @@ export default function OwnerView() {
                 labelCol={{ span: 24 }}
                 name="email"
               >
-                <Input  placeholder="Enter owner email"  style={{ border: "none", cursor:"default" }} readOnly/>
+                <Input  placeholder="Enter owner email"  style={{ border: "none", cursor:"default",pointerEvents: 'none' }} readOnly/>
               </FormItem>
   
               <FormItem
                 label={
               <span style={{
+                marginLeft:'15px',
                 fontFamily: 'Poppins',
                 fontStyle: 'normal',
                 fontWeight: 400,
@@ -203,13 +196,15 @@ export default function OwnerView() {
                 name="username"
                 labelCol={{ span: 24 }}
               >
-                <Input placeholder="Enter owner username" style={{ border: "none", cursor:"default" }} readOnly />
+                <Input placeholder="Enter owner username" style={{ border: "none", cursor:"default",pointerEvents: 'none' }} readOnly />
               </FormItem>
             </FirstLine>
   
             <FirstLine>
-            <FormItem label={
+            <FormItem
+             label={
               <span style={{
+                marginLeft:'15px',
                 fontFamily: 'Poppins',
                 fontStyle: 'normal',
                 fontWeight: 400,
@@ -220,11 +215,12 @@ export default function OwnerView() {
                 DOB
               </span>
             } labelCol={{ span: 24 }} name="dob">
-                <StyledDOB  style={{ border: "none", cursor:"default" }} inputReadOnly suffixIcon={null} />
+                <StyledDOB  style={{ border: "none", cursor:"default",pointerEvents: 'none' }} disabledDate={() => true}  inputReadOnly suffixIcon={null} />
               </FormItem>
               <FormItem
                 label={
               <span style={{
+                marginLeft:'15px',
                 fontFamily: 'Poppins',
                 fontStyle: 'normal',
                 fontWeight: 400,
@@ -239,12 +235,13 @@ export default function OwnerView() {
                 name="phone"
                 
               >
-                <Input placeholder="Enter owner phone number" style={{ border: "none", cursor:"default" }} readOnly/>
+                <Input placeholder="Enter owner phone number" style={{ border: "none", cursor:"default",pointerEvents: 'none' }} readOnly/>
               </FormItem>
               <FormItem
                 name="gender"
                 label={
               <span style={{
+                marginLeft:'15px',
                 fontFamily: 'Poppins',
                 fontStyle: 'normal',
                 fontWeight: 400,
@@ -265,8 +262,8 @@ export default function OwnerView() {
                   placeholder=""
                   type="text" 
                   readOnly 
-                  style={{ border: "none", cursor:"default" }}
-                  value={data ? (data.gender === "Female" ? "female" : "male") : undefined} 
+                  style={{ border: "none", cursor:"default",pointerEvents: 'none'   }}
+                  value={data ? (data.gender === "Female" ? "Female" : "Male") : undefined} 
                 />
                  
                 
@@ -276,6 +273,7 @@ export default function OwnerView() {
                   <FormItem
                 label={
               <span style={{
+                marginLeft:'15px',
                 fontFamily: 'Poppins',
                 fontStyle: 'normal',
                 fontWeight: 400,
@@ -288,34 +286,35 @@ export default function OwnerView() {
             }
                 labelCol={{ span: 24 }}
                 name="role"
-                
               >
-                <Input style={{ border: "none", cursor:"default" }} readOnly/>
+                <Input style={{ border: "none", cursor:"default",pointerEvents: 'none' }} readOnly/>
               </FormItem>
-            
             </SecondLine>
-              
-                
                   <ThreeLine>
       <div className="title_formS">Garages</div>
       <FormSearch>
-       
         <RightColumn>
-        
-  {garagesData.map((garage) => (
-  <div className='content_formS' key={garage.id}>{garage.name}</div>
-))}
+          {garagesData.map((garage) => (
+          <div className='content_formS' key={garage.id}>{garage.name}</div>
+        ))}
   
-</RightColumn>
+        </RightColumn>
       </FormSearch>
     </ThreeLine>
               <div className="Btns">
                 <Divider style={{ border: '1px solid #DDE4EE', margin: 0 }} />
                 <div className="btn-button">
-                  <ButtonStyle htmlType="button"onClick={handleCancel} >
-                    <span>Back</span>
-                  </ButtonStyle>
-                </div>
+                <ButtonStyle
+                  type="primary"
+                  style={{ background: '#8767E1' }}
+                  onClick={()=>handleUpdate(userId)}
+                >
+                  <span>Update</span>
+                </ButtonStyle>
+                <ButtonStyle htmlType="button" >
+                  <span>Delete</span>
+                </ButtonStyle>
+              </div>
               </div>
             </FirstInfo>
           </DivForm>
