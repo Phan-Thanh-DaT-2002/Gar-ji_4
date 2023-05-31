@@ -1,13 +1,14 @@
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { Form, Button, Row, Col, Input, Select, Space, Table, theme } from 'antd';
+import { Form, Button, Row, Col, Input, Select, Space, Table, theme, Modal } from 'antd';
 import '../../GarageOwner/Garage-owner-list/style.css';
 
 
 const GarageOwnerList = () => {
-
-  const location = useLocation(); // Sử dụng useLocation từ react-router-dom
+  const [filterField, setFilterField] = useState('Name');
+const [filterValue, setFilterValue] = useState('');
+  const location = useLocation(); 
   const [data, setData] = useState(null);
   const [userId, setUserId] = useState(null)
   const handleView = (userId) => {
@@ -30,16 +31,12 @@ const GarageOwnerList = () => {
       value: 'Email',
       label: 'Email',
     },
-    {
-      value: 'Phone',
-      label: 'Phone',
-    },
-    {
-      value: 'Actions',
-      label: 'Actions',
-    },
   ];
   const optionStatus = [
+    {
+      value: 'Status',
+      label: 'Status',
+    },
     {
       value: 'Active',
       label: 'Active',
@@ -59,24 +56,9 @@ const GarageOwnerList = () => {
       title: 'Name',
       dataIndex: 'username',
       key: 'username',
-      filteredValue: [searchText],
+      filteredValue: [filterValue],
       onFilter: (value, record) => {
-        if (String(isActived_1).toLowerCase().includes('username')) {
-          return String(record.username)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-        } else if (String(isActived_1).toLowerCase().includes('email')) {
-          return String(record.email)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-        } else if (String(isActived_1).toLowerCase().includes('phone')) {
-          return String(record.phoneNumber)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-        } else
-          return String(record.username)
-            .toLowerCase()
-            .includes(value.toLowerCase());
+        return String(record.username).toLowerCase().includes(value.toLowerCase());
       },
     },
     {
@@ -95,7 +77,9 @@ const GarageOwnerList = () => {
       key: 'blocked',
       filteredValue: [isActived_2],
       onFilter: (value, record) => {
-        return record.blocked.includes(value);
+        if (value === 'Status') {
+          return record.blocked.includes('');
+        } else return record.blocked.includes(value);
       },
     },
     {
@@ -105,14 +89,16 @@ const GarageOwnerList = () => {
         <Space size="middle">
   <EyeOutlined onClick={() => handleView(record.id)} />
   <EditOutlined onClick={() => handleUpdate(record.id)} />
-  <DeleteOutlined/>
+  <DeleteOutlined onClick={()=> handleDelete(record)}/>
 </Space>
       ),
     },
   ];
   const [userData, setUserData] = useState([]);
   const navigate = useNavigate();
-
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
   useEffect(() => {
     const jwt = localStorage.getItem('jwt');
     const requestOptions = {
@@ -123,23 +109,87 @@ const GarageOwnerList = () => {
       },
       redirect: 'follow',
     };
-
-    fetch("http://localhost:1337/api/users", requestOptions)
+  
+    let url = 'http://localhost:1337/api/users';
+    if (filterField === 'Name') {
+      url += `?username=${filterValue}`;
+    } else if (filterField === 'Email') {
+      url += `?email=${filterValue}`;
+    }
+  
+    fetch(url, requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
         setUserData(result);
       })
       .catch(error => console.log('error', error));
-  }, []);
+  }, [filterField, filterValue]);
 
   const handleAdd = () => {
     navigate('/garage-owner-create');
   };
+  const handleDelete = record => {
+    Modal.confirm({
+      title: 'Are you sure about that?',
+      onOk: () => {
+        setUserData(prevData => {
+          return prevData.filter(data => data.id !== record.id);
+        });
 
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
+        const jwt = localStorage.getItem('jwt');
+        const requestOptions = {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+          redirect: 'follow',
+        };
+
+        fetch(`http://localhost:1337/api/users/${record.id}`, requestOptions)
+          .then(response => response.json())
+          .then(result => {
+            if (!result.success) {
+              console.log('Error deleting user');
+            }
+          })
+          .catch(error => console.log('Error deleting user', error));
+      },
+    });
+  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const jwt = localStorage.getItem('jwt');
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+          redirect: 'follow',
+        };
+
+        const response = await fetch(
+          'http://localhost:1337/api/users/me?populate=role',
+          requestOptions
+        );
+        const result = await response.json();
+
+        if (response.ok) {
+          console.log(result);
+          setData(result);
+          setUserId(result.id); 
+          console.error('Error:', result);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div
@@ -152,7 +202,15 @@ const GarageOwnerList = () => {
       <div>
         <Row>
           <Col md={22}>
-            <h1>All Garage Owners</h1>
+            <h1 style={{
+              fontFamily: 'Poppins',
+              fontStyle: 'normal',
+              fontWeight: 500,
+              fontSize: '24px',
+              lineHeight: '32px',
+              color: '#111111',
+
+            }}>All Garage Owners</h1>
           </Col>
           <Col md={2}>
             <Button
@@ -161,6 +219,16 @@ const GarageOwnerList = () => {
               style={{
                 background: '#8767E1',
                 marginRight: '10px',
+                width: '105px',
+                height: '48px',
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: '500',
+                fontSize: '13px',
+                lineHeight: '24px',
+                alignItems: 'center',
+                textAlign: 'center',
+                color: '#F1F4F9',
               }}
             >
               Add owner
@@ -169,21 +237,21 @@ const GarageOwnerList = () => {
         </Row>
         <div>
           <Form>
-            <Space>
+            <Space >
               <Space.Compact size="large">
                 <Select
                   style={{ width: '100px' }}
                   defaultValue="Name"
                   options={options}
                   onChange={value => {
-                    setIsActived_1(value);
+                    setFilterField(value);
                   }}
                 />
                 <Search
                   placeholder="Search"
                   allowClear
                   onSearch={value => {
-                    setSearchText(value);
+                    setFilterValue(value);
                   }}
                 />
               </Space.Compact>
@@ -199,9 +267,17 @@ const GarageOwnerList = () => {
               </Space.Compact>
             </Space>
             
-            <Table columns={columns} dataSource={userData && userData.map((user, id) => {
+            <Table pagination={{pageSize: 5}} columns={columns} dataSource={userData && userData.map((user, id) => {
               return { ...user, STT: id + 1, blocked:user.blocked?'Inactive':'Active' }
-            })} style={{ marginTop: 20 }} />
+            })} style={{
+                    fontFamily: 'Poppins',
+                  fontStyle: 'normal',
+                  fontWeight: '500',
+                  fontSize: '13px',
+                  lineHeight: '24px',
+                  color: '#2F3A4C',
+                  marginTop:'20px'
+                  }} />
           </Form>
         </div>
       </div>

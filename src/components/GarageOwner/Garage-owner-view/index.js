@@ -7,7 +7,7 @@ import styled from 'styled-components';
 export const DivStyle = styled.div `
     position: relative;
     width: 100%;
-    height: 1000px;
+    height: 100vh;
     background: #F6F6F6;  
 `
 export const AllDiv = styled.div`
@@ -218,7 +218,7 @@ export const FormSearch = styled.div`
 width: 100%;
 display: flex;
 flex-direction: row;
-height: 45vh;
+height: 30vh;
 background: #FFFFFE;
 border: 1px solid #DDE4EE;
 border-radius: 8px;
@@ -294,4 +294,8 @@ line-height: 24px;
 text-align: center;
 /* Neutral Dark/6 */
 }
+`
+export const Span = styled.div`
+
+
 `

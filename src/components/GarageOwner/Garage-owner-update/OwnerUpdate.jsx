@@ -456,7 +456,7 @@ useEffect(() => {
                 ]}
               >
                 <StyleSelect
-                  size='large'
+           
                   className="selectStyle"
                   placeholder="Select a role"
                   name='role'

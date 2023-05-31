@@ -96,12 +96,16 @@ height: 56px;
 background: #FFFFFE;
 border: 1px solid #CBCBCB;
 border-radius: 8px;
-
+font-family: 'Poppins';
+font-style: normal;
+font-weight: 500;
+font-size: 16px;
+line-height: 24px;
+display: flex;
+align-items: center;
+color: #111111;
     }
-    &:where(.css-dev-only-do-not-override-15rg2km).ant-form-item .ant-form-item-control-input-content {
-    flex: auto;
-    max-width: 150% !important;
-}
+   
     
 `
 

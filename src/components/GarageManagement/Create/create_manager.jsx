@@ -26,7 +26,11 @@ import { Form, Input, Select, Divider, message } from 'antd';
 import moment from 'moment';
 
 function CreateManager() {
-  
+  const [garageNames, setGarageNames] = useState([]);
+
+const checkNameExists = (name) => {
+  return garageNames.includes(name);
+};
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [garageOwners, setGarageOwners] = useState([]); // Chỉnh sửa tên biến thành 'setGarageOwners'
@@ -51,34 +55,54 @@ function CreateManager() {
       .catch(error => console.log('error', error));
   }, []);
   
-  const onFinish = async (values) => {
+  const onFinish = async (values, form) => {
     try {
-      
       const jwt = localStorage.getItem('jwt');
-
       const openTime = values.openTime.format('HH:mm:ss');
-    const closeTime = values.closeTime.format('HH:mm:ss');
-    const selectedServices = selectedGarages.map((garage) => ({
-      id: garage.id,
-      name: getGarageNameById(garage.id),
-    }));
-    const raw = JSON.stringify({
-      "data": {
-        name: values.name,
-        address: values.address,
-        blocked: values.status === 'inactive' ? true : false,
-        phoneNumber: values.phoneNumber,
-        email: values.email,
-        openTime: openTime,
-        closeTime: closeTime,
-        description: values.description,
-        policy: values.policy,
-        owner: values.owner,
-        services: selectedServices,
+      const closeTime = values.closeTime.format('HH:mm:ss');
+      const selectedServices = selectedGarages.map((garage) => ({
+        id: garage.id,
+        name: getGarageNameById(garage.id),
+      }));
+      const phoneNumber = values.phoneNumber;
+      if (phoneNumber.length > 10) {
+        form.setFields([
+          {
+            name: 'phoneNumber',
+            errors: ['Số điện thoại không hợp lệ!'],
+          },
+        ]);
+        return;
       }
-    });
-
-
+      const garageName = values.name;
+      const isNameExists = checkNameExists(garageName);
+  
+      if (isNameExists) {
+        form.setFields([
+          {
+            name: 'name',
+            errors: ['Tên đã tồn tại!'],
+          },
+        ]);
+        return;
+      }
+  
+      const raw = JSON.stringify({
+        data: {
+          name: values.name,
+          address: values.address,
+          blocked: values.status === 'inactive' ? true : false,
+          phoneNumber: phoneNumber,
+          email: values.email,
+          openTime: openTime,
+          closeTime: closeTime,
+          description: values.description,
+          policy: values.policy,
+          owner: values.owner,
+          services: selectedServices,
+        },
+      });
+  
       const requestOptions = {
         method: 'POST',
         headers: {
@@ -88,27 +112,33 @@ function CreateManager() {
         body: raw,
         redirect: 'follow',
       };
-
-      const response = await fetch(
-        'http://localhost:1337/api/garages',
-        requestOptions
-      );
+  
+      const response = await fetch('http://localhost:1337/api/garages', requestOptions);
       const data = await response.json();
-
       if (response.ok) {
         console.log('Response:', data);
         message.success('Form submitted successfully!');
         form.resetFields();
       } else {
         console.error('Error:', data);
-        message.error('Failed to submit form!');
+        const errorMessage = data.error.message || 'Failed to submit form!';
+        message.error(errorMessage);
+  
+        if (data.details && data.details.errors && data.details.errors.length > 0) {
+          data.details.errors.forEach((error) => {
+            if (error.path && error.path.length > 0) {
+              const errorField = error.path[0];
+              const errorMessage = error.message;
+              message.error(`Error in field '${errorField}': ${errorMessage}`);
+            }
+          });
+        }
       }
     } catch (error) {
       console.error('Error:', error);
       message.error('An error occurred');
     }
   };
-
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
   };
@@ -215,7 +245,18 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
           <FirstInfo>
             <FirstLine>
               <FormItem
-                label="Name"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Name
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="name"
                 rules={[
@@ -228,7 +269,18 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
                 <Input placeholder="Enter owner name" />
               </FormItem>
               <FormItem
-                label="Email"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Email
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="email"
                 rules={[
@@ -246,7 +298,18 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
               </FormItem>
 
               <FormItem
-                label="Phone number"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Phone number
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="phoneNumber"
                 rules={[
@@ -266,7 +329,18 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
 
             <FirstLine>
               <FormItem
-                label="Address"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Address
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="address"
                 rules={[
@@ -280,7 +354,18 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
               </FormItem>
               <FormItem
                 name="openTime"
-                label="Open time"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Open time
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 rules={[
                   {
@@ -300,7 +385,18 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
               </FormItem>
               <FormItem
                 name="closeTime"
-                label="Close time"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Close time
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 rules={[
                   {
@@ -321,7 +417,18 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
             <SecondLine>
               <FormItem
                 name="owner"
-                label="Select a garage owner"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Garage owner
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 rules={[
                   {
@@ -340,7 +447,18 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
               </FormItem>
               <FormItem
                 name="status"
-                label="Status"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Status
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 rules={[
                   {
@@ -357,7 +475,18 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
             </SecondLine>
             <StyleCommentBox>
               <FormItem
-                label="Description"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Description
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="description"
                 rules={[
@@ -368,12 +497,31 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
                 ]}
               >
                 <StyledTextArea
+                style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}
                   autoSize={{ minRows: 4, maxRows: 30 }}
                   placeholder="Enter a description"
                 />
               </FormItem>
               <FormItem
-                label="Policy"
+               label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Policy
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="policy"
                 rules={[
@@ -386,6 +534,14 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
                 <StyledTextArea
                   autoSize={{ minRows: 4, maxRows: 30 }}
                   placeholder="Enter a policy"
+                  style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}
                 />
               </FormItem>
             </StyleCommentBox>

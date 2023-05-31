@@ -15,15 +15,6 @@ const onFinishFailed = (errorInfo) => {
   console.log('Failed:', errorInfo);
 };
 
-// const validateEmail = (rule, value) => {
-//   // Sử dụng biểu thức chính quy để kiểm tra định dạng email
-//   const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$/;
-//   if (value && !emailPattern.test(value)) {
-//     return Promise.reject('Hãy nhập email!');
-//   }
-//   return Promise.resolve();
-// };
-
 const validatePassword = (rule, value, callback) => {
   if (!value) {
     callback('Please enter the password!');
@@ -131,6 +122,9 @@ export default function Login() {
           validator: validatePassword,
         },
       ]}
+      style={{
+        marginBottom: '8px'
+      }}
     >
   
       <Input type='password'/>

@@ -59,7 +59,7 @@ export const InforLogin = styled.div`
   align-items: flex-start;
   padding: 0px;
 
-  width: 424px;
+   width: 424px;
   height: 208px;
 `;
 export const FormItem = styled(Form.Item)`
@@ -69,8 +69,8 @@ export const FormItem = styled(Form.Item)`
   padding: 0px;
   gap: 8px;
 
-  width: 424px;
-  height: 96px;
+  /* width: 424px;
+  height: 96px; */
 
   & input {
     display: flex;

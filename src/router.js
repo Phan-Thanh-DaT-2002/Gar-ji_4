@@ -87,8 +87,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/services-update',
-        element: <UpdateServices />,
-      },
+        element:<UpdateServices/>
+      },{
+        path:'/manager-create',
+        element:<CreateManager/>
+      }
     ],
   },
 ]);

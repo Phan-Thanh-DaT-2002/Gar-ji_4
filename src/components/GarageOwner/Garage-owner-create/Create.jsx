@@ -288,225 +288,209 @@ function Create() {
               </FormItem>
             </FirstLine>
 
-            <FirstLine>
-              <FormItem
-                label={
-                  <span
-                    style={{
-                      fontFamily: 'Poppins',
-                      fontStyle: 'normal',
-                      fontWeight: 400,
-                      fontSize: '16px',
-                      lineHeight: '24px',
-                      color: '#939393',
-                    }}
-                  >
-                    Password
-                  </span>
-                }
-                labelCol={{ span: 24 }}
-                name="password"
-                rules={[
-                  {
-                    required: true,
-                    validator: validatePassword,
-                  },
-                ]}
+          <FirstLine>
+            <FormItem
+              label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Password
+              </span>
+            }
+              labelCol={{ span: 24 }}
+              name="password"
+              rules={[
+                {
+                  required: true,
+                  validator: validatePassword,
+                },
+              ]}
+                    >
+              <Input placeholder="Enter owner password" />
+            </FormItem>
+            <FormItem
+            
+              label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Phone number
+              </span>
+            }
+              labelCol={{ span: 24 }}
+              name="phone"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input your phone number!',
+                },
+                {
+                  pattern: /^[0-9]{10,}$/,
+                  message: 'Please input a valid phone number!',
+                },
+              ]}
+            >
+              <Input placeholder="Enter owner phone number" />
+            </FormItem>
+            <FormItem
+              name="gender"
+              label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Gender
+              </span>
+            }
+              labelCol={{ span: 24 }}
+              rules={[
+                {
+                  required: true,
+                  message: 'Please select gender!',
+                },
+              ]}
+              
+            >
+              <StyleSelect
+                className="style_select"
+                placeholder="Select owner gender"
+                allowClear={false}
+                
               >
-                <Input placeholder="Enter owner password" />
-              </FormItem>
-              <FormItem
-                label={
-                  <span
-                    style={{
-                      fontFamily: 'Poppins',
-                      fontStyle: 'normal',
-                      fontWeight: 400,
-                      fontSize: '16px',
-                      lineHeight: '24px',
-                      color: '#939393',
-                    }}
-                  >
-                    Phone number
-                  </span>
-                }
-                labelCol={{ span: 24 }}
-                name="phone"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please input your phone number!',
-                  },
-                  {
-                    pattern: /^[0-9]{10,}$/,
-                    message: 'Please input a valid phone number!',
-                  },
-                ]}
+                <Select.Option value="male">Male</Select.Option>
+                <Select.Option value="female">Female</Select.Option>
+               
+              </StyleSelect>
+            </FormItem>
+          </FirstLine>
+          <SecondLine>
+            <FormItem label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                DOB
+              </span>
+            } labelCol={{ span: 24 }} name="dob">
+              <StyledDOB />
+            </FormItem>
+            <FormItem
+            name='role'
+            label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Role
+              </span>
+            }
+              labelCol={{ span: 24 }}
+              rules={[
+                {
+                  required: true,
+                  message: 'Please select a role!',
+                },
+              ]}
+            >
+              <StyleSelect
+                className="selectStyle"
+                placeholder="Select a role"
+                name='role'
+                allowClear={false}
               >
-                <Input placeholder="Enter owner phone number" />
-              </FormItem>
-              <FormItem
-                name="gender"
-                label={
-                  <span
-                    style={{
-                      fontFamily: 'Poppins',
-                      fontStyle: 'normal',
-                      fontWeight: 400,
-                      fontSize: '16px',
-                      lineHeight: '24px',
-                      color: '#939393',
-                    }}
-                  >
-                    Gender
-                  </span>
-                }
-                labelCol={{ span: 24 }}
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please select gender!',
-                  },
-                ]}
-              >
-                <StyleSelect
-                  className="style_select"
-                  placeholder="Select owner gender"
-                  allowClear={false}
-                >
-                  <Select.Option value="male">Male</Select.Option>
-                  <Select.Option value="female">Female</Select.Option>
-                </StyleSelect>
-              </FormItem>
-            </FirstLine>
-            <SecondLine>
-              <FormItem
-                label={
-                  <span
-                    style={{
-                      fontFamily: 'Poppins',
-                      fontStyle: 'normal',
-                      fontWeight: 400,
-                      fontSize: '16px',
-                      lineHeight: '24px',
-                      color: '#939393',
-                    }}
-                  >
-                    DOB
-                  </span>
-                }
-                labelCol={{ span: 24 }}
-                name="dob"
-              >
-                <StyledDOB />
-              </FormItem>
-              <FormItem
-                name="role"
-                label={
-                  <span
-                    style={{
-                      fontFamily: 'Poppins',
-                      fontStyle: 'normal',
-                      fontWeight: 400,
-                      fontSize: '16px',
-                      lineHeight: '24px',
-                      color: '#939393',
-                    }}
-                  >
-                    Role
-                  </span>
-                }
-                labelCol={{ span: 24 }}
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please select a role!',
-                  },
-                ]}
-              >
-                <StyleSelect
-                  className="selectStyle"
-                  placeholder="Select a role"
-                  name="role"
-                  allowClear={false}
-                >
-                  <Option value="3">Admin</Option>
-                  <Option value="1">User</Option>
-                </StyleSelect>
-              </FormItem>
-              <FormItem
-                name="status"
-                label={
-                  <span
-                    style={{
-                      fontFamily: 'Poppins',
-                      fontStyle: 'normal',
-                      fontWeight: 400,
-                      fontSize: '16px',
-                      lineHeight: '24px',
-                      color: '#939393',
-                    }}
-                  >
-                    Status
-                  </span>
-                }
-                labelCol={{ span: 24 }}
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please select a status!',
-                  },
-                ]}
-              >
-                <StyleSelect placeholder="Select a status" allowClear={false}>
-                  <Option value="active">Active</Option>
-                  <Option value="inactive">Inactive</Option>
-                </StyleSelect>
-              </FormItem>
-            </SecondLine>
-            <Form></Form>
-            <ThreeLine>
-              <div className="title_formS">Garages</div>
-              <FormSearch>
-                <LeftColumn>
-                  <StyleInput
-                    placeholder="Search for garages..."
-                    type="text"
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                  />
-                  <SCheckbox>
-                    {filteredGarages.map(garage => (
-                      <div key={garage.id}>
-                        <StyleCheckBox
-                          checked={selectedGarages.some(
-                            g => g.id === garage.id
-                          )}
-                          onChange={() => handleGarageChange(garage)}
-                        >
-                          {garage.attributes.name}
-                        </StyleCheckBox>
-                      </div>
-                    ))}
-                  </SCheckbox>
-                </LeftColumn>
-                <MyDivider type="vertical" />
-                <RightColumn>
-                  <div className="select_gara">
-                    Select garages ({selectedGarages.length})
-                  </div>
-                  {selectedGarages.map(garage => (
-                    <div className="select_remove" key={garage.id}>
-                      <span>{getGarageNameById(garage.id)}</span>
-                      <DeleteOutlined
-                        style={{ fontSize: '24px' }}
-                        onClick={() => handleRemoveGarage(garage)}
-                      />
-                    </div>
-                  ))}
-                </RightColumn>
-              </FormSearch>
-            </ThreeLine>
+                <Option value="3">Admin</Option>
+                <Option value="1">User</Option>
+              </StyleSelect>
+            </FormItem>
+            <FormItem
+              name="status"
+              label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Status
+              </span>
+            }
+              labelCol={{ span: 24 }}
+              rules={[
+                {
+                  required: true,
+                  message: 'Please select a status!',
+                },
+              ]}
+            >
+              <StyleSelect placeholder="Select a status" allowClear={false}>
+                <Option value="active">Active</Option>
+                <Option value="inactive">Inactive</Option>
+              </StyleSelect>
+            </FormItem>
+          </SecondLine>
+                <Form></Form>
+                <ThreeLine>
+    <div className="title_formS">Garages</div>
+    <FormSearch>
+      <LeftColumn>
+        <StyleInput
+          placeholder="Search for garages..."
+          type="text"
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
+        <SCheckbox>
+  {filteredGarages.map((garage) => (
+    <div key={garage.id}>
+      <StyleCheckBox
+        checked={selectedGarages.some((g) => g.id === garage.id)}
+        onChange={() => handleGarageChange(garage)}
+      >
+        {garage.attributes.name}
+      </StyleCheckBox>
+    </div>
+  ))}
+</SCheckbox>
+      </LeftColumn>
+      <MyDivider type="vertical" />
+      <RightColumn>
+        <div className="select_gara">Select garages ({selectedGarages.length})</div>
+        {selectedGarages.map((garage) => (
+  <div className="select_remove" key={garage.id}>
+    <span>{getGarageNameById(garage.id)}</span>
+    <DeleteOutlined
+      style={{ fontSize: '24px' }}
+      onClick={() => handleRemoveGarage(garage)}
+    />
+  </div>
+))}
+      </RightColumn>
+    </FormSearch>
+  </ThreeLine>
             <div className="Btns">
               <Divider style={{ border: '1px solid #DDE4EE', margin: 0 }} />
               <div className="btn-button">
