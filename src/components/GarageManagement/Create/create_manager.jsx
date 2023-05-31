@@ -55,47 +55,54 @@ const checkNameExists = (name) => {
       .catch(error => console.log('error', error));
   }, []);
   
-  const onFinish = async (values) => {
+  const onFinish = async (values, form) => {
     try {
-      
       const jwt = localStorage.getItem('jwt');
       const openTime = values.openTime.format('HH:mm:ss');
-    const closeTime = values.closeTime.format('HH:mm:ss');
-    const selectedServices = selectedGarages.map((garage) => ({
-      id: garage.id,
-      name: getGarageNameById(garage.id),
-    }));
-    const phoneNumber = values.phoneNumber
-    if (phoneNumber.length > 10) {
-     
-      message.error('Số điện thoại không hợp lệ!');
-      return;
-    }
-    const garageName = values.name;
-    const isNameExists = checkNameExists(garageName);
-  
-    if (isNameExists) {
-      message.error('Tên đã tồn tại!');
-      return;
-    }
-    
-    const raw = JSON.stringify({
-      "data": {
-        name: values.name,
-        address: values.address,
-        blocked: values.status === 'inactive' ? true : false,
-        phoneNumber: phoneNumber,
-        email: values.email,
-        openTime: openTime,
-        closeTime: closeTime,
-        description: values.description,
-        policy: values.policy,
-        owner: values.owner,
-        services: selectedServices,
+      const closeTime = values.closeTime.format('HH:mm:ss');
+      const selectedServices = selectedGarages.map((garage) => ({
+        id: garage.id,
+        name: getGarageNameById(garage.id),
+      }));
+      const phoneNumber = values.phoneNumber;
+      if (phoneNumber.length > 10) {
+        form.setFields([
+          {
+            name: 'phoneNumber',
+            errors: ['Số điện thoại không hợp lệ!'],
+          },
+        ]);
+        return;
       }
-    });
-
-
+      const garageName = values.name;
+      const isNameExists = checkNameExists(garageName);
+  
+      if (isNameExists) {
+        form.setFields([
+          {
+            name: 'name',
+            errors: ['Tên đã tồn tại!'],
+          },
+        ]);
+        return;
+      }
+  
+      const raw = JSON.stringify({
+        data: {
+          name: values.name,
+          address: values.address,
+          blocked: values.status === 'inactive' ? true : false,
+          phoneNumber: phoneNumber,
+          email: values.email,
+          openTime: openTime,
+          closeTime: closeTime,
+          description: values.description,
+          policy: values.policy,
+          owner: values.owner,
+          services: selectedServices,
+        },
+      });
+  
       const requestOptions = {
         method: 'POST',
         headers: {
@@ -105,27 +112,33 @@ const checkNameExists = (name) => {
         body: raw,
         redirect: 'follow',
       };
-
-      const response = await fetch(
-        'http://localhost:1337/api/garages',
-        requestOptions
-      );
+  
+      const response = await fetch('http://localhost:1337/api/garages', requestOptions);
       const data = await response.json();
-
       if (response.ok) {
         console.log('Response:', data);
         message.success('Form submitted successfully!');
         form.resetFields();
       } else {
-        // console.error('Error:', data);
-        // message.error('Failed to submit form!');
+        console.error('Error:', data);
+        const errorMessage = data.error.message || 'Failed to submit form!';
+        message.error(errorMessage);
+  
+        if (data.details && data.details.errors && data.details.errors.length > 0) {
+          data.details.errors.forEach((error) => {
+            if (error.path && error.path.length > 0) {
+              const errorField = error.path[0];
+              const errorMessage = error.message;
+              message.error(`Error in field '${errorField}': ${errorMessage}`);
+            }
+          });
+        }
       }
     } catch (error) {
       console.error('Error:', error);
       message.error('An error occurred');
     }
   };
-
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
   };

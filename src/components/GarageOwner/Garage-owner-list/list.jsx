@@ -158,6 +158,39 @@ const [filterValue, setFilterValue] = useState('');
       },
     });
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const jwt = localStorage.getItem('jwt');
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+          redirect: 'follow',
+        };
+
+        const response = await fetch(
+          'http://localhost:1337/api/users/me?populate=role',
+          requestOptions
+        );
+        const result = await response.json();
+
+        if (response.ok) {
+          console.log(result);
+          setData(result);
+          setUserId(result.id); 
+          console.error('Error:', result);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <div
       style={{
