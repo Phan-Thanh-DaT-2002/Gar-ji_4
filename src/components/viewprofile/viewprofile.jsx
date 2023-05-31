@@ -11,6 +11,7 @@ function ViewProfile() {
   const location = useLocation(); // Sử dụng useLocation từ react-router-dom
   const [data, setData] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [avatar, setAvatar] = useState(null);
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -29,7 +30,7 @@ function ViewProfile() {
         };
 
         const response = await fetch(
-          'http://localhost:1337/api/users/me?populate=role',
+          'http://localhost:1337/api/users/me?populate=role,avatar',
           requestOptions
         );
         const result = await response.json();
@@ -37,7 +38,8 @@ function ViewProfile() {
         if (response.ok) {
           console.log(result);
           setData(result);
-          setUserId(result.id); 
+          setUserId(result.id);
+          setAvatar(result.avatar.url);
           console.error('Error:', result);
         }
       } catch (error) {
@@ -55,7 +57,7 @@ function ViewProfile() {
   };
 
   if (!data) {
-    return null; 
+    return null;
   }
   return (
     <div
@@ -67,7 +69,10 @@ function ViewProfile() {
     >
       <div className="profile">
         <div className="avatar_view">
-          <Avatar size={250} icon={<Ellipse2 />} />
+          <Avatar
+            size={250}
+            src={avatar ? `http://localhost:1337${avatar}` : ''}
+          />
         </div>
         <div className="infor_view">
           <div>
