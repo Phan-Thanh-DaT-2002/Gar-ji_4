@@ -405,7 +405,7 @@ export default function OwnerView() {
                   style={{ background: '#8767E1' }}
                   onClick={() => handleUpdate(userId)}
                 >
-                  <span>Update</span>
+                  <span>Edit</span>
                 </ButtonStyle>
                 <ButtonStyle htmlType="button"
                   onClick={() => onDelete(temp_data_user)}
