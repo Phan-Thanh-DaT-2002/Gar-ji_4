@@ -31,8 +31,7 @@ const GarageOwnerList = () => {
   const handleUpdate = userId => {
     if (isAdmin) {
       navigate('/owner-update', { state: { userId: userId } });
-    }
-    else {
+    } else {
       message.error('You do not have permission to update.');
     }
   };
