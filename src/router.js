@@ -19,6 +19,7 @@ import CreateServices from './components/GarageServices/GarageServicesCreate/Cre
 import CreateManager from './components/GarageManagement/Create/create_manager';
 import ServiceDetail from './components/GarageServices/GarageServicesDetails/ServiceDetail';
 import UpdateServices from './components/GarageServices/GarageServicesUpdate/UpdateServices';
+import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 
 const router = createBrowserRouter([
   {
@@ -31,67 +32,132 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <ViewProfile />,
+        element: (
+          <PrivateRoute>
+            <ViewProfile />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/garage',
-        element: <GarageManagementList />,
+        element: (
+          <PrivateRoute>
+            <GarageManagementList />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/update-profile',
-        element: <UpdateProfile />,
+        element: (
+          <PrivateRoute>
+            <UpdateProfile />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/change-password',
-        element: <ChangePassword />,
+        element: (
+          <PrivateRoute>
+            <ChangePassword />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/garage-owner',
-        element: <GarageOwnerList />,
+        element: (
+          <PrivateRoute>
+            <GarageOwnerList />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/garage-services',
-        element: <GarageServicesList />,
+        element: (
+          <PrivateRoute>
+            <GarageServicesList />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/garage-owner-create',
-        element: <Create />,
+        element: (
+          <PrivateRoute>
+            <Create />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/owner-details',
-        element: <OwnerView />,
+        element: (
+          <PrivateRoute>
+            <OwnerView />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/owner-update',
-        element: <OwnerUpdate />,
+        element: (
+          <PrivateRoute>
+            <OwnerUpdate />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/manager-details',
-        element: <ManagerDetails />,
+        element: (
+          <PrivateRoute>
+            <ManagerDetails />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/manager-update',
-        element: <UpdateMana />,
+        element: (
+          <PrivateRoute>
+            <UpdateMana />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/create-services',
-        element: <CreateServices />,
+        element: (
+          <PrivateRoute>
+            <CreateServices />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/create-manager',
-        element: <CreateManager />,
+        element: (
+          <PrivateRoute>
+            {' '}
+            <CreateManager />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/services-detail',
-        element: <ServiceDetail />,
+        element: (
+          <PrivateRoute>
+            <ServiceDetail />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/services-update',
-        element: <UpdateServices />,
+        element: (
+          <PrivateRoute>
+            <UpdateServices />
+          </PrivateRoute>
+        ),
       },
       {
         path: '/manager-create',
-        element: <CreateManager />,
+        element: (
+          <PrivateRoute>
+            <CreateManager />
+          </PrivateRoute>
+        ),
       },
     ],
   },
