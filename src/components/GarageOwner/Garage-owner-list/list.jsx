@@ -304,6 +304,15 @@ const GarageOwnerList = () => {
             </Space>
             <Table
               columns={columns}
+              style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: '500',
+                fontSize: '13px',
+                lineHeight: '24px',
+                color: '#2F3A4C',
+                marginTop: '20px',
+              }}
               pagination={{
                 current: pagination.page,
                 pageSize: pagination.pageSize,
@@ -315,7 +324,6 @@ const GarageOwnerList = () => {
                 STT: index + 1,
                 blocked: user.blocked ? 'Inactive' : 'Active',
               }))}
-              style={{ marginTop: 20 }}
             />
           </Form>
         </div>
