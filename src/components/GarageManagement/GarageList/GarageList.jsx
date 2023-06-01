@@ -17,10 +17,7 @@ import './style.css';
 
 const GarageManagementList = () => {
   const navigate = useNavigate();
-
-  const [searchCategory, setSearchCategory] = useState('Name');
-  const [statusFilter, setStatusFilter] = useState('');
-  const handleView = (userId) => {
+  const handleView = userId => {
     navigate('/manager-details', { state: { userId: userId } });
   };
   const handleUpdate = userId => {
@@ -28,7 +25,7 @@ const GarageManagementList = () => {
   };
   const [searchText, setSearchText] = useState('');
   const [isActived_1, setIsActived_1] = useState('Name');
-  const [isActived_2, setIsActived_2] = useState('Status');
+  const [isActived_2, setIsActived_2] = useState('');
   const [pagination, setPagination] = useState({
     page: 1,
     pageSize: 10,
@@ -46,7 +43,7 @@ const GarageManagementList = () => {
   ];
   const optionStatus = [
     {
-      value: 'Status',
+      value: '',
       label: 'Status',
     },
     {
@@ -114,15 +111,12 @@ const GarageManagementList = () => {
       redirect: 'follow',
     };
     let filterParams = {};
-
-    if (isActived_2 === 'Status') {
-      filterParams = {};
-    } else if (isActived_2 === 'Active') {
-      filterParams['status][$contains]'] = 'active';
-    } else if (isActived_2 === 'Inactive') {
-      filterParams['status][$contains]'] = 'inactive';
+    if (isActived_2 === '') {
+    } else if (isActived_2 === 'active') {
+      filterParams['status][$eq]'] = 'active';
+    } else if (isActived_2 === 'inactive') {
+      filterParams['status][$eq]'] = 'inactive';
     }
-
     if (isActived_1 === 'Name') {
       filterParams['name][$contains]'] = searchText;
     } else if (isActived_1 === 'Email') {
@@ -133,19 +127,17 @@ const GarageManagementList = () => {
       .map(([key, value]) => `filters[${key}]=${encodeURIComponent(value)}`)
       .join('&');
     const paginationParams = `pagination[page]=${pagination.page}&pagination[pageSize]=${pagination.pageSize}`;
-
-    const apiUrl = `http://localhost:1337/api/garages?${filters}&${paginationParams}`;
-
+    const apiUrl = `http://localhost:1337/api/garages?${filters}&${paginationParams}&populate=owner`;
+    console.log(apiUrl);
     fetch(apiUrl, requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log(result.data);
         if (result.data) {
           const arrayNew = result.data.map(item => ({
             ...item.attributes,
           }));
-          console.log(arrayNew);
           setData(arrayNew);
+          console.log(data);
         }
       })
       .catch(error => console.log('error', error));
@@ -157,31 +149,6 @@ const GarageManagementList = () => {
       pageSize,
     }));
   };
-  // useEffect(() => {
-  //   const jwt = localStorage.getItem('jwt');
-  //   const requestOptions = {
-  //     method: 'GET',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       Authorization: `Bearer ${jwt}`,
-  //     },
-  //     redirect: 'follow',
-  //   };
-
-  //   fetch('http://localhost:1337/api/garages?populate=owner', requestOptions)
-  //     .then(response => response.json())
-  //     .then(result => {
-  //       const arrayNew = result.data.map(item => ({
-  //         ...item.attributes,
-  //         id: item.id,
-  //       }));
-  //       console.log(arrayNew);
-  //       setData(arrayNew);
-  //     })
-  //     .catch(error => console.log('error', error));
-  // }, []);
-
-
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -300,6 +267,7 @@ const GarageManagementList = () => {
               dataSource={data.map((data, index) => ({
                 ...data,
                 STT: index + 1,
+                owner: data.owner?.data?.attributes?.fullname || '',
               }))}
               style={{
                 fontFamily: 'Poppins',
