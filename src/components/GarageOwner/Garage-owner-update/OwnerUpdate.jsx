@@ -21,28 +21,24 @@ import {
   FirstInfo,
   FirstLine,
   FormItem,
-
   StyleSelect,
   SecondLine,
   FormSearch,
   ThreeLine,
-
   StyleInput,
   SCheckbox,
   StyleCheckBox,
   LeftColumn,
   RightColumn,
   MyDivider,
-
   ButtonStyle,
 } from './index.js';
 import { AudioOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
 export default function OwnerUpdate() {
-
   const handok = () => {
     navigate('/garage-owner');
-  }
+  };
   const { Option } = Select;
   const [temp_data_user, setTemp_data_user] = useState(0);
   const [form] = Form.useForm();
@@ -53,8 +49,7 @@ export default function OwnerUpdate() {
   const location = useLocation();
   const { userId } = location.state || {};
   const [data, setData] = useState(null);
-  const [garages, setGarages] = useState([])
-
+  const [garages, setGarages] = useState([]);
 
   const [selectedGarages, setSelectedGarages] = useState([]);
   useEffect(() => {
@@ -79,9 +74,9 @@ export default function OwnerUpdate() {
           const result = await response.json();
 
           setData(result);
-          setSelectedGarages(result.garages)
+          setSelectedGarages(result.garages);
           setTotalGarages(result.garages.length);
-          setTemp_data_user(result.id)
+          setTemp_data_user(result.id);
           form.setFieldsValue({
             name: result.fullname,
             email: result.email,
@@ -93,7 +88,6 @@ export default function OwnerUpdate() {
             role: result.role.id,
             status: result?.blocked ? 'Inactive' : 'Active',
             // garages: result.garages?.name,
-
           });
         } else {
           console.error('Error:', response.statusText);
@@ -106,8 +100,7 @@ export default function OwnerUpdate() {
     fetchData();
   }, [userId]);
 
-
-  const onFinish = async (values) => {
+  const onFinish = async values => {
     try {
       const jwt = localStorage.getItem('jwt');
       const updatedUserId = userId;
@@ -118,7 +111,7 @@ export default function OwnerUpdate() {
         address: values.address,
         phoneNumber: values.phone,
         role: values.role,
-        garages: selectedGarages.map((garage) => garage.id),
+        garages: selectedGarages.map(garage => garage.id),
         confirmed: true,
         blocked: false,
       });
@@ -152,8 +145,7 @@ export default function OwnerUpdate() {
     }
   };
 
-
-  const onFinishFailed = (errorInfo) => {
+  const onFinishFailed = errorInfo => {
     console.log('Failed:', errorInfo);
   };
 
@@ -165,71 +157,63 @@ export default function OwnerUpdate() {
     Modal.confirm({
       title: 'Are you sure about that?',
       onOk: () => {
-        if (isAdmin) {
-          setUserData(prevData => {
-            return prevData.filter(data => data.id !== record);
-          });
+        setUserData(prevData => {
+          return prevData.filter(data => data.id !== record);
+        });
 
-          const jwt = localStorage.getItem('jwt');
-          console.log(jwt);
-          const requestOptions = {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${jwt}`,
-            },
-            redirect: 'follow',
-          };
-          fetch(`http://localhost:1337/api/users/${record}`, requestOptions)
-            .then(result => {
-              if (!result.success) {
-                console.log('Error deleting user');
-              }
-              handok();
-            })
-            .then(result => {
-              if (!result.success) {
-                console.log('Error deleting user');
-              }
-            })
-            .catch(error => console.log('Error deleting user', error));
-        } else {
-          message.error('You do not have permission to delete.');
-          handok();
-        }
+        const jwt = localStorage.getItem('jwt');
+        console.log(jwt);
+        const requestOptions = {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+          redirect: 'follow',
+        };
+        fetch(`http://localhost:1337/api/users/${record}`, requestOptions)
+          .then(response => {
+            response.json();
+            message.success('delete sussesful');
+            handok();
+          })
+          .then(result => {
+            if (!result.success) {
+              console.log('Error deleting user');
+              console.log('Error deleting user');
+            }
+          })
+          .catch(error => console.log('Error deleting user', error));
       },
     });
   };
 
-  const onChange = (e) => {
+  const onChange = e => {
     console.log(`checked = ${e.target.checked}`);
   };
 
-
   const [garagesData, setGaragesData] = useState([]);
-
 
   const [searchTerm, setSearchTerm] = useState('');
 
-
   const [displayCount, setDisplayCount] = useState(5);
 
-  const handleSearchChange = (event) => {
+  const handleSearchChange = event => {
     setSearchTerm(event.target.value);
     setDisplayCount(5);
   };
 
-  const handleGarageChange = (garage) => {
-    const index = selectedGarages.findIndex((g) => g.id === garage.id);
+  const handleGarageChange = garage => {
+    const index = selectedGarages.findIndex(g => g.id === garage.id);
     if (index === -1) {
       setSelectedGarages([...selectedGarages, garage]);
     } else {
-      setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
+      setSelectedGarages(selectedGarages.filter(g => g.id !== garage.id));
     }
   };
 
-  const handleRemoveGarage = (garage) => {
-    setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
+  const handleRemoveGarage = garage => {
+    setSelectedGarages(selectedGarages.filter(g => g.id !== garage.id));
   };
 
   useEffect(() => {
@@ -238,12 +222,12 @@ export default function OwnerUpdate() {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${jwt}`,
+        Authorization: `Bearer ${jwt}`,
       },
-      redirect: 'follow'
+      redirect: 'follow',
     };
 
-    fetch("http://localhost:1337/api/garages", requestOptions)
+    fetch('http://localhost:1337/api/garages', requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
@@ -252,26 +236,24 @@ export default function OwnerUpdate() {
       .catch(error => console.log('error', error));
   }, []);
 
-
-
-  const getGarageNameById = (garageId) => {
-    const selectedGarage = garagesData.find((garage) => garage.id === garageId);
+  const getGarageNameById = garageId => {
+    const selectedGarage = garagesData.find(garage => garage.id === garageId);
     return selectedGarage ? selectedGarage.attributes.name : '';
   };
 
   const filteredGarages = garagesData
     ? garagesData
-      .filter((garage) => {
-        const garageName = garage.attributes.name.toLowerCase();
-        const searchTermLower = searchTerm.toLowerCase();
-        return (
-          garage.id.toString().includes(searchTermLower) ||
-          garageName.includes(searchTermLower)
-        );
-      })
-      .slice(0, displayCount)
+        .filter(garage => {
+          const garageName = garage.attributes.name.toLowerCase();
+          const searchTermLower = searchTerm.toLowerCase();
+          return (
+            garage.id.toString().includes(searchTermLower) ||
+            garageName.includes(searchTermLower)
+          );
+        })
+        .slice(0, displayCount)
     : [];
-  const isAdmin = data && data.type === 'admin';
+
   return (
     <DivStyle>
       <AllDiv>
@@ -287,54 +269,53 @@ export default function OwnerUpdate() {
           form={form}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
-
           autoComplete="off"
-
         >
           <FirstInfo>
             <FirstLine>
               <FormItem
                 label={
-                  <span style={{
-                    fontFamily: 'Poppins',
-                    fontStyle: 'normal',
-                    fontWeight: 400,
-                    fontSize: '16px',
-                    lineHeight: '24px',
-                    color: '#939393',
-                  }}>
+                  <span
+                    style={{
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
                     Name
                   </span>
                 }
                 labelCol={{ span: 24 }}
                 name="name"
-
                 rules={[
                   {
                     required: true,
                     message: 'Please input your name!',
                   },
                 ]}
-
               >
                 <Input placeholder="Enter owner name" />
               </FormItem>
               <FormItem
                 label={
-                  <span style={{
-                    fontFamily: 'Poppins',
-                    fontStyle: 'normal',
-                    fontWeight: 400,
-                    fontSize: '16px',
-                    lineHeight: '24px',
-                    color: '#939393',
-                  }}>
+                  <span
+                    style={{
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
                     Email
                   </span>
                 }
                 labelCol={{ span: 24 }}
                 name="email"
-
                 rules={[
                   {
                     required: true,
@@ -351,14 +332,16 @@ export default function OwnerUpdate() {
 
               <FormItem
                 label={
-                  <span style={{
-                    fontFamily: 'Poppins',
-                    fontStyle: 'normal',
-                    fontWeight: 400,
-                    fontSize: '16px',
-                    lineHeight: '24px',
-                    color: '#939393',
-                  }}>
+                  <span
+                    style={{
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
                     Username
                   </span>
                 }
@@ -378,14 +361,16 @@ export default function OwnerUpdate() {
             <FirstLine>
               <FormItem
                 label={
-                  <span style={{
-                    fontFamily: 'Poppins',
-                    fontStyle: 'normal',
-                    fontWeight: 400,
-                    fontSize: '16px',
-                    lineHeight: '24px',
-                    color: '#939393',
-                  }}>
+                  <span
+                    style={{
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
                     Password
                   </span>
                 }
@@ -402,14 +387,16 @@ export default function OwnerUpdate() {
               </FormItem>
               <FormItem
                 label={
-                  <span style={{
-                    fontFamily: 'Poppins',
-                    fontStyle: 'normal',
-                    fontWeight: 400,
-                    fontSize: '16px',
-                    lineHeight: '24px',
-                    color: '#939393',
-                  }}>
+                  <span
+                    style={{
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
                     Phone Number
                   </span>
                 }
@@ -431,14 +418,16 @@ export default function OwnerUpdate() {
               <FormItem
                 name="gender"
                 label={
-                  <span style={{
-                    fontFamily: 'Poppins',
-                    fontStyle: 'normal',
-                    fontWeight: 400,
-                    fontSize: '16px',
-                    lineHeight: '24px',
-                    color: '#939393',
-                  }}>
+                  <span
+                    style={{
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
                     Gender
                   </span>
                 }
@@ -458,36 +447,43 @@ export default function OwnerUpdate() {
                 >
                   <Select.Option value="male">Male</Select.Option>
                   <Select.Option value="female">Female</Select.Option>
-
                 </StyleSelect>
               </FormItem>
             </FirstLine>
             <SecondLine>
-              <FormItem label={
-                <span style={{
-                  fontFamily: 'Poppins',
-                  fontStyle: 'normal',
-                  fontWeight: 400,
-                  fontSize: '16px',
-                  lineHeight: '24px',
-                  color: '#939393',
-                }}>
-                  DOB
-                </span>
-              } labelCol={{ span: 24 }} name="dob">
+              <FormItem
+                label={
+                  <span
+                    style={{
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
+                    DOB
+                  </span>
+                }
+                labelCol={{ span: 24 }}
+                name="dob"
+              >
                 <StyledDOB />
               </FormItem>
               <FormItem
-                name='role'
+                name="role"
                 label={
-                  <span style={{
-                    fontFamily: 'Poppins',
-                    fontStyle: 'normal',
-                    fontWeight: 400,
-                    fontSize: '16px',
-                    lineHeight: '24px',
-                    color: '#939393',
-                  }}>
+                  <span
+                    style={{
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
                     Role
                   </span>
                 }
@@ -500,10 +496,9 @@ export default function OwnerUpdate() {
                 ]}
               >
                 <StyleSelect
-
                   className="selectStyle"
                   placeholder="Select a role"
-                  name='role'
+                  name="role"
                   allowClear={false}
                 >
                   <Option value={3}>Admin</Option>
@@ -513,14 +508,16 @@ export default function OwnerUpdate() {
               <FormItem
                 name="status"
                 label={
-                  <span style={{
-                    fontFamily: 'Poppins',
-                    fontStyle: 'normal',
-                    fontWeight: 400,
-                    fontSize: '16px',
-                    lineHeight: '24px',
-                    color: '#939393',
-                  }}>
+                  <span
+                    style={{
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
                     Status
                   </span>
                 }
@@ -550,10 +547,12 @@ export default function OwnerUpdate() {
                     onChange={handleSearchChange}
                   />
                   <SCheckbox>
-                    {filteredGarages.map((garage) => (
+                    {filteredGarages.map(garage => (
                       <div key={garage.id}>
                         <StyleCheckBox
-                          checked={selectedGarages.some((g) => g.id === garage.id)}
+                          checked={selectedGarages.some(
+                            g => g.id === garage.id
+                          )}
                           onChange={() => handleGarageChange(garage)}
                         >
                           {garage.attributes.name}
@@ -564,8 +563,10 @@ export default function OwnerUpdate() {
                 </LeftColumn>
                 <MyDivider type="vertical" />
                 <RightColumn>
-                  <div className="select_gara">Select garages ({selectedGarages.length})</div>
-                  {selectedGarages.map((garage) => (
+                  <div className="select_gara">
+                    Select garages ({selectedGarages.length})
+                  </div>
+                  {selectedGarages.map(garage => (
                     <div className="select_remove" key={garage.id}>
                       <span>{getGarageNameById(garage.id)}</span>
                       <DeleteOutlined
@@ -600,5 +601,4 @@ export default function OwnerUpdate() {
       </AllDiv>
     </DivStyle>
   );
-
 }

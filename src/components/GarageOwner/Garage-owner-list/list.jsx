@@ -12,11 +12,12 @@ import {
   Table,
   theme,
   Modal,
+  message,
 } from 'antd';
 import '../../GarageOwner/Garage-owner-list/style.css';
 
 const GarageOwnerList = () => {
-
+  const [data, setData] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [isActived_1, setIsActived_1] = useState('Name');
   const [isActived_2, setIsActived_2] = useState('Status');
@@ -25,7 +26,6 @@ const GarageOwnerList = () => {
     pageSize: 10,
   });
   const handleView = userId => {
-
     navigate('/owner-details', { state: { userId: userId } });
   };
   const handleUpdate = userId => {
@@ -60,12 +60,8 @@ const GarageOwnerList = () => {
   const columns = [
     {
       title: '#',
-      dataIndex: 'id',
-      key: 'id',
-      render: (_, __, index) => index + 1,
-      dataIndex: 'id',
-      key: 'id',
-      render: (_, __, index) => index + 1,
+      dataIndex: 'STT',
+      key: 'STT',
     },
     {
       title: 'Name',
@@ -137,16 +133,14 @@ const GarageOwnerList = () => {
     const paginationParams = `pagination[page]=${pagination.page}&pagination[pageSize]=${pagination.pageSize}`;
 
     const apiUrl = `http://localhost:1337/api/users?${filters}&${paginationParams}`;
-
+    console.log(apiUrl);
     fetch(apiUrl, requestOptions)
-
       .then(response => response.json())
       .then(result => {
         console.log(result);
         setUserData(result);
       })
       .catch(error => console.log('error', error));
-
   }, [searchText, isActived_1, isActived_2, pagination]);
   const handlePagination = (page, pageSize) => {
     setPagination(prevPagination => ({
@@ -167,7 +161,7 @@ const GarageOwnerList = () => {
           setUserData(prevData => {
             return prevData.filter(data => data.id !== record.id);
           });
-  
+
           const jwt = localStorage.getItem('jwt');
           const requestOptions = {
             method: 'DELETE',
@@ -177,9 +171,12 @@ const GarageOwnerList = () => {
             },
             redirect: 'follow',
           };
-  
+
           fetch(`http://localhost:1337/api/users/${record.id}`, requestOptions)
-            .then(response => response.json())
+            .then(response => {
+              response.json();
+              message.success('delete sussesful');
+            })
             .then(result => {
               if (!result.success) {
                 console.log('Error deleting user');
@@ -192,7 +189,41 @@ const GarageOwnerList = () => {
       },
     });
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const jwt = localStorage.getItem('jwt');
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+          redirect: 'follow',
+        };
 
+        const response = await fetch(
+          'http://localhost:1337/api/users/me?populate=role,avatar',
+          requestOptions
+        );
+        const result = await response.json();
+
+        if (response.ok) {
+          console.log(result);
+          setData(result.role);
+          console.log(result.role);
+
+          console.error('Error:', result);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const isAdmin = data && data.type === 'admin';
   return (
     <div
       style={{
@@ -243,7 +274,6 @@ const GarageOwnerList = () => {
         <div>
           <Form>
             <Space>
-
               <Space.Compact size="large">
                 <Select
                   style={{ width: '100px' }}
@@ -286,7 +316,6 @@ const GarageOwnerList = () => {
                 blocked: user.blocked ? 'Inactive' : 'Active',
               }))}
               style={{ marginTop: 20 }}
-
             />
           </Form>
         </div>
