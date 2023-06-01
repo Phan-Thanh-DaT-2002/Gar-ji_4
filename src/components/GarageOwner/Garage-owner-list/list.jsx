@@ -13,6 +13,7 @@ import {
   theme,
   Modal,
   message,
+  Avatar,
 } from 'antd';
 import '../../GarageOwner/Garage-owner-list/style.css';
 
@@ -21,6 +22,7 @@ const GarageOwnerList = () => {
   const [searchText, setSearchText] = useState('');
   const [isActived_1, setIsActived_1] = useState('Name');
   const [isActived_2, setIsActived_2] = useState('Status');
+  const [avatar, setAvatar] = useState(null);
   const [pagination, setPagination] = useState({
     page: 1,
     pageSize: 10,
@@ -150,9 +152,48 @@ const GarageOwnerList = () => {
         console.error('Error:', error);
       }
     };
-
     fetchData();
   }, [searchText, isActived_1, isActived_2, pagination]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const jwt = localStorage.getItem('jwt');
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwt}`,
+        },
+        redirect: 'follow',
+      };
+      const promises = userData.map(item => {
+        const apiUrl = `http://localhost:1337/api/users/${item.id}?populate=avatar`;
+        return fetch(apiUrl, requestOptions)
+          .then(response => response.json())
+          .then(result => {
+            if (result) {
+              console.log('111', result.avatar.url);
+              return result.avatar.url;
+            }
+            return null;
+          })
+          .catch(error => {
+            console.log('Error fetching avatar', error);
+            return null;
+          });
+      });
+      const avatarUrls = await Promise.all(promises);
+      console.log('333', avatarUrls);
+      const avatarMap = avatarUrls.reduce((map, url, index) => {
+        const userId = userData[index].id;
+        return { ...map, [userId]: url };
+      }, {});
+      console.log('222', avatarMap);
+      setAvatar(avatarMap);
+    };
+
+    fetchData();
+  }, [userData]);
+
   const handlePagination = (page, pageSize) => {
     setPagination(prevPagination => ({
       ...prevPagination,
@@ -331,6 +372,7 @@ const GarageOwnerList = () => {
               }}
               dataSource={userData.map(user => ({
                 ...user,
+
                 blocked: user.blocked ? 'Inactive' : 'Active',
               }))}
             />

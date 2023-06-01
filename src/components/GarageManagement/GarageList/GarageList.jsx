@@ -12,11 +12,13 @@ import {
   Table,
   theme,
   Modal,
+  Avatar,
 } from 'antd';
 import './style.css';
 
 const GarageManagementList = () => {
   const navigate = useNavigate();
+  const [avatar, setAvatar] = useState(null);
   const handleView = userId => {
     navigate('/manager-details', { state: { userId: userId } });
   };
@@ -149,6 +151,44 @@ const GarageManagementList = () => {
 
     fetchData();
   }, [searchText, isActived_1, isActived_2, pagination]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const jwt = localStorage.getItem('jwt');
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwt}`,
+        },
+        redirect: 'follow',
+      };
+      const promises = data.map(item => {
+        if (!item.owner || !item.owner.data) {
+          return null;
+        }
+        const apiUrl = `http://localhost:1337/api/users/${item.owner.data.id}?populate=avatar`;
+        return fetch(apiUrl, requestOptions)
+          .then(response => response.json())
+          .then(result => {
+            if (result) {
+              console.log(result);
+              return result.avatar.url;
+            }
+            return null;
+          })
+          .catch(error => {
+            console.log('Error fetching avatar', error);
+            return null;
+          });
+      });
+      const avatarUrls = await Promise.all(promises);
+      console.log(avatarUrls);
+      setAvatar(avatarUrls);
+    };
+
+    fetchData();
+  }, [data]);
+
   const handlePagination = (page, pageSize) => {
     setPagination(prevPagination => ({
       ...prevPagination,
@@ -273,7 +313,19 @@ const GarageManagementList = () => {
               }}
               dataSource={data.map((data, index) => ({
                 ...data,
-                owner: data.owner?.data?.attributes?.fullname || '',
+                STT: index + 1,
+                owner: (
+                  <>
+                    <Avatar
+                      size={32}
+                      src={`http://localhost:1337${avatar[index]}`}
+                      alt="avatar"
+                    />
+                    <span style={{ marginLeft: '5px' }}>
+                      {data.owner?.data?.attributes?.fullname || ''}
+                    </span>
+                  </>
+                ),
               }))}
               style={{
                 fontFamily: 'Poppins',
