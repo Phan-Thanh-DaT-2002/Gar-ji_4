@@ -1,143 +1,148 @@
 import React, { useEffect, useState } from 'react';
 
 import {
-  
- 
+
+
   AllDiv,
   DivForm,
   DivStyle,
- 
+
   FirstLine,
   FormItem,
   ButtonStyle,
   StyleCommentBox,
   StyledTextArea,
   FirstInfo,
-  
+
 } from './index.js';
 import {
 
   Form,
   Input,
   Select,
- 
+
   Divider,
   message,
-  
+
 } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function UpdateServices() {
-    const [form] = Form.useForm();
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
- 
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
   const handleView = (userId) => {
     navigate('/services-update', { state: { userId: userId } });
   };
   const location = useLocation();
   const { userId } = location.state || {};
-const [data, setData] = useState(null);
+  const [data, setData] = useState(null);
 
 
-const [owner, setOwner] = useState(null);
+  const [owner, setOwner] = useState(null);
 
-const [serviceValues, setServiceValues] = useState([]);
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const jwt = localStorage.getItem('jwt');
-      const requestOptions = {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${jwt}`,
-        },
-        redirect: 'follow',
-      };
-
-      const response = await fetch(
-        `http://localhost:1337/api/garage-services/${userId}`,
-        requestOptions
-      );
-
-      if (response.ok) {
-        const result = await response.json();
-        console.log(result);
-        setData(result);
-        form.setFieldsValue({
-          name: result.data.attributes.name,
-          description:result.data.attributes.description,
-          minPrice:result.data.attributes.minPrice,
-          maxPrice:result.data.attributes.maxPrice,
-        
-
-          
-        });
-      } else {
-        console.error('Error:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
-  fetchData();
-}, [userId]);
-    const onFinish = async (values) => {
+  const [serviceValues, setServiceValues] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
       try {
-        const jwt = localStorage.getItem('jwt')
-        const minPrice = parseInt(values.minPrice);
-        const maxPrice = parseInt(values.maxPrice);
-        if (minPrice >= maxPrice) {
-          message.error('Min price must be lower than max price');
-          return;
-        }
-        const raw = JSON.stringify({
-          "data": {
-            name: values.name,
-            description: values.description,
-            minPrice: minPrice,
-            maxPrice: maxPrice
-          }
-        });
+        const jwt = localStorage.getItem('jwt');
         const requestOptions = {
-          method: 'PUT',
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwt}`,
+            Authorization: `Bearer ${jwt}`,
           },
-          body: raw,
           redirect: 'follow',
         };
-    
-        const response = await fetch(`http://localhost:1337/api/garage-services/${userId}`, requestOptions);
-        const data = await response.json();
-    
+
+        const response = await fetch(
+          `http://localhost:1337/api/garage-services/${userId}`,
+          requestOptions
+        );
+
         if (response.ok) {
-          console.log('Response:', data);
-          message.success('Form submitted successfully!');
-         
+          const result = await response.json();
+          console.log(result);
+          setData(result);
+          form.setFieldsValue({
+            name: result.data.attributes.name,
+            description: result.data.attributes.description,
+            minPrice: result.data.attributes.minPrice,
+            maxPrice: result.data.attributes.maxPrice,
+
+
+
+          });
         } else {
-          console.error('Error:', data);
-          message.error('Failed to submit form!');
-        
+          console.error('Error:', response.statusText);
         }
       } catch (error) {
         console.error('Error:', error);
-        message.error('An error occurred');
-       
       }
     };
-  
-    const onFinishFailed = errorInfo => {
-      console.log('Failed:', errorInfo);
-    };
-    const { Option } = Select;
-    const onCancel = () => {
-      form.resetFields();
-      window.history.back()
-    };
+
+    fetchData();
+  }, [userId]);
+  const onFinish = async (values) => {
+    try {
+      const jwt = localStorage.getItem('jwt')
+      const minPrice = parseInt(values.minPrice);
+      const maxPrice = parseInt(values.maxPrice);
+      if (minPrice >= maxPrice) {
+        message.error('Min price must be lower than max price');
+        return;
+      }
+      const raw = JSON.stringify({
+        "data": {
+          name: values.name,
+          description: values.description,
+          minPrice: minPrice,
+          maxPrice: maxPrice
+        }
+      });
+      const requestOptions = {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwt}`,
+        },
+        body: raw,
+        redirect: 'follow',
+      };
+
+      const response = await fetch(`http://localhost:1337/api/garage-services/${userId}`, requestOptions);
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log('Response:', data);
+        message.success('Form submitted successfully!');
+        onSave();
+
+      } else {
+        console.error('Error:', data);
+        message.error('Failed to submit form!');
+
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      message.error('An error occurred');
+
+    }
+  };
+
+  const onFinishFailed = errorInfo => {
+    console.log('Failed:', errorInfo);
+  };
+  const { Option } = Select;
+  const onCancel = () => {
+    form.resetFields();
+    window.history.back()
+  };
+
+  const onSave = () => {
+    navigate('/garage-services');
+  };
   return (
     <DivStyle>
       <AllDiv>
@@ -162,17 +167,17 @@ useEffect(() => {
             <FirstLine>
               <FormItem
                 label={
-              <span style={{
-                fontFamily: 'Poppins',
-                fontStyle: 'normal',
-                fontWeight: 400,
-                fontSize: '16px',
-                lineHeight: '24px',
-                color: '#939393',
-              }}>
-                Name
-              </span>
-            }
+                  <span style={{
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
+                    Name
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 name="name"
                 rules={[
@@ -186,17 +191,17 @@ useEffect(() => {
               </FormItem>
               <FormItem
                 label={
-              <span style={{
-                fontFamily: 'Poppins',
-                fontStyle: 'normal',
-                fontWeight: 400,
-                fontSize: '16px',
-                lineHeight: '24px',
-                color: '#939393',
-              }}>
-                Min price
-              </span>
-            }
+                  <span style={{
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
+                    Min price
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 name="minPrice"
                 rules={[
@@ -208,7 +213,7 @@ useEffect(() => {
                     pattern: /^[0-9]*$/,
                     message: 'Please input a valid price!',
                   },
-                  
+
                 ]}
               >
                 <Input placeholder="Enter min price" />
@@ -216,17 +221,17 @@ useEffect(() => {
 
               <FormItem
                 label={
-              <span style={{
-                fontFamily: 'Poppins',
-                fontStyle: 'normal',
-                fontWeight: 400,
-                fontSize: '16px',
-                lineHeight: '24px',
-                color: '#939393',
-              }}>
-                Max price
-              </span>
-            }
+                  <span style={{
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
+                    Max price
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 name="maxPrice"
                 rules={[
@@ -244,19 +249,19 @@ useEffect(() => {
               </FormItem>
             </FirstLine>
             <StyleCommentBox>
-            <FormItem
+              <FormItem
                 label={
-              <span style={{
-                fontFamily: 'Poppins',
-                fontStyle: 'normal',
-                fontWeight: 400,
-                fontSize: '16px',
-                lineHeight: '24px',
-                color: '#939393',
-              }}>
-                Description
-              </span>
-            }
+                  <span style={{
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
+                    Description
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 name="description"
                 rules={[
@@ -264,33 +269,35 @@ useEffect(() => {
                     required: true,
                     message: 'Please input description',
                   },
-                 
+
                 ]}
-                
+
               >
-                <StyledTextArea 
-                autoSize={{ minRows: 4, maxRows: 30 }}
-                placeholder="Enter a description" 
-                style={{
-                fontFamily: 'Poppins',
-                fontStyle: 'normal',
-                fontWeight: 500,
-                fontSize: '16px',
-                lineHeight: '24px',
-                color: '#111111',
-              }}
+                <StyledTextArea
+                  autoSize={{ minRows: 4, maxRows: 30 }}
+                  placeholder="Enter a description"
+                  style={{
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 500,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#111111',
+                  }}
                 />
               </FormItem>
             </StyleCommentBox>
 
-            
+
             <div className="Btns">
               <Divider style={{ border: '1px solid #DDE4EE', margin: 0 }} />
               <div className="btn-button">
                 <ButtonStyle
                   type="primary"
                   style={{ background: '#8767E1' }}
+                  // onClick={onSave}
                   htmlType="submit"
+
                 >
                   <span>Save</span>
                 </ButtonStyle>

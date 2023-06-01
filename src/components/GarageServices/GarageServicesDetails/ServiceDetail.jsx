@@ -11,18 +11,16 @@ import {
   StyledTextArea,
   FirstInfo,
 } from './index.js';
-import { Form, Input, Select, Divider, message } from 'antd';
+import { Form, Input, Select, Divider, message, Modal } from 'antd';
+import moment from 'moment';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function ServiceDetail() {
+  const [userData, setUserData] = useState([]);
+
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const handleView = userId => {
-    navigate('/services-update', { state: { userId: userId } });
-  };
-  const location = useLocation();
-  const { userId } = location.state || {};
-  const [data, setData] = useState(null);
+  const { Option } = Select;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,6 +36,52 @@ export default function ServiceDetail() {
         };
 
         const response = await fetch(
+          'http://localhost:1337/api/users/me?populate=role,avatar',
+          requestOptions
+        );
+        const result = await response.json();
+
+        if (response.ok) {
+          console.log(result);
+          setData(result.role);
+          console.log(result.role.type);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handok = () => {
+    navigate('/garage-services');
+  };
+
+  const handleEdit = userId => {
+    navigate('/services-update', { state: { userId: userId } });
+  };
+
+  const location = useLocation();
+  const { userId } = location.state || {};
+  const [data, setData] = useState(null);
+  const [temp_data_service, settemp_data_service] = useState(0);
+  const [totalGarages, setTotalGarages] = useState(0);
+  const [garagesData, setGaragesData] = useState([]);
+  //hien thi thong tin ra man hinh
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const jwt = localStorage.getItem('jwt');
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+          redirect: 'follow',
+        };
+
+        const response = await fetch(
           `http://localhost:1337/api/garage-services/${userId}`,
           requestOptions
         );
@@ -45,7 +89,7 @@ export default function ServiceDetail() {
         if (response.ok) {
           const result = await response.json();
           console.log(result);
-          setData(result);
+          settemp_data_service(result);
           form.setFieldsValue({
             name: result.data.attributes.name,
             description: result.data.attributes.description,
@@ -62,6 +106,92 @@ export default function ServiceDetail() {
 
     fetchData();
   }, [userId]);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const jwt = localStorage.getItem('jwt');
+  //       const requestOptions = {
+  //         method: 'GET',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           Authorization: `Bearer ${jwt}`,
+  //         },
+  //         redirect: 'follow',
+  //       };
+
+  //       const response = await fetch(
+  //         `http://localhost:1337/api/garage-services/${filters}`,
+  //         requestOptions
+  //       );
+
+  //       if (response.ok) {
+  //         const result = await response.json();
+  //         console.log(result);
+  //         // setData(result);
+  //         // console.log(data);
+  //         setGaragesData(result.garages);
+  //         setTotalGarages(result.garages.length);
+  //         temp_data_service(result.id);
+  //         form.setFieldsValue({
+  //           name: result.fullname,
+  //           email: result.email,
+  //           username: result.username,
+  //           phone: result.phoneNumber,
+  //           gender: result.gender,
+  //           dob: result?.dob ? moment(result.dob, 'YYYY-MM-DD') : null,
+  //           role: result.role.name,
+  //           garages: result.garages.map(garage => garage.id),
+  //         });
+  //       } else {
+  //         console.error('Error:', response.statusText);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error:', error);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, [userId]);
+
+  const onDelete = record => {
+    console.log(record);
+
+    Modal.confirm({
+      title: 'Are you sure about that?',
+      onOk: () => {
+        setUserData(prevData => {
+          return prevData.filter(data => data.id !== record);
+        });
+
+        const jwt = localStorage.getItem('jwt');
+        console.log(jwt);
+        const requestOptions = {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+          redirect: 'follow',
+        };
+        fetch(
+          `http://localhost:1337/api/garage-services/${record}`,
+          requestOptions
+        )
+          .then(response => {
+            response.json();
+            message.success('delete sussesful');
+            handok();
+          })
+          .then(result => {
+            if (!result.success) {
+              console.log('Error deleting');
+            }
+          })
+          .catch(error => console.log('Error deleting user', error));
+      },
+    });
+  };
+  const [serviceValues, setServiceValues] = useState([]);
+
   const onCancel = () => {
     form.resetFields();
   };
@@ -219,11 +349,14 @@ export default function ServiceDetail() {
                 <ButtonStyle
                   type="primary"
                   style={{ background: '#8767E1' }}
-                  onClick={() => handleView(userId)}
+                  onClick={() => handleEdit(userId)}
                 >
                   <span>Edit</span>
                 </ButtonStyle>
-                <ButtonStyle htmlType="button" onClick={onCancel}>
+                <ButtonStyle
+                  htmlType="button"
+                  onClick={() => onDelete(temp_data_service.data.id)}
+                >
                   <span>Delete</span>
                 </ButtonStyle>
               </div>
