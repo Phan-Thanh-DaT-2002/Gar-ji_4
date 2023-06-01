@@ -1,20 +1,28 @@
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
-import { Form, Button, Row, Col, Input, Select,Avatar, Space, Table, theme, Modal } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import {
+  Form,
+  Button,
+  Row,
+  Col,
+  Input,
+  Select,
+  Space,
+  Table,
+  theme,
+  Modal,
+  Avatar,
+} from 'antd';
 import './style.css';
-import { useNavigate } from 'react-router';
 
 const GarageManagementList = () => {
   const navigate = useNavigate();
   const [avatar, setAvatar] = useState(null);
-  const handleAdd = () => {
-    navigate('/create-manager');
-  };
-  
-const handleView = (userId) => {
+  const handleView = userId => {
     navigate('/manager-details', { state: { userId: userId } });
   };
-  const handleUpdate = (userId) => {
+  const handleUpdate = userId => {
     navigate('/manager-update', { state: { userId: userId } });
   };
   const [searchText, setSearchText] = useState('');
@@ -38,7 +46,7 @@ const handleView = (userId) => {
   ];
   const optionStatus = [
     {
-      value: 'Status',
+      value: '',
       label: 'Status',
     },
     {
@@ -60,21 +68,6 @@ const handleView = (userId) => {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      filteredValue: [searchText],
-      onFilter: (value, record) => {
-        if (String(isActived_1).toLowerCase().includes('name')) {
-          return String(record.name)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-        } else if (String(isActived_1).toLowerCase().includes('email')) {
-          return String(record.email)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-        } else
-          return String(record.name)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-      },
     },
     {
       title: 'Email',
@@ -89,33 +82,27 @@ const handleView = (userId) => {
     {
       title: 'Garage owner',
       dataIndex: 'owner',
-      key: 'owner',
-      
+      key: 'owner,',
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
-      
     },
     {
       title: 'Actions',
       key: 'actions',
       render: (_, record) => (
-        
         <Space size="middle">
-        <div>{console.log(record)}</div>
           <EyeOutlined onClick={() => handleView(record.id)} />
           <EditOutlined onClick={() => handleUpdate(record.id)} />
-          <DeleteOutlined onClick={()=> handleDelete(record)}/>
+          <DeleteOutlined onClick={() => handleDelete(record)} />
         </Space>
       ),
     },
   ];
- 
+
   const [data, setData] = useState([]);
-  
-  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -209,10 +196,12 @@ const handleView = (userId) => {
       pageSize,
     }));
   };
-
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+  const handleAdd = () => {
+    navigate('/manager-create');
+  };
   const handleDelete = record => {
     Modal.confirm({
       title: 'Are you sure about that?',
@@ -247,19 +236,22 @@ const handleView = (userId) => {
       <div>
         <Row>
           <Col md={22}>
-            <h1 style={{
-              fontFamily: 'Poppins',
-              fontStyle: 'normal',
-              fontWeight: 500,
-              fontSize: '24px',
-              lineHeight: '32px',
-              color: '#111111',
-
-            }}>All Garages</h1>
+            <h1
+              style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                fontSize: '24px',
+                lineHeight: '32px',
+                color: '#111111',
+              }}
+            >
+              All Garages
+            </h1>
           </Col>
           <Col md={2}>
             <Button
-            onClick={handleAdd}
+              onClick={handleAdd}
               type="primary"
               style={{
                 background: '#8767E1',
@@ -283,7 +275,7 @@ const handleView = (userId) => {
         <div>
           <Form>
             <Space>
-            <Space.Compact size="large">
+              <Space.Compact size="large">
                 <Select
                   style={{ width: '100px' }}
                   defaultValue="Name"
@@ -336,14 +328,14 @@ const handleView = (userId) => {
                 ),
               }))}
               style={{
-                    fontFamily: 'Poppins',
-                  fontStyle: 'normal',
-                  fontWeight: '500',
-                  fontSize: '13px',
-                  lineHeight: '24px',
-                  color: '#2F3A4C',
-                marginTop:'20px'
-                  }} 
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: '500',
+                fontSize: '13px',
+                lineHeight: '24px',
+                color: '#2F3A4C',
+                marginTop: '20px',
+              }}
             />
           </Form>
         </div>
