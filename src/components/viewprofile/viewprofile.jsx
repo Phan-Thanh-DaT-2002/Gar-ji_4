@@ -51,11 +51,11 @@ function ViewProfile() {
   }, []);
 
   const handleClick = e => {
-    if (e == 1)
+    if (e === 1)
       navigate('/update-profile', {
         state: { data, role: data.role.name, userId: userId },
       });
-    else if (e == 2) navigate('/change-password');
+    else if (e === 2) navigate('/change-password');
   };
 
   if (!data) {

@@ -19,7 +19,6 @@ import CreateServices from './components/GarageServices/GarageServicesCreate/Cre
 import CreateManager from './components/GarageManagement/Create/create_manager';
 import ServiceDetail from './components/GarageServices/GarageServicesDetails/ServiceDetail';
 import UpdateServices from './components/GarageServices/GarageServicesUpdate/UpdateServices';
-import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 
 const router = createBrowserRouter([
   {
@@ -32,130 +31,67 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: (
-          <PrivateRoute>
-            <ViewProfile />
-          </PrivateRoute>
-        ),
-      },
-      {
-        path: '/update-profile',
-        element: (
-          <PrivateRoute>
-            <UpdateProfile />
-          </PrivateRoute>
-        ),
-      },
-      {
-        path: '/change-password',
-        element: (
-          <PrivateRoute>
-            <ChangePassword />
-          </PrivateRoute>
-        ),
+        element: <ViewProfile />,
       },
       {
         path: '/garage',
-        element: (
-          <PrivateRoute>
-            <GarageManagementList />
-          </PrivateRoute>
-        ),
-        children: [
-          {
-            path: 'manager-details',
-            element: (
-              <PrivateRoute>
-                <ManagerDetails />
-              </PrivateRoute>
-            ),
-          },
-          {
-            path: 'create-manager',
-            element: (
-              <PrivateRoute>
-                <CreateManager />
-              </PrivateRoute>
-            ),
-          },
-          {
-            path: 'manager-update',
-            element: (
-              <PrivateRoute>
-                <UpdateMana />
-              </PrivateRoute>
-            ),
-          },
-        ],
+        element: <GarageManagementList />,
+      },
+      {
+        path: '/update-profile',
+        element: <UpdateProfile />,
+      },
+      {
+        path: '/change-password',
+        element: <ChangePassword />,
       },
       {
         path: '/garage-owner',
-        element: (
-          <PrivateRoute>
-            <GarageOwnerList />
-          </PrivateRoute>
-        ),
-        children: [
-          {
-            path: 'owner-details',
-            element: (
-              <PrivateRoute>
-                {' '}
-                <OwnerView />
-              </PrivateRoute>
-            ),
-          },
-          {
-            path: 'garage-owner-create',
-            element: (
-              <PrivateRoute>
-                <Create />
-              </PrivateRoute>
-            ),
-          },
-          {
-            path: 'owner-update',
-            element: (
-              <PrivateRoute>
-                <OwnerUpdate />
-              </PrivateRoute>
-            ),
-          },
-        ],
+        element: <GarageOwnerList />,
       },
       {
         path: '/garage-services',
-        element: (
-          <PrivateRoute>
-            <GarageServicesList />
-          </PrivateRoute>
-        ),
-        children: [
-          {
-            path: 'services-detail',
-            element: (
-              <PrivateRoute>
-                <ServiceDetail />
-              </PrivateRoute>
-            ),
-          },
-          {
-            path: 'create-services',
-            element: (
-              <PrivateRoute>
-                <CreateServices />
-              </PrivateRoute>
-            ),
-          },
-          {
-            path: 'services-update',
-            element: (
-              <PrivateRoute>
-                <UpdateServices />
-              </PrivateRoute>
-            ),
-          },
-        ],
+        element: <GarageServicesList />,
+      },
+      {
+        path: '/garage-owner-create',
+        element: <Create />,
+      },
+      {
+        path: '/owner-details',
+        element: <OwnerView />,
+      },
+      {
+        path: '/owner-update',
+        element: <OwnerUpdate />,
+      },
+      {
+        path: '/manager-details',
+        element: <ManagerDetails />,
+      },
+      {
+        path: '/manager-update',
+        element: <UpdateMana />,
+      },
+      {
+        path: '/create-services',
+        element: <CreateServices />,
+      },
+      {
+        path: '/create-manager',
+        element: <CreateManager />,
+      },
+      {
+        path: '/services-detail',
+        element: <ServiceDetail />,
+      },
+      {
+        path: '/services-update',
+        element: <UpdateServices />,
+      },
+      {
+        path: '/manager-create',
+        element: <CreateManager />,
       },
     ],
   },

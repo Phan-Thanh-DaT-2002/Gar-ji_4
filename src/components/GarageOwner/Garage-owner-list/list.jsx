@@ -1,26 +1,34 @@
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { Form, Button, Row, Col, Input, Select, Space, Table, theme, Modal, message } from 'antd';
+import {
+  Form,
+  Button,
+  Row,
+  Col,
+  Input,
+  Select,
+  Space,
+  Table,
+  theme,
+  Modal,
+  message,
+} from 'antd';
 import '../../GarageOwner/Garage-owner-list/style.css';
 
-
 const GarageOwnerList = () => {
-
   const location = useLocation();
   const [data, setData] = useState(null);
-  const [userId, setUserId] = useState(null)
-  const handleView = (userId) => {
+  const [userId, setUserId] = useState(null);
+  const handleView = userId => {
     navigate('/owner-details', { state: { userId: userId } });
   };
-  const handleUpdate = (userId) => {
+  const handleUpdate = userId => {
     if (isAdmin) {
       navigate('/owner-update', { state: { userId: userId } });
-    }
-    else {
+    } else {
       message.error('You do not have permission to update.');
     }
-
   };
 
   const [searchText, setSearchText] = useState('');
@@ -127,7 +135,7 @@ const GarageOwnerList = () => {
       redirect: 'follow',
     };
 
-    fetch("http://localhost:1337/api/users", requestOptions)
+    fetch('http://localhost:1337/api/users', requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
@@ -318,5 +326,5 @@ const GarageOwnerList = () => {
       </div>
     </div>
   );
-}
+};
 export default GarageOwnerList;
