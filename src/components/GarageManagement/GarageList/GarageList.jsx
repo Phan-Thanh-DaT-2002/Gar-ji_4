@@ -17,8 +17,12 @@ import './style.css';
 
 const GarageManagementList = () => {
   const navigate = useNavigate();
-
-  const handleView = userId => {
+  const handleAdd = () => {
+    navigate('/garage-owner-create');
+  };
+  const [searchCategory, setSearchCategory] = useState('Name');
+  const [statusFilter, setStatusFilter] = useState('');
+const handleView = (userId) => {
     navigate('/manager-details', { state: { userId: userId } });
   };
   const handleUpdate = userId => {
@@ -178,6 +182,7 @@ const GarageManagementList = () => {
   //     })
   //     .catch(error => console.log('error', error));
   // }, []);
+
 
   const {
     token: { colorBgContainer },

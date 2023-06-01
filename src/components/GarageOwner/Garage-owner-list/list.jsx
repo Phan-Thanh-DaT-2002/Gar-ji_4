@@ -16,6 +16,7 @@ import {
 import '../../GarageOwner/Garage-owner-list/style.css';
 
 const GarageOwnerList = () => {
+
   const [searchText, setSearchText] = useState('');
   const [isActived_1, setIsActived_1] = useState('Name');
   const [isActived_2, setIsActived_2] = useState('Status');
@@ -24,11 +25,13 @@ const GarageOwnerList = () => {
     pageSize: 10,
   });
   const handleView = userId => {
+
     navigate('/owner-details', { state: { userId: userId } });
   };
   const handleUpdate = userId => {
     navigate('/owner-update', { state: { userId: userId } });
   };
+
   const { Search } = Input;
   const options = [
     {
@@ -57,8 +60,12 @@ const GarageOwnerList = () => {
   const columns = [
     {
       title: '#',
-      dataIndex: 'STT',
-      key: 'STT',
+      dataIndex: 'id',
+      key: 'id',
+      render: (_, __, index) => index + 1,
+      dataIndex: 'id',
+      key: 'id',
+      render: (_, __, index) => index + 1,
     },
     {
       title: 'Name',
@@ -107,6 +114,7 @@ const GarageOwnerList = () => {
       },
       redirect: 'follow',
     };
+
     let filterParams = {};
 
     if (isActived_2 === 'Status') {
@@ -131,12 +139,14 @@ const GarageOwnerList = () => {
     const apiUrl = `http://localhost:1337/api/users?${filters}&${paginationParams}`;
 
     fetch(apiUrl, requestOptions)
+
       .then(response => response.json())
       .then(result => {
         console.log(result);
         setUserData(result);
       })
       .catch(error => console.log('error', error));
+
   }, [searchText, isActived_1, isActived_2, pagination]);
   const handlePagination = (page, pageSize) => {
     setPagination(prevPagination => ({
@@ -153,28 +163,32 @@ const GarageOwnerList = () => {
     Modal.confirm({
       title: 'Are you sure about that?',
       onOk: () => {
-        setUserData(prevData => {
-          return prevData.filter(data => data.id !== record.id);
-        });
-
-        const jwt = localStorage.getItem('jwt');
-        const requestOptions = {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${jwt}`,
-          },
-          redirect: 'follow',
-        };
-
-        fetch(`http://localhost:1337/api/users/${record.id}`, requestOptions)
-          .then(response => response.json())
-          .then(result => {
-            if (!result.success) {
-              console.log('Error deleting user');
-            }
-          })
-          .catch(error => console.log('Error deleting user', error));
+        if (isAdmin) {
+          setUserData(prevData => {
+            return prevData.filter(data => data.id !== record.id);
+          });
+  
+          const jwt = localStorage.getItem('jwt');
+          const requestOptions = {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${jwt}`,
+            },
+            redirect: 'follow',
+          };
+  
+          fetch(`http://localhost:1337/api/users/${record.id}`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+              if (!result.success) {
+                console.log('Error deleting user');
+              }
+            })
+            .catch(error => console.log('Error deleting user', error));
+        } else {
+          message.error('You do not have permission to delete.');
+        }
       },
     });
   };
@@ -229,6 +243,7 @@ const GarageOwnerList = () => {
         <div>
           <Form>
             <Space>
+
               <Space.Compact size="large">
                 <Select
                   style={{ width: '100px' }}
@@ -271,6 +286,7 @@ const GarageOwnerList = () => {
                 blocked: user.blocked ? 'Inactive' : 'Active',
               }))}
               style={{ marginTop: 20 }}
+
             />
           </Form>
         </div>
