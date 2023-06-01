@@ -6,9 +6,9 @@ import '../../GarageOwner/Garage-owner-list/style.css';
 
 
 const GarageOwnerList = () => {
-  const [filterField, setFilterField] = useState('Name');
-const [filterValue, setFilterValue] = useState('');
-  const location = useLocation(); 
+
+  const location = useLocation();
+
   const [data, setData] = useState(null);
   const [userId, setUserId] = useState(null)
   const handleView = (userId) => {
@@ -17,7 +17,7 @@ const [filterValue, setFilterValue] = useState('');
   const handleUpdate = (userId) => {
     navigate('/owner-update', { state: { userId: userId } });
   };
-  
+
   const [searchText, setSearchText] = useState('');
   const [isActived_1, setIsActived_1] = useState('');
   const [isActived_2, setIsActived_2] = useState('');
@@ -58,7 +58,19 @@ const [filterValue, setFilterValue] = useState('');
       key: 'username',
       filteredValue: [filterValue],
       onFilter: (value, record) => {
-        return String(record.username).toLowerCase().includes(value.toLowerCase());
+        if (String(isActived_1).toLowerCase().includes('username')) {
+          return String(record.username)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+        } else if (String(isActived_1).toLowerCase().includes('email')) {
+          return String(record.email)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+        } else
+          return String(record.username)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+
       },
     },
     {
@@ -87,10 +99,11 @@ const [filterValue, setFilterValue] = useState('');
       key: 'actions',
       render: (_, record) => (
         <Space size="middle">
-  <EyeOutlined onClick={() => handleView(record.id)} />
-  <EditOutlined onClick={() => handleUpdate(record.id)} />
-  <DeleteOutlined onClick={()=> handleDelete(record)}/>
-</Space>
+          <EyeOutlined onClick={() => handleView(record.id)} />
+          <EditOutlined onClick={() => handleUpdate(record.id)} />
+          <DeleteOutlined onClick={() => handleDelete(record)} />
+        </Space>
+
       ),
     },
   ];
@@ -147,6 +160,7 @@ const [filterValue, setFilterValue] = useState('');
           redirect: 'follow',
         };
 
+
         fetch(`http://localhost:1337/api/users/${record.id}`, requestOptions)
           .then(response => response.json())
           .then(result => {
@@ -158,39 +172,6 @@ const [filterValue, setFilterValue] = useState('');
       },
     });
   };
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const jwt = localStorage.getItem('jwt');
-        const requestOptions = {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${jwt}`,
-          },
-          redirect: 'follow',
-        };
-
-        const response = await fetch(
-          'http://localhost:1337/api/users/me?populate=role',
-          requestOptions
-        );
-        const result = await response.json();
-
-        if (response.ok) {
-          console.log(result);
-          setData(result);
-          setUserId(result.id); 
-          console.error('Error:', result);
-        }
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
   return (
     <div
       style={{
@@ -266,18 +247,19 @@ const [filterValue, setFilterValue] = useState('');
                 />
               </Space.Compact>
             </Space>
-            
-            <Table pagination={{pageSize: 5}} columns={columns} dataSource={userData && userData.map((user, id) => {
-              return { ...user, STT: id + 1, blocked:user.blocked?'Inactive':'Active' }
+
+            <Table pagination={{ pageSize: 5 }} columns={columns} dataSource={userData && userData.map((user, id) => {
+              return { ...user, STT: id + 1, blocked: user.blocked ? 'Inactive' : 'Active' }
             })} style={{
-                    fontFamily: 'Poppins',
-                  fontStyle: 'normal',
-                  fontWeight: '500',
-                  fontSize: '13px',
-                  lineHeight: '24px',
-                  color: '#2F3A4C',
-                  marginTop:'20px'
-                  }} />
+              fontFamily: 'Poppins',
+              fontStyle: 'normal',
+              fontWeight: '500',
+              fontSize: '13px',
+              lineHeight: '24px',
+              color: '#2F3A4C',
+              marginTop: '20px'
+            }} />
+
           </Form>
         </div>
       </div>
