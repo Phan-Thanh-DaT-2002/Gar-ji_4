@@ -5,10 +5,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import React from 'react';
 import './style.css';
-
 import Profile from '../../components/avatar/profile';
 import { Outlet } from 'react-router-dom';
-
 
 const { Header, Content, Sider } = Layout;
 
