@@ -65,8 +65,8 @@ const GarageOwnerList = () => {
     },
     {
       title: 'Name',
-      dataIndex: 'username',
-      key: 'username',
+      dataIndex: 'fullname',
+      key: 'fullname',
     },
     {
       title: 'Email',
@@ -101,46 +101,54 @@ const GarageOwnerList = () => {
     token: { colorBgContainer },
   } = theme.useToken();
   useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    const requestOptions = {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${jwt}`,
-      },
-      redirect: 'follow',
+    const fetchData = async () => {
+      try {
+        const jwt = localStorage.getItem('jwt');
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+          redirect: 'follow',
+        };
+
+        let filterParams = {};
+
+        if (isActived_2 === 'Status') {
+          filterParams = {};
+        } else if (isActived_2 === 'Active') {
+          filterParams['blocked'] = false;
+        } else if (isActived_2 === 'Inactive') {
+          filterParams['blocked'] = true;
+        }
+
+        if (isActived_1 === 'Name') {
+          filterParams['fullname][$contains]'] = searchText;
+        } else if (isActived_1 === 'Email') {
+          filterParams['email][$contains]'] = searchText;
+        }
+
+        const filters = Object.entries(filterParams)
+          .map(([key, value]) => `filters[${key}]=${encodeURIComponent(value)}`)
+          .join('&');
+        const paginationParams = `pagination[page]=${pagination.page}&pagination[pageSize]=${pagination.pageSize}`;
+
+        const apiUrl = `http://localhost:1337/api/users?${filters}&${paginationParams}`;
+
+        const response = await fetch(apiUrl, requestOptions);
+        const result = await response.json();
+
+        if (response.ok) {
+          setUserData(result);
+          console.error('Error:', result);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
     };
 
-    let filterParams = {};
-
-    if (isActived_2 === 'Status') {
-      filterParams = {};
-    } else if (isActived_2 === 'Active') {
-      filterParams['blocked'] = false;
-    } else if (isActived_2 === 'Inactive') {
-      filterParams['blocked'] = true;
-    }
-
-    if (isActived_1 === 'Name') {
-      filterParams['fullname][$contains]'] = searchText;
-    } else if (isActived_1 === 'Email') {
-      filterParams['email][$contains]'] = searchText;
-    }
-
-    const filters = Object.entries(filterParams)
-      .map(([key, value]) => `filters[${key}]=${encodeURIComponent(value)}`)
-      .join('&');
-    const paginationParams = `pagination[page]=${pagination.page}&pagination[pageSize]=${pagination.pageSize}`;
-
-    const apiUrl = `http://localhost:1337/api/users?${filters}&${paginationParams}`;
-    console.log(apiUrl);
-    fetch(apiUrl, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        console.log(result);
-        setUserData(result);
-      })
-      .catch(error => console.log('error', error));
+    fetchData();
   }, [searchText, isActived_1, isActived_2, pagination]);
   const handlePagination = (page, pageSize) => {
     setPagination(prevPagination => ({
@@ -209,7 +217,6 @@ const GarageOwnerList = () => {
         const result = await response.json();
 
         if (response.ok) {
-          console.log(result);
           setData(result.role);
           console.log(result.role);
 
