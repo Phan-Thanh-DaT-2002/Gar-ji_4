@@ -24,37 +24,39 @@ import {
 } from './index.js';
 import { Form, Input, Select, Divider, message } from 'antd';
 import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
 
 function CreateManager() {
   const [garageNames, setGarageNames] = useState([]);
-
+  const navigate = useNavigate();
+  
 const checkNameExists = (name) => {
   return garageNames.includes(name);
 };
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [garageOwners, setGarageOwners] = useState([]); // Chỉnh sửa tên biến thành 'setGarageOwners'
-
+  const [garageOwners, setGarageOwners] = useState([]);
+  const [userData, setUserData] = useState([])
   useEffect(() => {
     const jwt = localStorage.getItem('jwt');
     const requestOptions = {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${jwt}`,
+        Authorization: `Bearer ${jwt}`,
       },
-      redirect: 'follow'
+      redirect: 'follow',
+      
     };
-  
     fetch("http://localhost:1337/api/users", requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
-        setGarageOwners(result); // Sửa thành setGarageOwners(result)
+        setUserData(result);
+        setGarageOwners(result)
       })
       .catch(error => console.log('error', error));
   }, []);
-  
   const onFinish = async (values, form) => {
     try {
       const jwt = localStorage.getItem('jwt');
@@ -74,19 +76,6 @@ const checkNameExists = (name) => {
         ]);
         return;
       }
-      const garageName = values.name;
-      const isNameExists = checkNameExists(garageName);
-  
-      if (isNameExists) {
-        form.setFields([
-          {
-            name: 'name',
-            errors: ['Tên đã tồn tại!'],
-          },
-        ]);
-        return;
-      }
-  
       const raw = JSON.stringify({
         data: {
           name: values.name,
@@ -113,26 +102,19 @@ const checkNameExists = (name) => {
         redirect: 'follow',
       };
   
-      const response = await fetch('http://localhost:1337/api/garages', requestOptions);
+      const response = await fetch('http://localhost:1337/api/garages?populate=role', requestOptions);
       const data = await response.json();
       if (response.ok) {
         console.log('Response:', data);
         message.success('Form submitted successfully!');
-        form.resetFields();
+        
+        setTimeout(() => {
+          navigate('/garage');
+        }, 3000); 
       } else {
         console.error('Error:', data);
         const errorMessage = data.error.message || 'Failed to submit form!';
         message.error(errorMessage);
-  
-        if (data.details && data.details.errors && data.details.errors.length > 0) {
-          data.details.errors.forEach((error) => {
-            if (error.path && error.path.length > 0) {
-              const errorField = error.path[0];
-              const errorMessage = error.message;
-              message.error(`Error in field '${errorField}': ${errorMessage}`);
-            }
-          });
-        }
       }
     } catch (error) {
       console.error('Error:', error);
@@ -437,10 +419,12 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
                   },
                 ]}
               >
-                <StyleSelect placeholder="Select a garage owner" allowClear={false}>
-                {garageOwners.map((owner) => (
-      <Option key={owner.id} value={owner.id}>
-        {owner.name}
+                <StyleSelect placeholder="Select a garage owner" allowClear={false}> 
+                
+                {Array.isArray(garageOwners)&&garageOwners.map((owner) => (
+      <Option key={owner.id} value={owner.name}>
+        {owner.fullname}
+      
       </Option>
     ))}
 </StyleSelect>
@@ -591,6 +575,7 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
                   type="primary"
                   style={{ background: '#8767E1' }}
                   htmlType="submit"
+                  
                 >
                   <span>Save</span>
                 </ButtonStyle>

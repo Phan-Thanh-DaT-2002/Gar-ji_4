@@ -2,7 +2,7 @@ import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Form, Button, Row, Col, Input, Select, Space, Table, theme, Modal, message } from 'antd';
-import { Form, Button, Row, Col, Input, Select, Space, Table, theme, Modal, message } from 'antd';
+
 import '../../GarageOwner/Garage-owner-list/style.css';
 
 
@@ -52,9 +52,7 @@ const GarageOwnerList = () => {
       dataIndex: 'id',
       key: 'id',
       render: (_, __, index) => index + 1,
-      dataIndex: 'id',
-      key: 'id',
-      render: (_, __, index) => index + 1,
+
     },
     {
       title: 'Name',
@@ -63,18 +61,6 @@ const GarageOwnerList = () => {
       filteredValue: [searchText],
       filteredValue: [searchText],
       onFilter: (value, record) => {
-        if (String(isActived_1).toLowerCase().includes('username')) {
-          return String(record.username)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-        } else if (String(isActived_1).toLowerCase().includes('email')) {
-          return String(record.email)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-        } else
-          return String(record.username)
-            .toLowerCase()
-            .includes(value.toLowerCase());
         if (String(isActived_1).toLowerCase().includes('username')) {
           return String(record.username)
             .toLowerCase()
@@ -140,7 +126,6 @@ const GarageOwnerList = () => {
 
     fetch("http://localhost:1337/api/users", requestOptions)
 
-    fetch("http://localhost:1337/api/users", requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
@@ -148,7 +133,7 @@ const GarageOwnerList = () => {
       })
       .catch(error => console.log('error', error));
   }, []);
-  }, []);
+  
 
   const handleAdd = () => {
     navigate('/garage-owner-create');
@@ -202,7 +187,7 @@ const GarageOwnerList = () => {
   
         const response = await fetch(
           'http://localhost:1337/api/users/me?populate=role,avatar',
-          'http://localhost:1337/api/users/me?populate=role,avatar',
+       
           requestOptions
         );
         const result = await response.json();
@@ -246,18 +231,6 @@ const GarageOwnerList = () => {
             >
               All Garage Owners
             </h1>
-            <h1
-              style={{
-                fontFamily: 'Poppins',
-                fontStyle: 'normal',
-                fontWeight: 500,
-                fontSize: '24px',
-                lineHeight: '32px',
-                color: '#111111',
-              }}
-            >
-              All Garage Owners
-            </h1>
           </Col>
           <Col md={2}>
             <Button
@@ -284,7 +257,7 @@ const GarageOwnerList = () => {
         </Row>
         <div>
           <Form>
-            <Space>
+            
             <Space>
               <Space.Compact size="large">
                 <Select
@@ -293,7 +266,7 @@ const GarageOwnerList = () => {
                   options={options}
                   onChange={value => {
                     setIsActived_1(value);
-                    setIsActived_1(value);
+                 
                   }}
                 />
                 <Search
@@ -301,7 +274,7 @@ const GarageOwnerList = () => {
                   allowClear
                   onSearch={value => {
                     setSearchText(value);
-                    setSearchText(value);
+                   
                   }}
                 />
               </Space.Compact>

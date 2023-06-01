@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router';
 const GarageManagementList = () => {
   const navigate = useNavigate();
   const handleAdd = () => {
-    navigate('/garage-owner-create');
+    navigate('/create-manager');
   };
   const [searchCategory, setSearchCategory] = useState('Name');
   const [statusFilter, setStatusFilter] = useState('');
@@ -130,7 +130,7 @@ const handleView = (userId) => {
       redirect: 'follow',
     };
 
-    fetch("http://localhost:1337/api/garages?populate=owner", requestOptions)
+    fetch("http://localhost:1337/api/garages?populate=owner, services", requestOptions)
     .then(response => response.json())
     .then(result => {
       const arrayNew = result.data.map(item => {
