@@ -82,8 +82,8 @@ export default function CreateServices() {
   const { Option } = Select;
   const onCancel = () => {
     form.resetFields();
+    window.history.back();
   };
-
   
   return (
     <DivStyle>
@@ -108,7 +108,18 @@ export default function CreateServices() {
           <FirstInfo>
             <FirstLine>
               <FormItem
-                label="Name"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Name
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="name"
                 rules={[
@@ -121,7 +132,18 @@ export default function CreateServices() {
                 <Input placeholder="Enter services name" />
               </FormItem>
               <FormItem
-                label="Min price"
+               label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Min price
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="minPrice"
                 rules={[
@@ -140,7 +162,18 @@ export default function CreateServices() {
               </FormItem>
 
               <FormItem
-                label="Max price"
+               label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Max price
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="maxPrice"
                 rules={[
@@ -159,7 +192,18 @@ export default function CreateServices() {
             </FirstLine>
             <StyleCommentBox>
             <FormItem
-                label="Description"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Description
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="description"
                 rules={[
@@ -174,6 +218,15 @@ export default function CreateServices() {
                 <StyledTextArea 
                 autoSize={{ minRows: 4, maxRows: 30 }}
                 placeholder="Enter a description" 
+                style={{
+                  
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+                }}
                 />
               </FormItem>
             </StyleCommentBox>

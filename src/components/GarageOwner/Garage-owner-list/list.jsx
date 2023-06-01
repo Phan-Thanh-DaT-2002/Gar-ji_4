@@ -8,6 +8,7 @@ import '../../GarageOwner/Garage-owner-list/style.css';
 const GarageOwnerList = () => {
 
   const location = useLocation();
+
   const [data, setData] = useState(null);
   const [userId, setUserId] = useState(null)
   const handleView = (userId) => {
@@ -55,7 +56,7 @@ const GarageOwnerList = () => {
       title: 'Name',
       dataIndex: 'username',
       key: 'username',
-      filteredValue: [searchText],
+      filteredValue: [filterValue],
       onFilter: (value, record) => {
         if (String(isActived_1).toLowerCase().includes('username')) {
           return String(record.username)
@@ -69,6 +70,7 @@ const GarageOwnerList = () => {
           return String(record.username)
             .toLowerCase()
             .includes(value.toLowerCase());
+
       },
     },
     {
@@ -101,6 +103,7 @@ const GarageOwnerList = () => {
           <EditOutlined onClick={() => handleUpdate(record.id)} />
           <DeleteOutlined onClick={() => handleDelete(record)} />
         </Space>
+
       ),
     },
   ];
@@ -119,15 +122,22 @@ const GarageOwnerList = () => {
       },
       redirect: 'follow',
     };
-
-    fetch("http://localhost:1337/api/users", requestOptions)
+  
+    let url = 'http://localhost:1337/api/users';
+    if (filterField === 'Name') {
+      url += `?username=${filterValue}`;
+    } else if (filterField === 'Email') {
+      url += `?email=${filterValue}`;
+    }
+  
+    fetch(url, requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
         setUserData(result);
       })
       .catch(error => console.log('error', error));
-  }, []);
+  }, [filterField, filterValue]);
 
   const handleAdd = () => {
     navigate('/garage-owner-create');
@@ -149,6 +159,7 @@ const GarageOwnerList = () => {
           },
           redirect: 'follow',
         };
+
 
         fetch(`http://localhost:1337/api/users/${record.id}`, requestOptions)
           .then(response => response.json())
@@ -214,14 +225,14 @@ const GarageOwnerList = () => {
                   defaultValue="Name"
                   options={options}
                   onChange={value => {
-                    setIsActived_1(value);
+                    setFilterField(value);
                   }}
                 />
                 <Search
                   placeholder="Search"
                   allowClear
                   onSearch={value => {
-                    setSearchText(value);
+                    setFilterValue(value);
                   }}
                 />
               </Space.Compact>
@@ -248,6 +259,7 @@ const GarageOwnerList = () => {
               color: '#2F3A4C',
               marginTop: '20px'
             }} />
+
           </Form>
         </div>
       </div>

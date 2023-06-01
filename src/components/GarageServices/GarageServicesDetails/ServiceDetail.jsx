@@ -126,7 +126,7 @@ useEffect(() => {
                 labelCol={{ span: 24 }}
                 name="name"
               >
-                <Input placeholder="Enter services name" style={{ border: "none", cursor:"default" }} readOnly/>
+                <Input placeholder="Enter services name" style={{ border: "none", cursor:"default",pointerEvents: 'none' }} readOnly/>
               </FormItem>
               <FormItem
               
@@ -146,7 +146,7 @@ useEffect(() => {
                 name="minPrice"
                
               >
-                <Input placeholder="Enter min price" style={{ border: "none", cursor:"default" }} readOnly />
+                <Input placeholder="Enter min price" style={{ border: "none", cursor:"default" ,pointerEvents: 'none'}} readOnly />
               </FormItem>
 
               <FormItem
@@ -165,7 +165,7 @@ useEffect(() => {
                 labelCol={{ span: 24 }}
                 name="maxPrice"
               >
-                <Input placeholder="Enter max price" style={{ border: "none", cursor:"default" }} readOnly/>
+                <Input placeholder="Enter max price" style={{ border: "none", cursor:"default" ,pointerEvents: 'none'}} readOnly/>
               </FormItem>
             </FirstLine>
             <StyleCommentBox>
@@ -196,7 +196,7 @@ useEffect(() => {
                     border: "none", 
                     cursor:"default",
                     color: '#111111',
-                    
+                    pointerEvents: 'none'
                 }}  
                 readOnly
                 />
@@ -215,7 +215,7 @@ useEffect(() => {
                   <span>Edit</span>
                 </ButtonStyle>
                 <ButtonStyle htmlType="button" onClick={onCancel}>
-                  <span>Cancel</span>
+                  <span>Delete</span>
                 </ButtonStyle>
               </div>
             </div>

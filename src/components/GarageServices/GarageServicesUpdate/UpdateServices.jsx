@@ -136,6 +136,7 @@ useEffect(() => {
     const { Option } = Select;
     const onCancel = () => {
       form.resetFields();
+      window.history.back()
     };
   return (
     <DivStyle>
@@ -160,7 +161,18 @@ useEffect(() => {
           <FirstInfo>
             <FirstLine>
               <FormItem
-                label="Name"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Name
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="name"
                 rules={[
@@ -173,7 +185,18 @@ useEffect(() => {
                 <Input placeholder="Enter services name" />
               </FormItem>
               <FormItem
-                label="Min price"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Min price
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="minPrice"
                 rules={[
@@ -192,7 +215,18 @@ useEffect(() => {
               </FormItem>
 
               <FormItem
-                label="Max price"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Max price
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="maxPrice"
                 rules={[
@@ -211,7 +245,18 @@ useEffect(() => {
             </FirstLine>
             <StyleCommentBox>
             <FormItem
-                label="Description"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Description
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="description"
                 rules={[
@@ -226,6 +271,14 @@ useEffect(() => {
                 <StyledTextArea 
                 autoSize={{ minRows: 4, maxRows: 30 }}
                 placeholder="Enter a description" 
+                style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#111111',
+              }}
                 />
               </FormItem>
             </StyleCommentBox>
