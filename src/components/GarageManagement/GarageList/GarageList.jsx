@@ -17,12 +17,10 @@ import './style.css';
 
 const GarageManagementList = () => {
   const navigate = useNavigate();
-  const handleAdd = () => {
-    navigate('/garage-owner-create');
-  };
+
   const [searchCategory, setSearchCategory] = useState('Name');
   const [statusFilter, setStatusFilter] = useState('');
-const handleView = (userId) => {
+  const handleView = (userId) => {
     navigate('/manager-details', { state: { userId: userId } });
   };
   const handleUpdate = userId => {
