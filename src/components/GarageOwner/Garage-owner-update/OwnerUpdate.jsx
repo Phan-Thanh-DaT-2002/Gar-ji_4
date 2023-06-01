@@ -36,11 +36,11 @@ import {
 import { AudioOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
 export default function OwnerUpdate() {
-  const handok = () => {
+  const handcancel = () => {
     navigate('/garage-owner');
   };
+
   const { Option } = Select;
-  const [temp_data_user, setTemp_data_user] = useState(0);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [totalGarages, setTotalGarages] = useState(0);
@@ -73,10 +73,9 @@ export default function OwnerUpdate() {
         if (response.ok) {
           const result = await response.json();
 
-          setData(result);
+          // setData(result);
           setSelectedGarages(result.garages);
           setTotalGarages(result.garages.length);
-          setTemp_data_user(result.id);
           form.setFieldsValue({
             name: result.fullname,
             email: result.email,
@@ -99,45 +98,83 @@ export default function OwnerUpdate() {
 
     fetchData();
   }, [userId]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const jwt = localStorage.getItem('jwt');
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+          redirect: 'follow',
+        };
+
+        const response = await fetch(
+          'http://localhost:1337/api/users/me?populate=role,avatar',
+          requestOptions
+        );
+        const result = await response.json();
+
+        if (response.ok) {
+          console.log(result);
+          setData(result.role);
+          console.log(result.role);
+
+          console.error('Error:', result);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const onFinish = async values => {
     try {
-      const jwt = localStorage.getItem('jwt');
-      const updatedUserId = userId;
+      if (isAdmin) {
+        const jwt = localStorage.getItem('jwt');
+        const updatedUserId = userId;
 
-      const raw = JSON.stringify({
-        fullname: values.name,
-        dob: values.dob.format('YYYY-MM-DD'),
-        address: values.address,
-        phoneNumber: values.phone,
-        role: values.role,
-        garages: selectedGarages.map(garage => garage.id),
-        confirmed: true,
-        blocked: false,
-      });
+        const raw = JSON.stringify({
+          fullname: values.name,
+          dob: values.dob.format('YYYY-MM-DD'),
+          address: values.address,
+          phoneNumber: values.phone,
+          role: values.role,
+          garages: selectedGarages.map(garage => garage.id),
+          confirmed: true,
+          blocked: false,
+        });
 
-      const requestOptions = {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${jwt}`,
-        },
-        body: raw,
-        redirect: 'follow',
-      };
+        const requestOptions = {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+          body: raw,
+          redirect: 'follow',
+        };
 
-      const response = await fetch(
-        `http://localhost:1337/api/users/${updatedUserId}`, // Sử dụng updatedUserId thay cho userId
-        requestOptions
-      );
-      const data = await response.json();
+        const response = await fetch(
+          `http://localhost:1337/api/users/${updatedUserId}`, // Sử dụng updatedUserId thay cho userId
+          requestOptions
+        );
+        const data = await response.json();
 
-      if (response.ok) {
-        console.log('Response:', data);
-        message.success('Form submitted successfully!');
+        if (response.ok) {
+          console.log('Response:', data);
+          message.success('Form submitted successfully!');
+          handcancel();
+        } else {
+          console.error('Error:', data);
+          message.error('Failed to submit form!');
+        }
       } else {
-        console.error('Error:', data);
-        message.error('Failed to submit form!');
+        message.error('You do not have permission to delete.');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -147,45 +184,6 @@ export default function OwnerUpdate() {
 
   const onFinishFailed = errorInfo => {
     console.log('Failed:', errorInfo);
-  };
-
-  const [userData, setUserData] = useState([]);
-  console.log(temp_data_user);
-  const onDelete = record => {
-    console.log(record);
-
-    Modal.confirm({
-      title: 'Are you sure about that?',
-      onOk: () => {
-        setUserData(prevData => {
-          return prevData.filter(data => data.id !== record);
-        });
-
-        const jwt = localStorage.getItem('jwt');
-        console.log(jwt);
-        const requestOptions = {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${jwt}`,
-          },
-          redirect: 'follow',
-        };
-        fetch(`http://localhost:1337/api/users/${record}`, requestOptions)
-          .then(response => {
-            response.json();
-            message.success('delete sussesful');
-            handok();
-          })
-          .then(result => {
-            if (!result.success) {
-              console.log('Error deleting user');
-              console.log('Error deleting user');
-            }
-          })
-          .catch(error => console.log('Error deleting user', error));
-      },
-    });
   };
 
   const onChange = e => {
@@ -253,6 +251,7 @@ export default function OwnerUpdate() {
         })
         .slice(0, displayCount)
     : [];
+  const isAdmin = data && data.type === 'admin';
 
   return (
     <DivStyle>
@@ -588,11 +587,8 @@ export default function OwnerUpdate() {
                 >
                   <span>Update</span>
                 </ButtonStyle>
-                <ButtonStyle
-                  htmlType="button"
-                  onClick={() => onDelete(temp_data_user)}
-                >
-                  <span>Delete</span>
+                <ButtonStyle htmlType="button" onClick={() => handcancel()}>
+                  <span>Cancel</span>
                 </ButtonStyle>
               </div>
             </div>

@@ -29,9 +29,16 @@ const GarageOwnerList = () => {
     navigate('/owner-details', { state: { userId: userId } });
   };
   const handleUpdate = userId => {
-    navigate('/owner-update', { state: { userId: userId } });
+    if (isAdmin) {
+      navigate('/owner-update', { state: { userId: userId } });
+    } else {
+      message.error('You do not have permission to update.');
+    }
   };
 
+  const [searchText, setSearchText] = useState('');
+  const [isActived_1, setIsActived_1] = useState('');
+  const [isActived_2, setIsActived_2] = useState('');
   const { Search } = Input;
   const options = [
     {
@@ -67,6 +74,21 @@ const GarageOwnerList = () => {
       title: 'Name',
       dataIndex: 'username',
       key: 'username',
+      filteredValue: [searchText],
+      onFilter: (value, record) => {
+        if (String(isActived_1).toLowerCase().includes('username')) {
+          return String(record.username)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+        } else if (String(isActived_1).toLowerCase().includes('email')) {
+          return String(record.email)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+        } else
+          return String(record.username)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+      },
     },
     {
       title: 'Email',
@@ -82,11 +104,17 @@ const GarageOwnerList = () => {
       title: 'Status',
       dataIndex: 'blocked',
       key: 'blocked',
+      filteredValue: [isActived_2],
+      onFilter: (value, record) => {
+        if (value === 'Status') {
+          return record.blocked.includes('');
+        } else return record.blocked.includes(value);
+      },
     },
     {
       title: 'Actions',
       key: 'actions',
-      render: record => (
+      render: (_, record) => (
         <Space size="middle">
           <EyeOutlined onClick={() => handleView(record.id)} />
           <EditOutlined onClick={() => handleUpdate(record.id)} />
@@ -173,6 +201,10 @@ const GarageOwnerList = () => {
           };
 
           fetch(`http://localhost:1337/api/users/${record.id}`, requestOptions)
+            .then(response => {
+              response.json();
+              message.success('delete sussesful');
+            })
             .then(response => {
               response.json();
               message.success('delete sussesful');
@@ -302,13 +334,28 @@ const GarageOwnerList = () => {
                 />
               </Space.Compact>
             </Space>
+
             <Table
+              pagination={{ pageSize: 5 }}
               columns={columns}
-              pagination={{
-                current: pagination.page,
-                pageSize: pagination.pageSize,
-                total: userData.length,
-                onChange: handlePagination,
+              dataSource={
+                userData &&
+                userData.map((user, id) => {
+                  return {
+                    ...user,
+                    STT: id + 1,
+                    blocked: user.blocked ? 'Inactive' : 'Active',
+                  };
+                })
+              }
+              style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: '500',
+                fontSize: '13px',
+                lineHeight: '24px',
+                color: '#2F3A4C',
+                marginTop: '20px',
               }}
               dataSource={userData.map((user, index) => ({
                 ...user,
