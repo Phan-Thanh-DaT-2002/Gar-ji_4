@@ -35,10 +35,33 @@ function UpdateMana() {
   const { userId } = location.state || {};
   const [data, setData] = useState(null);
  
-  
+  const [userData, setUserData] = useState([])
   const [owner, setOwner] = useState(null);
 
   const [serviceValues, setServiceValues] = useState([]);
+  useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwt}`,
+      },
+      redirect: 'follow',
+      
+    };
+    
+
+    fetch("http://localhost:1337/api/users", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        setUserData(result);
+        setGarageOwners(result)
+      })
+      .catch(error => console.log('error', error));
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -62,8 +85,7 @@ function UpdateMana() {
           console.log(result);
           setData(result);
           setSelectedGarages(result.data.attributes.services.data || []);
-          console.log(garagesData);
-          console.log(owner);
+          
           form.setFieldsValue({
             name: result.data.attributes.name,
             address: result.data.attributes.address,
@@ -72,7 +94,7 @@ function UpdateMana() {
             email: result.data.attributes.email,
             description: result.data.attributes.description,
             policy: result.data.attributes.policy,
-            owner: result.data.attributes.owner,
+            owner: result.data.attributes.owner.data.attributes.fullname,
             openTime: moment(result.data.attributes.openTime, 'HH:mm'),
             closeTime: moment(result.data.attributes.closeTime, 'HH:mm'),
             // services: result.data.attributes.services.map((services)=>services),
@@ -251,7 +273,18 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
           <FirstInfo>
             <FirstLine>
               <FormItem
-                label="Name"
+               label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Name
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="name"
                 rules={[
@@ -264,7 +297,18 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
                 <Input placeholder="Enter owner name" />
               </FormItem>
               <FormItem
-                label="Email"
+               label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Email
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="email"
                 rules={[
@@ -282,7 +326,18 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
               </FormItem>
 
               <FormItem
-                label="Phone number"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Phone number
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="phoneNumber"
                 rules={[
@@ -302,7 +357,18 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
 
             <FirstLine>
               <FormItem
-                label="Address"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Address
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="address"
                 rules={[
@@ -316,7 +382,18 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
               </FormItem>
               <FormItem
                 name="openTime"
-                label="Open time"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Open time
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 rules={[
                   {
@@ -336,7 +413,18 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
               </FormItem>
               <FormItem
                 name="closeTime"
-                label="Close time"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Close time
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 rules={[
                   {
@@ -357,7 +445,18 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
             <SecondLine>
               <FormItem
                 name="owner"
-                label="Select a garage owner"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Garage owner
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 rules={[
                   {
@@ -366,17 +465,31 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
                   },
                 ]}
               >
-                <StyleSelect placeholder="Select a garage owner" allowClear={false}>
-                {garageOwners.map((owner) => (
-      <Option key={owner.id} value={owner.id}>
-        {owner.name}
+                <StyleSelect placeholder="Select a garage owner" allowClear={false}> 
+                
+                {Array.isArray(garageOwners)&&garageOwners.map((owner) => (
+      <Option key={owner.id} value={owner.name}>
+        {owner.fullname}
+      
       </Option>
+      
     ))}
 </StyleSelect>
               </FormItem>
               <FormItem
                 name="status"
-                label="Status"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Status
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 rules={[
                   {
@@ -393,7 +506,18 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
             </SecondLine>
             <StyleCommentBox>
               <FormItem
-                label="Description"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Description
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="description"
                 rules={[
@@ -404,12 +528,31 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
                 ]}
               >
                 <StyledTextArea
+                   style={{
+                    fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#111111',
+                  }}
                   autoSize={{ minRows: 4, maxRows: 30 }}
                   placeholder="Enter a description"
                 />
               </FormItem>
               <FormItem
-                label="Policy"
+                label={
+              <span style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#939393',
+              }}>
+                Policy
+              </span>
+            }
                 labelCol={{ span: 24 }}
                 name="policy"
                 rules={[
@@ -420,6 +563,14 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
                 ]}
               >
                 <StyledTextArea
+                  style={{
+                    fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#111111',
+                  }}
                   autoSize={{ minRows: 4, maxRows: 30 }}
                   placeholder="Enter a policy"
                 />
@@ -431,6 +582,14 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
     <FormSearch>
       <LeftColumn>
         <StyleInput
+         style={{
+                    fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: '#111111',
+                  }}
           placeholder="Search for garages..."
           type="text"
           value={searchTerm}
@@ -475,7 +634,7 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
                   <span>Save</span>
                 </ButtonStyle>
                 <ButtonStyle htmlType="button" onClick={onCancel}>
-                  <span>Cancel</span>
+                  <span>Delete</span>
                 </ButtonStyle>
               </div>
             </div>

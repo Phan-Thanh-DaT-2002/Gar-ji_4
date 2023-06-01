@@ -1,111 +1,149 @@
 import React, { useEffect, useRef, useState } from 'react';
 import moment from 'moment';
 import {
-    DatePicker,
-    Button,
-    Checkbox,
-    Form,
-    Input,
-    Select,
-    TreeSelect,
-    AutoComplete,
-    Divider,
-    message,
-  } from 'antd';
-  import {
-    StyledDOB,
-    AllDiv,
-    DivForm,
-    DivStyle,
-    FirstInfo,
-    FirstLine,
-    FormItem,
-   
-    StyleSelect,
-    SecondLine,
-    FormSearch,
-    ThreeLine,
-   
-    StyleInput,
-    SCheckbox,
-    StyleCheckBox,
-    LeftColumn,
-    RightColumn,
-    MyDivider,
-    
-    ButtonStyle,
-  } from './index.js';
-  import { AudioOutlined, DeleteOutlined } from '@ant-design/icons';
+  DatePicker,
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  Select,
+  TreeSelect,
+  AutoComplete,
+  Divider,
+  message,
+  Modal,
+} from 'antd';
+import {
+  StyledDOB,
+  AllDiv,
+  DivForm,
+  DivStyle,
+  FirstInfo,
+  FirstLine,
+  FormItem,
+
+  StyleSelect,
+  SecondLine,
+  FormSearch,
+  ThreeLine,
+
+  StyleInput,
+  SCheckbox,
+  StyleCheckBox,
+  LeftColumn,
+  RightColumn,
+  MyDivider,
+
+  ButtonStyle,
+} from './index.js';
+import { AudioOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
 export default function OwnerUpdate() {
-    
+  const handcancel = () => {
+    navigate('/garage-owner');
+  }
+
   const { Option } = Select;
-    
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [totalGarages, setTotalGarages] = useState(0);
-  
+
   const navigate = useNavigate();
   const location = useLocation();
   const { userId } = location.state || {};
-const [data, setData] = useState(null);
-const [garages, setGarages] = useState([])
+  const [data, setData] = useState(null);
+  const [garages, setGarages] = useState([])
 
 
-const [selectedGarages, setSelectedGarages] = useState([]);
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const jwt = localStorage.getItem('jwt');
-      const requestOptions = {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${jwt}`,
-        },
-        redirect: 'follow',
-      };
-
-      const response = await fetch(
-        `http://localhost:1337/api/users/${userId}?populate=role, garages`,
-        requestOptions
-      );
-
-      if (response.ok) {
-        const result = await response.json();
-        console.log(result);
-        setData(result);
-        setSelectedGarages(result.garages)
-        setTotalGarages(result.garages.length);
-        form.setFieldsValue({
-          name: result.fullname,
-          email: result.email,
-          username: result.username,
-          password: '******',
-          phone: result.phoneNumber,
-          gender: result.gender,
-          dob: result?.dob ? moment(result.dob, 'YYYY-MM-DD') : null,
-          role: result.role.id,
-          status: result?.blocked ? 'Inactive' : 'Active',
-          // garages: result.garages?.name,
-        });
-      } else {
-        console.error('Error:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
-  fetchData();
-}, [userId]);
-
-    
-    const onFinish = async (values) => {
+  const [selectedGarages, setSelectedGarages] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
       try {
         const jwt = localStorage.getItem('jwt');
-        const updatedUserId = userId; 
-    
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+          redirect: 'follow',
+        };
+
+        const response = await fetch(
+          `http://localhost:1337/api/users/${userId}?populate=role, garages`,
+          requestOptions
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+
+          // setData(result);
+          setSelectedGarages(result.garages)
+          setTotalGarages(result.garages.length);
+          form.setFieldsValue({
+            name: result.fullname,
+            email: result.email,
+            username: result.username,
+            password: '******',
+            phone: result.phoneNumber,
+            gender: result.gender,
+            dob: result?.dob ? moment(result.dob, 'YYYY-MM-DD') : null,
+            role: result.role.id,
+            status: result?.blocked ? 'Inactive' : 'Active',
+            // garages: result.garages?.name,
+
+          });
+        } else {
+          console.error('Error:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    fetchData();
+  }, [userId]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const jwt = localStorage.getItem('jwt');
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+          redirect: 'follow',
+        };
+
+        const response = await fetch(
+          'http://localhost:1337/api/users/me?populate=role,avatar',
+          requestOptions
+        );
+        const result = await response.json();
+
+        if (response.ok) {
+          console.log(result);
+          setData(result.role);
+          console.log(result.role);
+
+          console.error('Error:', result);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+
+  const onFinish = async (values) => {
+    try {
+      if (isAdmin) {
+        const jwt = localStorage.getItem('jwt');
+        const updatedUserId = userId;
+
         const raw = JSON.stringify({
           fullname: values.name,
           dob: values.dob.format('YYYY-MM-DD'),
@@ -116,7 +154,7 @@ useEffect(() => {
           confirmed: true,
           blocked: false,
         });
-    
+
         const requestOptions = {
           method: 'PUT',
           headers: {
@@ -126,50 +164,50 @@ useEffect(() => {
           body: raw,
           redirect: 'follow',
         };
-    
+
         const response = await fetch(
           `http://localhost:1337/api/users/${updatedUserId}`, // Sử dụng updatedUserId thay cho userId
           requestOptions
         );
         const data = await response.json();
-    
+
         if (response.ok) {
           console.log('Response:', data);
           message.success('Form submitted successfully!');
+          handcancel()
+
         } else {
           console.error('Error:', data);
           message.error('Failed to submit form!');
         }
-      } catch (error) {
-        console.error('Error:', error);
-        message.error('An error occurred');
+      } else {
+        message.error('You do not have permission to delete.');
       }
-    };
-  
-    
-    const onFinishFailed = (errorInfo) => {
-      console.log('Failed:', errorInfo);
-    };
-    
-    
-    const onCancel = () => {
-      form.resetFields();
-      window.history.back();
-    };
-    
-    const onChange = (e) => {
-      console.log(`checked = ${e.target.checked}`);
-    };
-    
-  
-    const [garagesData, setGaragesData] = useState([]);
-    
-   
-      const [searchTerm, setSearchTerm] = useState('');
-    
-    
-      const [displayCount, setDisplayCount] = useState(5);
-      
+    } catch (error) {
+      console.error('Error:', error);
+      message.error('An error occurred');
+    }
+
+  };
+
+
+  const onFinishFailed = (errorInfo) => {
+    console.log('Failed:', errorInfo);
+  };
+
+  const onChange = (e) => {
+    console.log(`checked = ${e.target.checked}`);
+  };
+
+
+  const [garagesData, setGaragesData] = useState([]);
+
+
+  const [searchTerm, setSearchTerm] = useState('');
+
+
+  const [displayCount, setDisplayCount] = useState(5);
+
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
     setDisplayCount(5);
@@ -187,49 +225,50 @@ useEffect(() => {
   const handleRemoveGarage = (garage) => {
     setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
   };
-      
-      useEffect(() => {
-        const jwt = localStorage.getItem('jwt');
-        const requestOptions = {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwt}`,
-          },
-          redirect: 'follow'
-        };
-      
-        fetch("http://localhost:1337/api/garages", requestOptions)
-          .then(response => response.json())
-          .then(result => {
-            console.log(result);
-            setGaragesData(result.data);
-          })
-          .catch(error => console.log('error', error));
-      }, []);
-      
-     
-      
-      const getGarageNameById = (garageId) => {
-        const selectedGarage = garagesData.find((garage) => garage.id === garageId);
-        return selectedGarage ? selectedGarage.attributes.name : '';
-      };
-    
-      const filteredGarages = garagesData
-        ? garagesData
-            .filter((garage) => {
-              const garageName = garage.attributes.name.toLowerCase();
-              const searchTermLower = searchTerm.toLowerCase();
-              return (
-                garage.id.toString().includes(searchTermLower) ||
-                garageName.includes(searchTermLower)
-              );
-            })
-            .slice(0, displayCount)
-        : [];
-    
-    return (
-      <DivStyle>
+
+  useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwt}`,
+      },
+      redirect: 'follow'
+    };
+
+    fetch("http://localhost:1337/api/garages", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        setGaragesData(result.data);
+      })
+      .catch(error => console.log('error', error));
+  }, []);
+
+
+
+  const getGarageNameById = (garageId) => {
+    const selectedGarage = garagesData.find((garage) => garage.id === garageId);
+    return selectedGarage ? selectedGarage.attributes.name : '';
+  };
+
+  const filteredGarages = garagesData
+    ? garagesData
+      .filter((garage) => {
+        const garageName = garage.attributes.name.toLowerCase();
+        const searchTermLower = searchTerm.toLowerCase();
+        return (
+          garage.id.toString().includes(searchTermLower) ||
+          garageName.includes(searchTermLower)
+        );
+      })
+      .slice(0, displayCount)
+    : [];
+  const isAdmin = data && data.type === 'admin';
+
+  return (
+    <DivStyle>
       <AllDiv>
         <DivForm
           name="basic"
@@ -243,54 +282,54 @@ useEffect(() => {
           form={form}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
-          
+
           autoComplete="off"
-          
+
         >
           <FirstInfo>
             <FirstLine>
               <FormItem
-               label={
-              <span style={{
-                fontFamily: 'Poppins',
-                fontStyle: 'normal',
-                fontWeight: 400,
-                fontSize: '16px',
-                lineHeight: '24px',
-                color: '#939393',
-              }}>
-                Name
-              </span>
-            }
+                label={
+                  <span style={{
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
+                    Name
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 name="name"
-               
+
                 rules={[
                   {
                     required: true,
                     message: 'Please input your name!',
                   },
                 ]}
-                
+
               >
                 <Input placeholder="Enter owner name" />
               </FormItem>
               <FormItem
                 label={
-              <span style={{
-                fontFamily: 'Poppins',
-                fontStyle: 'normal',
-                fontWeight: 400,
-                fontSize: '16px',
-                lineHeight: '24px',
-                color: '#939393',
-              }}>
-                Email
-              </span>
-            }
+                  <span style={{
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
+                    Email
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 name="email"
-                
+
                 rules={[
                   {
                     required: true,
@@ -304,20 +343,20 @@ useEffect(() => {
               >
                 <Input placeholder="Enter owner email" />
               </FormItem>
-  
+
               <FormItem
                 label={
-              <span style={{
-                fontFamily: 'Poppins',
-                fontStyle: 'normal',
-                fontWeight: 400,
-                fontSize: '16px',
-                lineHeight: '24px',
-                color: '#939393',
-              }}>
-                Username
-              </span>
-            }
+                  <span style={{
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
+                    Username
+                  </span>
+                }
                 name="username"
                 labelCol={{ span: 24 }}
                 rules={[
@@ -330,21 +369,21 @@ useEffect(() => {
                 <Input placeholder="Enter owner username" />
               </FormItem>
             </FirstLine>
-  
+
             <FirstLine>
               <FormItem
                 label={
-              <span style={{
-                fontFamily: 'Poppins',
-                fontStyle: 'normal',
-                fontWeight: 400,
-                fontSize: '16px',
-                lineHeight: '24px',
-                color: '#939393',
-              }}>
-                Password
-              </span>
-            }
+                  <span style={{
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
+                    Password
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 name="password"
                 rules={[
@@ -358,17 +397,17 @@ useEffect(() => {
               </FormItem>
               <FormItem
                 label={
-              <span style={{
-                fontFamily: 'Poppins',
-                fontStyle: 'normal',
-                fontWeight: 400,
-                fontSize: '16px',
-                lineHeight: '24px',
-                color: '#939393',
-              }}>
-                Phone Number
-              </span>
-            }
+                  <span style={{
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
+                    Phone Number
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 name="phone"
                 rules={[
@@ -387,17 +426,17 @@ useEffect(() => {
               <FormItem
                 name="gender"
                 label={
-              <span style={{
-                fontFamily: 'Poppins',
-                fontStyle: 'normal',
-                fontWeight: 400,
-                fontSize: '16px',
-                lineHeight: '24px',
-                color: '#939393',
-              }}>
-                Gender
-              </span>
-            }
+                  <span style={{
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
+                    Gender
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 rules={[
                   {
@@ -414,39 +453,39 @@ useEffect(() => {
                 >
                   <Select.Option value="male">Male</Select.Option>
                   <Select.Option value="female">Female</Select.Option>
-                  
+
                 </StyleSelect>
               </FormItem>
             </FirstLine>
             <SecondLine>
               <FormItem label={
-              <span style={{
-                fontFamily: 'Poppins',
-                fontStyle: 'normal',
-                fontWeight: 400,
-                fontSize: '16px',
-                lineHeight: '24px',
-                color: '#939393',
-              }}>
-                DOB
-              </span>
-            } labelCol={{ span: 24 }} name="dob">
+                <span style={{
+                  fontFamily: 'Poppins',
+                  fontStyle: 'normal',
+                  fontWeight: 400,
+                  fontSize: '16px',
+                  lineHeight: '24px',
+                  color: '#939393',
+                }}>
+                  DOB
+                </span>
+              } labelCol={{ span: 24 }} name="dob">
                 <StyledDOB />
               </FormItem>
               <FormItem
-              name='role'
+                name='role'
                 label={
-              <span style={{
-                fontFamily: 'Poppins',
-                fontStyle: 'normal',
-                fontWeight: 400,
-                fontSize: '16px',
-                lineHeight: '24px',
-                color: '#939393',
-              }}>
-                Role
-              </span>
-            }
+                  <span style={{
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
+                    Role
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 rules={[
                   {
@@ -456,7 +495,7 @@ useEffect(() => {
                 ]}
               >
                 <StyleSelect
-                  size='large'
+
                   className="selectStyle"
                   placeholder="Select a role"
                   name='role'
@@ -467,91 +506,94 @@ useEffect(() => {
                 </StyleSelect>
               </FormItem>
               <FormItem
-              name="status"
-              label={
-              <span style={{
-                fontFamily: 'Poppins',
-                fontStyle: 'normal',
-                fontWeight: 400,
-                fontSize: '16px',
-                lineHeight: '24px',
-                color: '#939393',
-              }}>
-                Status
-              </span>
-            }
-              labelCol={{ span: 24 }}
-              rules={[
-                {
-                  required: true,
-                  message: 'Please select a status!',
-                },
-              ]}
-            >
-              <StyleSelect placeholder="Select a status" allowClear={false}>
-                <Option value="active">Active</Option>
-                <Option value="inactive">Inactive</Option>
-              </StyleSelect>
-            </FormItem>
+                name="status"
+                label={
+                  <span style={{
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
+                    Status
+                  </span>
+                }
+                labelCol={{ span: 24 }}
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please select a status!',
+                  },
+                ]}
+              >
+                <StyleSelect placeholder="Select a status" allowClear={false}>
+                  <Option value="active">Active</Option>
+                  <Option value="inactive">Inactive</Option>
+                </StyleSelect>
+              </FormItem>
             </SecondLine>
-                  <Form></Form>
-                  <ThreeLine>
-    <div className="title_formS">Garages</div>
-    <FormSearch>
-      <LeftColumn>
-        <StyleInput
-          placeholder="Search for garages..."
-          type="text"
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
-        <SCheckbox>
-  {filteredGarages.map((garage) => (
-    <div key={garage.id}>
-      <StyleCheckBox
-        checked={selectedGarages.some((g) => g.id === garage.id)}
-        onChange={() => handleGarageChange(garage)}
-      >
-        {garage.attributes.name}
-      </StyleCheckBox>
-    </div>
-  ))}
-</SCheckbox>
-      </LeftColumn>
-      <MyDivider type="vertical" />
-      <RightColumn>
-        <div className="select_gara">Select garages ({selectedGarages.length})</div>
-        {selectedGarages.map((garage) => (
-  <div className="select_remove" key={garage.id}>
-    <span>{getGarageNameById(garage.id)}</span>
-    <DeleteOutlined
-      style={{ fontSize: '24px' }}
-      onClick={() => handleRemoveGarage(garage)}
-    />
-  </div>
-))}
-      </RightColumn>
-    </FormSearch>
-  </ThreeLine>
-              <div className="Btns">
-                <Divider style={{ border: '1px solid #DDE4EE', margin: 0 }} />
-                <div className="btn-button">
-                  <ButtonStyle
-                    type="primary"
-                    style={{ background: '#8767E1' }}
-                    htmlType="submit"
-                  >
-                    <span>Update</span>
-                  </ButtonStyle>
-                  <ButtonStyle htmlType="button" onClick={onCancel}>
-                    <span>Cancel</span>
-                  </ButtonStyle>
-                </div>
+            <Form></Form>
+            <ThreeLine>
+              <div className="title_formS">Garages</div>
+              <FormSearch>
+                <LeftColumn>
+                  <StyleInput
+                    placeholder="Search for garages..."
+                    type="text"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                  />
+                  <SCheckbox>
+                    {filteredGarages.map((garage) => (
+                      <div key={garage.id}>
+                        <StyleCheckBox
+                          checked={selectedGarages.some((g) => g.id === garage.id)}
+                          onChange={() => handleGarageChange(garage)}
+                        >
+                          {garage.attributes.name}
+                        </StyleCheckBox>
+                      </div>
+                    ))}
+                  </SCheckbox>
+                </LeftColumn>
+                <MyDivider type="vertical" />
+                <RightColumn>
+                  <div className="select_gara">Select garages ({selectedGarages.length})</div>
+                  {selectedGarages.map((garage) => (
+                    <div className="select_remove" key={garage.id}>
+                      <span>{getGarageNameById(garage.id)}</span>
+                      <DeleteOutlined
+                        style={{ fontSize: '24px' }}
+                        onClick={() => handleRemoveGarage(garage)}
+                      />
+                    </div>
+                  ))}
+                </RightColumn>
+              </FormSearch>
+            </ThreeLine>
+            <div className="Btns">
+              <Divider style={{ border: '1px solid #DDE4EE', margin: 0 }} />
+              <div className="btn-button">
+                <ButtonStyle
+                  type="primary"
+                  style={{ background: '#8767E1' }}
+                  htmlType="submit"
+                >
+                  <span>Update</span>
+                </ButtonStyle>
+                <ButtonStyle
+                  htmlType="button"
+                  onClick={() => handcancel()}
+                >
+                  <span>Cancel</span>
+                </ButtonStyle>
               </div>
-            </FirstInfo>
-          </DivForm>
-        </AllDiv>
-      </DivStyle>
-    );
-  
+            </div>
+          </FirstInfo>
+        </DivForm>
+      </AllDiv>
+    </DivStyle>
+  );
+
 }
