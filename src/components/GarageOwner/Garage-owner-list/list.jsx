@@ -63,8 +63,8 @@ const GarageOwnerList = () => {
   const columns = [
     {
       title: '#',
-      dataIndex: 'STT',
-      key: 'STT',
+      dataIndex: 'id',
+      key: 'id',
     },
     {
       title: 'Name',
@@ -144,7 +144,7 @@ const GarageOwnerList = () => {
 
         if (response.ok) {
           setUserData(result);
-          console.error('Error:', result);
+          console.log(result);
         }
       } catch (error) {
         console.error('Error:', error);
@@ -329,9 +329,8 @@ const GarageOwnerList = () => {
                 total: userData.length,
                 onChange: handlePagination,
               }}
-              dataSource={userData.map((user, index) => ({
+              dataSource={userData.map(user => ({
                 ...user,
-                STT: index + 1,
                 blocked: user.blocked ? 'Inactive' : 'Active',
               }))}
             />
