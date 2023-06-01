@@ -165,32 +165,38 @@ export default function OwnerUpdate() {
     Modal.confirm({
       title: 'Are you sure about that?',
       onOk: () => {
-        setUserData(prevData => {
-          return prevData.filter(data => data.id !== record);
-        });
+        if (isAdmin) {
+          setUserData(prevData => {
+            return prevData.filter(data => data.id !== record);
+          });
 
-        const jwt = localStorage.getItem('jwt');
-        console.log(jwt);
-        const requestOptions = {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${jwt}`,
-          },
-          redirect: 'follow',
-        };
-        fetch(`http://localhost:1337/api/users/${record}`, requestOptions)
-          .then(response => {
-            response.json();
-            handok();
-          })
-          .then(result => {
-            if (!result.success) {
-              console.log('Error deleting user');
-            }
-          })
-          .catch(error => console.log('Error deleting user', error));
-
+          const jwt = localStorage.getItem('jwt');
+          console.log(jwt);
+          const requestOptions = {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${jwt}`,
+            },
+            redirect: 'follow',
+          };
+          fetch(`http://localhost:1337/api/users/${record}`, requestOptions)
+            .then(result => {
+              if (!result.success) {
+                console.log('Error deleting user');
+              }
+              handok();
+            })
+            .then(result => {
+              if (!result.success) {
+                console.log('Error deleting user');
+              }
+            })
+            .catch(error => console.log('Error deleting user', error));
+        } else {
+          message.error('You do not have permission to delete.');
+          handok();
+        }
       },
     });
   };
@@ -265,7 +271,7 @@ export default function OwnerUpdate() {
       })
       .slice(0, displayCount)
     : [];
-
+  const isAdmin = data && data.type === 'admin';
   return (
     <DivStyle>
       <AllDiv>
