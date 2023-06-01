@@ -29,9 +29,13 @@ const GarageOwnerList = () => {
     navigate('/owner-details', { state: { userId: userId } });
   };
   const handleUpdate = userId => {
-    navigate('/owner-update', { state: { userId: userId } });
+    if (isAdmin) {
+      navigate('/owner-update', { state: { userId: userId } });
+    }
+    else {
+      message.error('You do not have permission to update.');
+    }
   };
-
   const { Search } = Input;
   const options = [
     {
