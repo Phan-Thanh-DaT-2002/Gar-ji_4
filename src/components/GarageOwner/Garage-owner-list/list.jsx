@@ -1,6 +1,6 @@
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Form,
   Button,
@@ -17,9 +17,14 @@ import {
 import '../../GarageOwner/Garage-owner-list/style.css';
 
 const GarageOwnerList = () => {
-  const location = useLocation();
   const [data, setData] = useState(null);
-  const [userId, setUserId] = useState(null);
+  const [searchText, setSearchText] = useState('');
+  const [isActived_1, setIsActived_1] = useState('Name');
+  const [isActived_2, setIsActived_2] = useState('Status');
+  const [pagination, setPagination] = useState({
+    page: 1,
+    pageSize: 10,
+  });
   const handleView = userId => {
     navigate('/owner-details', { state: { userId: userId } });
   };
@@ -30,10 +35,6 @@ const GarageOwnerList = () => {
       message.error('You do not have permission to update.');
     }
   };
-
-  const [searchText, setSearchText] = useState('');
-  const [isActived_1, setIsActived_1] = useState('');
-  const [isActived_2, setIsActived_2] = useState('');
   const { Search } = Input;
   const options = [
     {
@@ -62,29 +63,13 @@ const GarageOwnerList = () => {
   const columns = [
     {
       title: '#',
-      dataIndex: 'id',
-      key: 'id',
-      render: (_, __, index) => index + 1,
+      dataIndex: 'STT',
+      key: 'STT',
     },
     {
       title: 'Name',
       dataIndex: 'username',
       key: 'username',
-      filteredValue: [searchText],
-      onFilter: (value, record) => {
-        if (String(isActived_1).toLowerCase().includes('username')) {
-          return String(record.username)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-        } else if (String(isActived_1).toLowerCase().includes('email')) {
-          return String(record.email)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-        } else
-          return String(record.username)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-      },
     },
     {
       title: 'Email',
@@ -100,17 +85,11 @@ const GarageOwnerList = () => {
       title: 'Status',
       dataIndex: 'blocked',
       key: 'blocked',
-      filteredValue: [isActived_2],
-      onFilter: (value, record) => {
-        if (value === 'Status') {
-          return record.blocked.includes('');
-        } else return record.blocked.includes(value);
-      },
     },
     {
       title: 'Actions',
       key: 'actions',
-      render: (_, record) => (
+      render: record => (
         <Space size="middle">
           <EyeOutlined onClick={() => handleView(record.id)} />
           <EditOutlined onClick={() => handleUpdate(record.id)} />
@@ -135,14 +114,44 @@ const GarageOwnerList = () => {
       redirect: 'follow',
     };
 
-    fetch('http://localhost:1337/api/users', requestOptions)
+    let filterParams = {};
+
+    if (isActived_2 === 'Status') {
+      filterParams = {};
+    } else if (isActived_2 === 'Active') {
+      filterParams['blocked'] = false;
+    } else if (isActived_2 === 'Inactive') {
+      filterParams['blocked'] = true;
+    }
+
+    if (isActived_1 === 'Name') {
+      filterParams['fullname][$contains]'] = searchText;
+    } else if (isActived_1 === 'Email') {
+      filterParams['email][$contains]'] = searchText;
+    }
+
+    const filters = Object.entries(filterParams)
+      .map(([key, value]) => `filters[${key}]=${encodeURIComponent(value)}`)
+      .join('&');
+    const paginationParams = `pagination[page]=${pagination.page}&pagination[pageSize]=${pagination.pageSize}`;
+
+    const apiUrl = `http://localhost:1337/api/users?${filters}&${paginationParams}`;
+    console.log(apiUrl);
+    fetch(apiUrl, requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
         setUserData(result);
       })
       .catch(error => console.log('error', error));
-  }, []);
+  }, [searchText, isActived_1, isActived_2, pagination]);
+  const handlePagination = (page, pageSize) => {
+    setPagination(prevPagination => ({
+      ...prevPagination,
+      page,
+      pageSize,
+    }));
+  };
 
   const handleAdd = () => {
     navigate('/garage-owner-create');
@@ -183,7 +192,6 @@ const GarageOwnerList = () => {
       },
     });
   };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -297,20 +305,8 @@ const GarageOwnerList = () => {
                 />
               </Space.Compact>
             </Space>
-
             <Table
-              pagination={{ pageSize: 5 }}
               columns={columns}
-              dataSource={
-                userData &&
-                userData.map((user, id) => {
-                  return {
-                    ...user,
-                    STT: id + 1,
-                    blocked: user.blocked ? 'Inactive' : 'Active',
-                  };
-                })
-              }
               style={{
                 fontFamily: 'Poppins',
                 fontStyle: 'normal',
@@ -320,6 +316,17 @@ const GarageOwnerList = () => {
                 color: '#2F3A4C',
                 marginTop: '20px',
               }}
+              pagination={{
+                current: pagination.page,
+                pageSize: pagination.pageSize,
+                total: userData.length,
+                onChange: handlePagination,
+              }}
+              dataSource={userData.map((user, index) => ({
+                ...user,
+                STT: index + 1,
+                blocked: user.blocked ? 'Inactive' : 'Active',
+              }))}
             />
           </Form>
         </div>
