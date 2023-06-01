@@ -2,7 +2,7 @@ import axios from 'axios';
 import { ACCESS_TOKEN } from '../constants';
 
 const axiosInstance = axios.create({
-  baseURL: 'https://edison-device-api.savvycom.xyz/api/',
+  baseURL: 'http://localhost:1337/api',
   headers: {
     Accept: 'applications/json',
     'Content-Type': 'application/json',
@@ -10,10 +10,11 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(
+
   async config => {
     // Do something before request is sent
     const token = localStorage.getItem(ACCESS_TOKEN) || '';
-
+    // console.log('token', token);
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
@@ -33,3 +34,4 @@ axiosInstance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+export default axiosInstance;

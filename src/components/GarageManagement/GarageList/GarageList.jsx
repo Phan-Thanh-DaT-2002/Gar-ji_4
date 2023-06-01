@@ -1,25 +1,37 @@
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
-import { Form, Button, Row, Col, Input, Select, Space, Table, theme, Modal } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import {
+  Form,
+  Button,
+  Row,
+  Col,
+  Input,
+  Select,
+  Space,
+  Table,
+  theme,
+  Modal,
+  Avatar,
+} from 'antd';
 import './style.css';
-import { useNavigate } from 'react-router';
 
 const GarageManagementList = () => {
   const navigate = useNavigate();
-  const handleAdd = () => {
-    navigate('/create-manager');
-  };
-  const [searchCategory, setSearchCategory] = useState('Name');
-  const [statusFilter, setStatusFilter] = useState('');
-const handleView = (userId) => {
+  const [avatar, setAvatar] = useState(null);
+  const handleView = userId => {
     navigate('/manager-details', { state: { userId: userId } });
   };
-  const handleUpdate = (userId) => {
+  const handleUpdate = userId => {
     navigate('/manager-update', { state: { userId: userId } });
   };
   const [searchText, setSearchText] = useState('');
-  const [isActived_1, setIsActived_1] = useState('');
+  const [isActived_1, setIsActived_1] = useState('Name');
   const [isActived_2, setIsActived_2] = useState('');
+  const [pagination, setPagination] = useState({
+    page: 1,
+    pageSize: 10,
+  });
   const { Search } = Input;
   const options = [
     {
@@ -33,7 +45,7 @@ const handleView = (userId) => {
   ];
   const optionStatus = [
     {
-      value: 'Status',
+      value: '',
       label: 'Status',
     },
     {
@@ -48,29 +60,13 @@ const handleView = (userId) => {
   const columns = [
     {
       title: '#',
-      dataIndex: 'id',
-      key: 'id',
-      render: (_, __, index) => index + 1,
+      dataIndex: 'STT',
+      key: 'STT',
     },
     {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      filteredValue: [searchText],
-      onFilter: (value, record) => {
-        if (String(isActived_1).toLowerCase().includes('name')) {
-          return String(record.name)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-        } else if (String(isActived_1).toLowerCase().includes('email')) {
-          return String(record.email)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-        } else
-          return String(record.name)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-      },
     },
     {
       title: 'Email',
@@ -85,25 +81,12 @@ const handleView = (userId) => {
     {
       title: 'Garage owner',
       dataIndex: 'owner',
-      key: 'owner',
-      render: (data) => {
-        if (data && data.data && data.data.attributes && data.data.attributes.fullname) {
-          return <span>{data.data.attributes.fullname}</span>;
-        } else {
-          return null;
-        }
-      },
+      key: 'owner,',
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
-      filteredValue: [isActived_2],
-      onFilter: (value, record) => {
-        if (value === 'Status') {
-          return record.status.includes('');
-        } else return record.status.includes(value);
-      },
     },
     {
       title: 'Actions',
@@ -112,12 +95,12 @@ const handleView = (userId) => {
         <Space size="middle">
           <EyeOutlined onClick={() => handleView(record.id)} />
           <EditOutlined onClick={() => handleUpdate(record.id)} />
-          <DeleteOutlined onClick={()=> handleDelete(record)}/>
+          <DeleteOutlined onClick={() => handleDelete(record)} />
         </Space>
       ),
     },
   ];
- 
+
   const [data, setData] = useState([]);
   useEffect(() => {
     const jwt = localStorage.getItem('jwt');
@@ -129,25 +112,89 @@ const handleView = (userId) => {
       },
       redirect: 'follow',
     };
+    let filterParams = {};
+    if (isActived_2 === '') {
+    } else if (isActived_2 === 'active') {
+      filterParams['status][$eq]'] = 'active';
+    } else if (isActived_2 === 'inactive') {
+      filterParams['status][$eq]'] = 'inactive';
+    }
+    if (isActived_1 === 'Name') {
+      filterParams['name][$contains]'] = searchText;
+    } else if (isActived_1 === 'Email') {
+      filterParams['email][$contains]'] = searchText;
+    }
 
-    fetch("http://localhost:1337/api/garages?populate=owner, services", requestOptions)
-    .then(response => response.json())
-    .then(result => {
-      const arrayNew = result.data.map(item => {
-        if (item.owner && item.owner.data && item.owner.data.attributes && item.owner.data.attributes.fullname) {
-          return { ...item.attributes, id: item.id, owner: item.owner.data.attributes.fullname };
-        } else {
-          return { ...item.attributes, id: item.id, owner: null };
+    const filters = Object.entries(filterParams)
+      .map(([key, value]) => `filters[${key}]=${encodeURIComponent(value)}`)
+      .join('&');
+    const paginationParams = `pagination[page]=${pagination.page}&pagination[pageSize]=${pagination.pageSize}`;
+    const apiUrl = `http://localhost:1337/api/garages?${filters}&${paginationParams}&populate=owner, `;
+    console.log(apiUrl);
+    fetch(apiUrl, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        if (result.data) {
+          const arrayNew = result.data.map(item => ({
+            ...item.attributes,
+          }));
+          setData(arrayNew);
+          console.log(data);
         }
+      })
+      .catch(error => console.log('error', error));
+  }, [searchText, isActived_1, isActived_2, pagination]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const jwt = localStorage.getItem('jwt');
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwt}`,
+        },
+        redirect: 'follow',
+      };
+      const promises = data.map(item => {
+        if (!item.owner || !item.owner.data) {
+          return null;
+        }
+        const apiUrl = `http://localhost:1337/api/users/${item.owner.data.id}?populate=avatar`;
+        return fetch(apiUrl, requestOptions)
+          .then(response => response.json())
+          .then(result => {
+            if (result) {
+              console.log(result);
+              return result.avatar.url;
+            }
+            return null;
+          })
+          .catch(error => {
+            console.log('Error fetching avatar', error);
+            return null;
+          });
       });
-      setData(arrayNew);
-    })
-    .catch(error => console.log('error', error));
-  }, []);
+      const avatarUrls = await Promise.all(promises);
+      console.log(avatarUrls);
+      setAvatar(avatarUrls);
+    };
 
+    fetchData();
+  }, [data]);
+
+  const handlePagination = (page, pageSize) => {
+    setPagination(prevPagination => ({
+      ...prevPagination,
+      page,
+      pageSize,
+    }));
+  };
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+  const handleAdd = () => {
+    navigate('/manager-create');
+  };
   const handleDelete = record => {
     Modal.confirm({
       title: 'Are you sure about that?',
@@ -182,19 +229,22 @@ const handleView = (userId) => {
       <div>
         <Row>
           <Col md={22}>
-            <h1 style={{
-              fontFamily: 'Poppins',
-              fontStyle: 'normal',
-              fontWeight: 500,
-              fontSize: '24px',
-              lineHeight: '32px',
-              color: '#111111',
-
-            }}>All Garages</h1>
+            <h1
+              style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                fontSize: '24px',
+                lineHeight: '32px',
+                color: '#111111',
+              }}
+            >
+              All Garages
+            </h1>
           </Col>
           <Col md={2}>
             <Button
-            onClick={handleAdd}
+              onClick={handleAdd}
               type="primary"
               style={{
                 background: '#8767E1',
@@ -218,7 +268,7 @@ const handleView = (userId) => {
         <div>
           <Form>
             <Space>
-            <Space.Compact size="large">
+              <Space.Compact size="large">
                 <Select
                   style={{ width: '100px' }}
                   defaultValue="Name"
@@ -248,17 +298,37 @@ const handleView = (userId) => {
             </Space>
             <Table
               columns={columns}
-              dataSource={data}
-              pagination={{pageSize: 5}}
+              pagination={{
+                current: pagination.page,
+                pageSize: pagination.pageSize,
+                total: data.length,
+                onChange: handlePagination,
+              }}
+              dataSource={data.map((data, index) => ({
+                ...data,
+                STT: index + 1,
+                owner: (
+                  <>
+                    <Avatar
+                      size={32}
+                      src={`http://localhost:1337${avatar[index]}`}
+                      alt="avatar"
+                    />
+                    <span style={{ marginLeft: '5px' }}>
+                      {data.owner?.data?.attributes?.fullname || ''}
+                    </span>
+                  </>
+                ),
+              }))}
               style={{
-                    fontFamily: 'Poppins',
-                  fontStyle: 'normal',
-                  fontWeight: '500',
-                  fontSize: '13px',
-                  lineHeight: '24px',
-                  color: '#2F3A4C',
-                marginTop:'20px'
-                  }} 
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: '500',
+                fontSize: '13px',
+                lineHeight: '24px',
+                color: '#2F3A4C',
+                marginTop: '20px',
+              }}
             />
           </Form>
         </div>
