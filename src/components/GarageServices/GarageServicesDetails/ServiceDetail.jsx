@@ -1,34 +1,19 @@
 import React, { useEffect, useState } from 'react';
 
 import {
-
-
   AllDiv,
   DivForm,
   DivStyle,
-
   FirstLine,
   FormItem,
   ButtonStyle,
   StyleCommentBox,
   StyledTextArea,
   FirstInfo,
-
 } from './index.js';
-import {
-
-  Form,
-  Input,
-  Select,
-
-  Divider,
-  message,
-  Modal,
-
-} from 'antd';
+import { Form, Input, Select, Divider, message, Modal } from 'antd';
 import moment from 'moment';
 import { useLocation, useNavigate } from 'react-router-dom';
-
 
 export default function ServiceDetail() {
   const [userData, setUserData] = useState([]);
@@ -73,8 +58,7 @@ export default function ServiceDetail() {
     navigate('/garage-services');
   };
 
-  const handleEdit = (userId) => {
-
+  const handleEdit = userId => {
     navigate('/services-update', { state: { userId: userId } });
   };
 
@@ -111,9 +95,6 @@ export default function ServiceDetail() {
             description: result.data.attributes.description,
             minPrice: result.data.attributes.minPrice,
             maxPrice: result.data.attributes.maxPrice,
-
-
-
           });
         } else {
           console.error('Error:', response.statusText);
@@ -178,7 +159,6 @@ export default function ServiceDetail() {
     Modal.confirm({
       title: 'Are you sure about that?',
       onOk: () => {
-
         setUserData(prevData => {
           return prevData.filter(data => data.id !== record);
         });
@@ -192,7 +172,10 @@ export default function ServiceDetail() {
           },
           redirect: 'follow',
         };
-        fetch(`http://localhost:1337/api/garage-services/${record}`, requestOptions)
+        fetch(
+          `http://localhost:1337/api/garage-services/${record}`,
+          requestOptions
+        )
           .then(response => {
             response.json();
             message.success('delete sussesful');
@@ -204,7 +187,6 @@ export default function ServiceDetail() {
             }
           })
           .catch(error => console.log('Error deleting user', error));
-
       },
     });
   };
@@ -213,7 +195,6 @@ export default function ServiceDetail() {
   const onCancel = () => {
     form.resetFields();
   };
-
 
   return (
     <DivStyle>
@@ -230,7 +211,6 @@ export default function ServiceDetail() {
           initialValues={{
             remember: true,
           }}
-
           autoComplete="off"
           form={form}
         >
@@ -238,76 +218,110 @@ export default function ServiceDetail() {
             <FirstLine>
               <FormItem
                 label={
-                  <span style={{
-                    marginLeft: '15px',
-                    fontFamily: 'Poppins',
-                    fontStyle: 'normal',
-                    fontWeight: 400,
-                    fontSize: '16px',
-                    lineHeight: '24px',
-                    color: '#939393',
-                  }}>
+                  <span
+                    style={{
+                      marginLeft: '15px',
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
                     Name
-                  </span>}
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 name="name"
               >
-                <Input placeholder="Enter services name" style={{ border: "none", cursor: "default", pointerEvents: 'none' }} readOnly />
+                <Input
+                  placeholder="Enter services name"
+                  style={{
+                    border: 'none',
+                    cursor: 'default',
+                    pointerEvents: 'none',
+                  }}
+                  readOnly
+                />
               </FormItem>
               <FormItem
-
                 label={
-                  <span style={{
-                    marginLeft: '15px',
-                    fontFamily: 'Poppins',
-                    fontStyle: 'normal',
-                    fontWeight: 400,
-                    fontSize: '16px',
-                    lineHeight: '24px',
-                    color: '#939393',
-                  }}>
+                  <span
+                    style={{
+                      marginLeft: '15px',
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
                     Min price
-                  </span>}
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 name="minPrice"
-
               >
-                <Input placeholder="Enter min price" style={{ border: "none", cursor: "default", pointerEvents: 'none' }} readOnly />
+                <Input
+                  placeholder="Enter min price"
+                  style={{
+                    border: 'none',
+                    cursor: 'default',
+                    pointerEvents: 'none',
+                  }}
+                  readOnly
+                />
               </FormItem>
 
               <FormItem
                 label={
-                  <span style={{
-                    marginLeft: '15px',
-                    fontFamily: 'Poppins',
-                    fontStyle: 'normal',
-                    fontWeight: 400,
-                    fontSize: '16px',
-                    lineHeight: '24px',
-                    color: '#939393',
-                  }}>
+                  <span
+                    style={{
+                      marginLeft: '15px',
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
                     Max price
-                  </span>}
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 name="maxPrice"
               >
-                <Input placeholder="Enter max price" style={{ border: "none", cursor: "default", pointerEvents: 'none' }} readOnly />
+                <Input
+                  placeholder="Enter max price"
+                  style={{
+                    border: 'none',
+                    cursor: 'default',
+                    pointerEvents: 'none',
+                  }}
+                  readOnly
+                />
               </FormItem>
             </FirstLine>
             <StyleCommentBox>
               <FormItem
                 label={
-                  <span style={{
-                    marginLeft: '15px',
-                    fontFamily: 'Poppins',
-                    fontStyle: 'normal',
-                    fontWeight: 400,
-                    fontSize: '16px',
-                    lineHeight: '24px',
-                    color: '#939393',
-                  }}>
+                  <span
+                    style={{
+                      marginLeft: '15px',
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      color: '#939393',
+                    }}
+                  >
                     Description
-                  </span>}
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 name="description"
               >
@@ -319,16 +333,15 @@ export default function ServiceDetail() {
                     fontWeight: 500,
                     fontSize: '16px',
                     lineHeight: '24px',
-                    border: "none",
-                    cursor: "default",
+                    border: 'none',
+                    cursor: 'default',
                     color: '#111111',
-                    pointerEvents: 'none'
+                    pointerEvents: 'none',
                   }}
                   readOnly
                 />
               </FormItem>
             </StyleCommentBox>
-
 
             <div className="Btns">
               <Divider style={{ border: '1px solid #DDE4EE', margin: 0 }} />
@@ -342,7 +355,8 @@ export default function ServiceDetail() {
                 </ButtonStyle>
                 <ButtonStyle
                   htmlType="button"
-                  onClick={() => onDelete(temp_data_service.data.id)}>
+                  onClick={() => onDelete(temp_data_service.data.id)}
+                >
                   <span>Delete</span>
                 </ButtonStyle>
               </div>
@@ -353,4 +367,3 @@ export default function ServiceDetail() {
     </DivStyle>
   );
 }
-

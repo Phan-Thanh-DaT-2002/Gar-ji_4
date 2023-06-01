@@ -166,6 +166,9 @@ function UpdateProfile() {
           console.log('Response:', data);
           message.success('Form submitted successfully!');
           navigate('/');
+
+          // Load lại trang
+          window.location.reload();
         } else {
           // console.error('Error:', data);
           message.error('Failed to submit form!');
@@ -304,4 +307,5 @@ function UpdateProfile() {
     </div>
   );
 }
+
 export default UpdateProfile;
