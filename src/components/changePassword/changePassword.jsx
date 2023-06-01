@@ -64,16 +64,18 @@ const ChangePassword = () => {
       console.log(raw);
 
       fetch('http://localhost:1337/api/auth/change-password', requestOptions)
-        .then(response => { if (response.ok) { message.success('change password successfully!'); } })
-        .then(result => {
-          alert(`error ${result}`);
-          setUserData(result);
+        .then(response => {
+          if (response.ok) {
+            message.success('change password successfully!');
+            navigate('/');
+          }
         })
+        .then(result => console.log(result))
         .catch(error => console.log('error', error));
     }
-    else alert("mật khâủ mới nhập vào không khớp")
+    else alert("new password does not match")
 
-    navigate('/garage');
+
 
   }
 
@@ -118,12 +120,16 @@ const ChangePassword = () => {
               validator: validatePassword,
             },
           ]}>
-          <Input
+          <Input.Password
             label='currentPassword'
             placeholder="Enter current password"
 
           />
         </Form.Item>
+
+
+
+
         <p className="text-btn">New Password</p>
         <Form.Item
           name="newPassword"
@@ -133,12 +139,14 @@ const ChangePassword = () => {
               validator: validatePassword,
             },
           ]}>
-          <Input
+          <Input.Password
             label='newPassword'
             placeholder="Enter new password"
-
           />
         </Form.Item>
+
+
+
         <p className="text-btn">Confirm Password</p>
         <Form.Item
           name="confirmPassword"
@@ -148,12 +156,21 @@ const ChangePassword = () => {
               validator: validatePassword,
             },
           ]}>
-          <Input
+          <Input.Password
             label='confirmPassword'
             placeholder="Enter confirm password"
-
           />
         </Form.Item>
+
+
+
+
+
+
+
+
+
+
         <div className="line"></div>
         <Form.Item {...tailLayout}>
           <div className="btn-c-s">
