@@ -24,7 +24,7 @@ import {
 } from './index.js';
 import { Form, Input, Select, Divider, message } from 'antd';
 import moment from 'moment';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function UpdateMana() {
   const [form] = Form.useForm();
@@ -34,7 +34,7 @@ function UpdateMana() {
 
   const { userId } = location.state || {};
   const [data, setData] = useState(null);
- 
+ const navigate = useNavigate()
   const [userData, setUserData] = useState([])
   const [owner, setOwner] = useState(null);
 
@@ -94,11 +94,12 @@ function UpdateMana() {
             email: result.data.attributes.email,
             description: result.data.attributes.description,
             policy: result.data.attributes.policy,
-            owner: result.data.attributes.owner.data.attributes.fullname,
+            owner: result?.data?.attributes?.owner?.data?.id,
             openTime: moment(result.data.attributes.openTime, 'HH:mm'),
             closeTime: moment(result.data.attributes.closeTime, 'HH:mm'),
             // services: result.data.attributes.services.map((services)=>services),
           });
+          console.log(owner);
         } else {
           console.error('Error:', response.statusText);
         }
@@ -156,10 +157,14 @@ function UpdateMana() {
       if (response.ok) {
         console.log('Response:', data);
         message.success('Form submitted successfully!');
-        form.resetFields();
+        setTimeout(() => {
+          navigate('/garage');
+        }, 3000); 
+        
       } else {
         console.error('Error:', data);
         message.error('Failed to submit form!');
+        
       }
     } catch (error) {
       console.error('Error:', error);
@@ -466,15 +471,15 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
                 ]}
               >
                 <StyleSelect placeholder="Select a garage owner" allowClear={false}> 
-                
+                {console.log(garageOwners)}
                 {Array.isArray(garageOwners)&&garageOwners.map((owner) => (
-      <Option key={owner.id} value={owner.name}>
-        {owner.fullname}
-      
-      </Option>
-      
-    ))}
-</StyleSelect>
+                  <Option key={owner.id} value={owner.id}>
+                    {owner.fullname}
+                    
+                  </Option>
+                  
+                ))}
+            </StyleSelect>
               </FormItem>
               <FormItem
                 name="status"
