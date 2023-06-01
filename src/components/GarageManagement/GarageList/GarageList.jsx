@@ -1,13 +1,13 @@
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
-import { Form, Button, Row, Col, Input, Select, Space, Table, theme, Modal, message } from 'antd';
+import { Form, Button, Row, Col, Input, Select, Space, Table, theme, Modal } from 'antd';
 import './style.css';
 import { useNavigate } from 'react-router';
 
 const GarageManagementList = () => {
   const navigate = useNavigate();
   const handleAdd = () => {
-    navigate('/manager-create');
+    navigate('/garage-owner-create');
   };
   const [searchCategory, setSearchCategory] = useState('Name');
   const [statusFilter, setStatusFilter] = useState('');
@@ -89,8 +89,9 @@ const handleView = (userId) => {
       render: (data) => {
         if (data && data.data && data.data.attributes && data.data.attributes.fullname) {
           return <span>{data.data.attributes.fullname}</span>;
+        } else {
+          return null;
         }
-        return null;
       },
     },
     {
@@ -130,74 +131,52 @@ const handleView = (userId) => {
     };
 
     fetch("http://localhost:1337/api/garages?populate=owner", requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        const arrayNew = result.data.map(item => ({...item.attributes, id : item.id}))
-       console.log(arrayNew);
-        setData(arrayNew);
-      })
-      .catch(error => console.log('error', error));
+    .then(response => response.json())
+    .then(result => {
+      const arrayNew = result.data.map(item => {
+        if (item.owner && item.owner.data && item.owner.data.attributes && item.owner.data.attributes.fullname) {
+          return { ...item.attributes, id: item.id, owner: item.owner.data.attributes.fullname };
+        } else {
+          return { ...item.attributes, id: item.id, owner: null };
+        }
+      });
+      setData(arrayNew);
+    })
+    .catch(error => console.log('error', error));
   }, []);
 
   const {
     token: { colorBgContainer },
   } = theme.useToken();
-  const [userData, setUserData] = useState([])
-    useEffect(() => {
-      const jwt = localStorage.getItem('jwt');
-      const requestOptions = {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${jwt}`,
-        },
-        redirect: 'follow',
-      };
-  
-      fetch("http://localhost:1337/api/users", requestOptions)
-        .then(response => response.json())
-        .then(result => {
-          console.log(result);
-          setUserData(result);
-        })
-        .catch(error => console.log('error', error));
-    }, []);
-    const isAdmin = data && data.type === 'admin'; 
-   
-    const handleDelete = record => {
-      Modal.confirm({
-        title: 'Are you sure about that?',
-        onOk: () => {
-          if (isAdmin) {
-            setUserData(prevData => {
-              return prevData.filter(data => data.id !== record.id);
-            });
-    
-            const jwt = localStorage.getItem('jwt');
-            const requestOptions = {
-              method: 'DELETE',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${jwt}`,
-              },
-              redirect: 'follow',
-            };
-    
-            fetch(`http://localhost:1337/api/users/${record.id}`, requestOptions)
-              .then(response => response.json())
-              .then(result => {
-                if (!result.success) {
-                  console.log('Error deleting user');
-                }
-              })
-              .catch(error => console.log('Error deleting user', error));
-          } else {
-            message.error('You do not have permission to delete.');
-          }
-        },
-      });
-    };
-  
+  const handleDelete = record => {
+    Modal.confirm({
+      title: 'Are you sure about that?',
+      onOk: () => {
+        setData(prevData => {
+          return prevData.filter(data => data.id !== record.id);
+        });
+
+        const jwt = localStorage.getItem('jwt');
+        const requestOptions = {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+          redirect: 'follow',
+        };
+
+        fetch(`http://localhost:1337/api/garages/${record.id}`, requestOptions)
+          .then(response => response.json())
+          .then(result => {
+            if (!result.success) {
+              console.log('Error deleting user');
+            }
+          })
+          .catch(error => console.log('Error deleting user', error));
+      },
+    });
+  };
   return (
     <div style={{ padding: 24, minHeight: 360, background: colorBgContainer }}>
       <div>
