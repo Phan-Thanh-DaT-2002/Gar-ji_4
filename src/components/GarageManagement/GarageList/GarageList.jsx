@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router';
 const GarageManagementList = () => {
   const navigate = useNavigate();
   const handleAdd = () => {
-    navigate('/manager-create');
+    navigate('/garage-owner-create');
   };
   const [searchCategory, setSearchCategory] = useState('Name');
   const [statusFilter, setStatusFilter] = useState('');
@@ -50,6 +50,7 @@ const handleView = (userId) => {
       title: '#',
       dataIndex: 'id',
       key: 'id',
+      render: (_, __, index) => index + 1,
     },
     {
       title: 'Name',
@@ -84,9 +85,13 @@ const handleView = (userId) => {
     {
       title: 'Garage owner',
       dataIndex: 'owner',
-      key: 'owner,',
+      key: 'owner',
       render: (data) => {
-        return <span > {data.data.attributes.fullname} </span>
+        if (data && data.data && data.data.attributes && data.data.attributes.fullname) {
+          return <span>{data.data.attributes.fullname}</span>;
+        } else {
+          return null;
+        }
       },
     },
     {
@@ -126,13 +131,18 @@ const handleView = (userId) => {
     };
 
     fetch("http://localhost:1337/api/garages?populate=owner", requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        const arrayNew = result.data.map(item => ({...item.attributes, id : item.id}))
-       console.log(arrayNew);
-        setData(arrayNew);
-      })
-      .catch(error => console.log('error', error));
+    .then(response => response.json())
+    .then(result => {
+      const arrayNew = result.data.map(item => {
+        if (item.owner && item.owner.data && item.owner.data.attributes && item.owner.data.attributes.fullname) {
+          return { ...item.attributes, id: item.id, owner: item.owner.data.attributes.fullname };
+        } else {
+          return { ...item.attributes, id: item.id, owner: null };
+        }
+      });
+      setData(arrayNew);
+    })
+    .catch(error => console.log('error', error));
   }, []);
 
   const {

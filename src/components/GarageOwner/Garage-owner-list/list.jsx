@@ -2,12 +2,13 @@ import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Form, Button, Row, Col, Input, Select, Space, Table, theme, Modal, message } from 'antd';
+import { Form, Button, Row, Col, Input, Select, Space, Table, theme, Modal, message } from 'antd';
 import '../../GarageOwner/Garage-owner-list/style.css';
 
 
 const GarageOwnerList = () => {
 
-  const location = useLocation();
+  const location = useLocation(); 
   const [data, setData] = useState(null);
   const [userId, setUserId] = useState(null)
   const handleView = (userId) => {
@@ -51,13 +52,29 @@ const GarageOwnerList = () => {
       dataIndex: 'id',
       key: 'id',
       render: (_, __, index) => index + 1,
+      dataIndex: 'id',
+      key: 'id',
+      render: (_, __, index) => index + 1,
     },
     {
       title: 'Name',
       dataIndex: 'username',
       key: 'username',
       filteredValue: [searchText],
+      filteredValue: [searchText],
       onFilter: (value, record) => {
+        if (String(isActived_1).toLowerCase().includes('username')) {
+          return String(record.username)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+        } else if (String(isActived_1).toLowerCase().includes('email')) {
+          return String(record.email)
+            .toLowerCase()
+            .includes(value.toLowerCase());
+        } else
+          return String(record.username)
+            .toLowerCase()
+            .includes(value.toLowerCase());
         if (String(isActived_1).toLowerCase().includes('username')) {
           return String(record.username)
             .toLowerCase()
@@ -122,12 +139,15 @@ const GarageOwnerList = () => {
     };
 
     fetch("http://localhost:1337/api/users", requestOptions)
+
+    fetch("http://localhost:1337/api/users", requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
         setUserData(result);
       })
       .catch(error => console.log('error', error));
+  }, []);
   }, []);
 
   const handleAdd = () => {
@@ -141,7 +161,7 @@ const GarageOwnerList = () => {
           setUserData(prevData => {
             return prevData.filter(data => data.id !== record.id);
           });
-
+  
           const jwt = localStorage.getItem('jwt');
           const requestOptions = {
             method: 'DELETE',
@@ -151,7 +171,7 @@ const GarageOwnerList = () => {
             },
             redirect: 'follow',
           };
-
+  
           fetch(`http://localhost:1337/api/users/${record.id}`, requestOptions)
             .then(response => response.json())
             .then(result => {
@@ -166,7 +186,7 @@ const GarageOwnerList = () => {
       },
     });
   };
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -179,29 +199,30 @@ const GarageOwnerList = () => {
           },
           redirect: 'follow',
         };
-
+  
         const response = await fetch(
+          'http://localhost:1337/api/users/me?populate=role,avatar',
           'http://localhost:1337/api/users/me?populate=role,avatar',
           requestOptions
         );
         const result = await response.json();
-
+  
         if (response.ok) {
           console.log(result);
           setData(result.role);
           console.log(result.role);
-
+      
           console.error('Error:', result);
         }
       } catch (error) {
         console.error('Error:', error);
       }
     };
-
+  
     fetchData();
   }, []);
-
-  const isAdmin = data && data.type === 'admin';
+  
+  const isAdmin = data && data.type === 'admin'; 
   return (
     <div
       style={{
@@ -213,6 +234,18 @@ const GarageOwnerList = () => {
       <div>
         <Row>
           <Col md={22}>
+            <h1
+              style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                fontSize: '24px',
+                lineHeight: '32px',
+                color: '#111111',
+              }}
+            >
+              All Garage Owners
+            </h1>
             <h1
               style={{
                 fontFamily: 'Poppins',
@@ -252,6 +285,7 @@ const GarageOwnerList = () => {
         <div>
           <Form>
             <Space>
+            <Space>
               <Space.Compact size="large">
                 <Select
                   style={{ width: '100px' }}
@@ -259,12 +293,14 @@ const GarageOwnerList = () => {
                   options={options}
                   onChange={value => {
                     setIsActived_1(value);
+                    setIsActived_1(value);
                   }}
                 />
                 <Search
                   placeholder="Search"
                   allowClear
                   onSearch={value => {
+                    setSearchText(value);
                     setSearchText(value);
                   }}
                 />
@@ -280,7 +316,7 @@ const GarageOwnerList = () => {
                 />
               </Space.Compact>
             </Space>
-
+  
             <Table
               pagination={{ pageSize: 5 }}
               columns={columns}
@@ -308,6 +344,5 @@ const GarageOwnerList = () => {
         </div>
       </div>
     </div>
-  );
-}
+  );}
 export default GarageOwnerList;

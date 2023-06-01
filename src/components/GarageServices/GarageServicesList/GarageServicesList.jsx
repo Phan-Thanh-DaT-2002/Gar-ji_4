@@ -65,6 +65,7 @@ const GarageServicesList = () => {
       title: '#',
       dataIndex: 'id',
       key: 'id',
+      render: (_, __, index) => index + 1,
     },
     {
       title: 'Name',
