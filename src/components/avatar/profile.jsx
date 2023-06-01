@@ -84,6 +84,7 @@ function Profile({}) {
         navigate('/change-password');
         break;
       case '4':
+        localStorage.removeItem('jwt');
         navigate('/login');
         break;
       default:
