@@ -1,25 +1,36 @@
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
-import { Form, Button, Row, Col, Input, Select, Space, Table, theme, Modal } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import {
+  Form,
+  Button,
+  Row,
+  Col,
+  Input,
+  Select,
+  Space,
+  Table,
+  theme,
+  Modal,
+} from 'antd';
 import './style.css';
-import { useNavigate } from 'react-router';
 
 const GarageManagementList = () => {
   const navigate = useNavigate();
-  const handleAdd = () => {
-    navigate('/manager-create');
-  };
-  const [searchCategory, setSearchCategory] = useState('Name');
-  const [statusFilter, setStatusFilter] = useState('');
-const handleView = (userId) => {
+
+  const handleView = userId => {
     navigate('/manager-details', { state: { userId: userId } });
   };
-  const handleUpdate = (userId) => {
+  const handleUpdate = userId => {
     navigate('/manager-update', { state: { userId: userId } });
   };
   const [searchText, setSearchText] = useState('');
-  const [isActived_1, setIsActived_1] = useState('');
-  const [isActived_2, setIsActived_2] = useState('');
+  const [isActived_1, setIsActived_1] = useState('Name');
+  const [isActived_2, setIsActived_2] = useState('Status');
+  const [pagination, setPagination] = useState({
+    page: 1,
+    pageSize: 10,
+  });
   const { Search } = Input;
   const options = [
     {
@@ -48,28 +59,13 @@ const handleView = (userId) => {
   const columns = [
     {
       title: '#',
-      dataIndex: 'id',
-      key: 'id',
+      dataIndex: 'STT',
+      key: 'STT',
     },
     {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      filteredValue: [searchText],
-      onFilter: (value, record) => {
-        if (String(isActived_1).toLowerCase().includes('name')) {
-          return String(record.name)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-        } else if (String(isActived_1).toLowerCase().includes('email')) {
-          return String(record.email)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-        } else
-          return String(record.name)
-            .toLowerCase()
-            .includes(value.toLowerCase());
-      },
     },
     {
       title: 'Email',
@@ -85,20 +81,11 @@ const handleView = (userId) => {
       title: 'Garage owner',
       dataIndex: 'owner',
       key: 'owner,',
-      render: (data) => {
-        return <span > {data.data.attributes.fullname} </span>
-      },
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
-      filteredValue: [isActived_2],
-      onFilter: (value, record) => {
-        if (value === 'Status') {
-          return record.status.includes('');
-        } else return record.status.includes(value);
-      },
     },
     {
       title: 'Actions',
@@ -107,12 +94,12 @@ const handleView = (userId) => {
         <Space size="middle">
           <EyeOutlined onClick={() => handleView(record.id)} />
           <EditOutlined onClick={() => handleUpdate(record.id)} />
-          <DeleteOutlined onClick={()=> handleDelete(record)}/>
+          <DeleteOutlined onClick={() => handleDelete(record)} />
         </Space>
       ),
     },
   ];
- 
+
   const [data, setData] = useState([]);
   useEffect(() => {
     const jwt = localStorage.getItem('jwt');
@@ -124,20 +111,80 @@ const handleView = (userId) => {
       },
       redirect: 'follow',
     };
+    let filterParams = {};
 
-    fetch("http://localhost:1337/api/garages?populate=owner", requestOptions)
+    if (isActived_2 === 'Status') {
+      filterParams = {};
+    } else if (isActived_2 === 'Active') {
+      filterParams['status][$contains]'] = 'active';
+    } else if (isActived_2 === 'Inactive') {
+      filterParams['status][$contains]'] = 'inactive';
+    }
+
+    if (isActived_1 === 'Name') {
+      filterParams['name][$contains]'] = searchText;
+    } else if (isActived_1 === 'Email') {
+      filterParams['email][$contains]'] = searchText;
+    }
+
+    const filters = Object.entries(filterParams)
+      .map(([key, value]) => `filters[${key}]=${encodeURIComponent(value)}`)
+      .join('&');
+    const paginationParams = `pagination[page]=${pagination.page}&pagination[pageSize]=${pagination.pageSize}`;
+
+    const apiUrl = `http://localhost:1337/api/garages?${filters}&${paginationParams}`;
+
+    fetch(apiUrl, requestOptions)
       .then(response => response.json())
       .then(result => {
-        const arrayNew = result.data.map(item => ({...item.attributes, id : item.id}))
-       console.log(arrayNew);
-        setData(arrayNew);
+        console.log(result.data);
+        if (result.data) {
+          const arrayNew = result.data.map(item => ({
+            ...item.attributes,
+          }));
+          console.log(arrayNew);
+          setData(arrayNew);
+        }
       })
       .catch(error => console.log('error', error));
-  }, []);
+  }, [searchText, isActived_1, isActived_2, pagination]);
+  const handlePagination = (page, pageSize) => {
+    setPagination(prevPagination => ({
+      ...prevPagination,
+      page,
+      pageSize,
+    }));
+  };
+  // useEffect(() => {
+  //   const jwt = localStorage.getItem('jwt');
+  //   const requestOptions = {
+  //     method: 'GET',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       Authorization: `Bearer ${jwt}`,
+  //     },
+  //     redirect: 'follow',
+  //   };
+
+  //   fetch('http://localhost:1337/api/garages?populate=owner', requestOptions)
+  //     .then(response => response.json())
+  //     .then(result => {
+  //       const arrayNew = result.data.map(item => ({
+  //         ...item.attributes,
+  //         id: item.id,
+  //       }));
+  //       console.log(arrayNew);
+  //       setData(arrayNew);
+  //     })
+  //     .catch(error => console.log('error', error));
+  // }, []);
 
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+  const handleAdd = () => {
+    navigate('/manager-create');
+  };
   const handleDelete = record => {
     Modal.confirm({
       title: 'Are you sure about that?',
@@ -172,19 +219,22 @@ const handleView = (userId) => {
       <div>
         <Row>
           <Col md={22}>
-            <h1 style={{
-              fontFamily: 'Poppins',
-              fontStyle: 'normal',
-              fontWeight: 500,
-              fontSize: '24px',
-              lineHeight: '32px',
-              color: '#111111',
-
-            }}>All Garages</h1>
+            <h1
+              style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                fontSize: '24px',
+                lineHeight: '32px',
+                color: '#111111',
+              }}
+            >
+              All Garages
+            </h1>
           </Col>
           <Col md={2}>
             <Button
-            onClick={handleAdd}
+              onClick={handleAdd}
               type="primary"
               style={{
                 background: '#8767E1',
@@ -208,7 +258,7 @@ const handleView = (userId) => {
         <div>
           <Form>
             <Space>
-            <Space.Compact size="large">
+              <Space.Compact size="large">
                 <Select
                   style={{ width: '100px' }}
                   defaultValue="Name"
@@ -238,17 +288,25 @@ const handleView = (userId) => {
             </Space>
             <Table
               columns={columns}
-              dataSource={data}
-              pagination={{pageSize: 5}}
+              pagination={{
+                current: pagination.page,
+                pageSize: pagination.pageSize,
+                total: data.length,
+                onChange: handlePagination,
+              }}
+              dataSource={data.map((data, index) => ({
+                ...data,
+                STT: index + 1,
+              }))}
               style={{
-                    fontFamily: 'Poppins',
-                  fontStyle: 'normal',
-                  fontWeight: '500',
-                  fontSize: '13px',
-                  lineHeight: '24px',
-                  color: '#2F3A4C',
-                marginTop:'20px'
-                  }} 
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: '500',
+                fontSize: '13px',
+                lineHeight: '24px',
+                color: '#2F3A4C',
+                marginTop: '20px',
+              }}
             />
           </Form>
         </div>

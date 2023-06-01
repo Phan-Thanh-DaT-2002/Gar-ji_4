@@ -4,81 +4,39 @@ import {
   DeleteOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Form,
-  theme,
   Button,
   Row,
   Col,
   Input,
-  Tooltip,
   Space,
   Table,
+  theme,
   Modal,
 } from 'antd';
-import '../../GarageServices/GarageServicesList/style.css';
-import { useState } from 'react';
-import '../GarageServicesList/style.css';
-import { useLocation, useNavigate } from 'react-router-dom';
+
 const GarageServicesList = () => {
-  const location = useLocation(); // Sử dụng useLocation từ react-router-dom
-  const navigate = useNavigate();
-  const [userId, setUserId] = useState(null)
-  const handleAdd = () => {
-    navigate('/create-services');
-  };
-  const handleView = (userId) => {
-    navigate('/services-detail', { state: { userId: userId } });
-  };
-  const handleUpdate = (userId) => {
-    navigate('/services-update', { state: { userId: userId } });
-  };
   const [searchText, setSearchText] = useState('');
-  const [isActived_1, setIsActived_1] = useState('');
+  const [pagination, setPagination] = useState({
+    page: 1,
+    pageSize: 10,
+  });
+
   const { Search } = Input;
-  const options = [
-    {
-      value: 'Name',
-      label: 'Name',
-    },
-    {
-      value: 'Description',
-      label: 'Description',
-    },
-    {
-      value: 'Min price',
-      label: 'Min price',
-    },
-    {
-      value: 'Max price',
-      label: 'Max price',
-    },
-    {
-      value: 'Actions',
-      label: 'Actions',
-    },
-  ];
 
   const columns = [
     {
       title: '#',
-      dataIndex: 'id',
-      key: 'id',
+      dataIndex: 'STT',
+      key: 'STT',
     },
     {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      filteredValue: [searchText],
-      onFilter: (value, record) => {
-        return (
-          String(record.name).toLowerCase().includes(value.toLowerCase()) ||
-          String(record.description)
-            .toLowerCase()
-            .includes(value.toLowerCase())
-        );
-      },
     },
     {
       title: 'Description',
@@ -98,18 +56,18 @@ const GarageServicesList = () => {
     {
       title: 'Actions',
       key: 'actions',
-      render: (_, record) => (
+      render: record => (
         <Space size="middle">
-           <EyeOutlined onClick={() => handleView(record.id)} />
-           <EditOutlined onClick={() => handleUpdate(record.id)} />
-           <DeleteOutlined onClick={()=> handleDelete(record)}/>
+          <EyeOutlined onClick={() => handleView(record.id)} />
+          <EditOutlined onClick={() => handleUpdate(record.id)} />
+          <DeleteOutlined onClick={() => handleDelete(record)} />
         </Space>
       ),
     },
   ];
-  
-  const [data, setData] = useState([]);
 
+  const [data, setData] = useState([]);
+  const navigate = useNavigate();
   useEffect(() => {
     const jwt = localStorage.getItem('jwt');
     const requestOptions = {
@@ -120,19 +78,48 @@ const GarageServicesList = () => {
       },
       redirect: 'follow',
     };
+    let filterParams = {};
+    filterParams['name][$contains]'] = searchText;
+    const filters = Object.entries(filterParams)
+      .map(([key, value]) => `filters[${key}]=${encodeURIComponent(value)}`)
+      .join('&');
+    const paginationParams = `pagination[page]=${pagination.page}&pagination[pageSize]=${pagination.pageSize}`;
 
-    fetch("http://localhost:1337/api/garage-services?populate=garages", requestOptions)
+    const apiUrl = `http://localhost:1337/api/garage-services?${filters}&${paginationParams}`;
+    console.log(filters);
+
+    fetch(apiUrl, requestOptions)
       .then(response => response.json())
       .then(result => {
-        const arrayNew = result.data.map(item => ({...item.attributes, id : item.id, }))
-       
+        const arrayNew = result.data.map(item => ({
+          ...item.attributes,
+          id: item.id,
+        }));
+
         setData(arrayNew);
       })
       .catch(error => console.log('error', error));
-  }, []);
+  }, [searchText, pagination]);
+  const handlePagination = (page, pageSize) => {
+    setPagination(prevPagination => ({
+      ...prevPagination,
+      page,
+      pageSize,
+    }));
+  };
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+  const handleAdd = () => {
+    navigate('/create-services');
+  };
+  const handleView = userId => {
+    navigate('/services-detail', { state: { userId: userId } });
+  };
+  const handleUpdate = userId => {
+    navigate('/services-update', { state: { userId: userId } });
+  };
+
   const handleDelete = record => {
     Modal.confirm({
       title: 'Are you sure about that?',
@@ -151,7 +138,10 @@ const GarageServicesList = () => {
           redirect: 'follow',
         };
 
-        fetch(`http://localhost:1337/api/garage-services/${record.id}`, requestOptions)
+        fetch(
+          `http://localhost:1337/api/garage-services/${record.id}`,
+          requestOptions
+        )
           .then(response => response.json())
           .then(result => {
             if (!result.success) {
@@ -173,15 +163,18 @@ const GarageServicesList = () => {
       <div>
         <Row>
           <Col md={22}>
-            <h1 style={{
-              fontFamily: 'Poppins',
-              fontStyle: 'normal',
-              fontWeight: 500,
-              fontSize: '24px',
-              lineHeight: '32px',
-              color: '#111111',
-
-            }}>All Garage Services</h1>
+            <h1
+              style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                fontSize: '24px',
+                lineHeight: '32px',
+                color: '#111111',
+              }}
+            >
+              All Garage Services
+            </h1>
           </Col>
           <Col md={2}>
             <Button
@@ -220,19 +213,26 @@ const GarageServicesList = () => {
               />
             </Space.Compact>
             <Table
-              pagination={{pageSize: 5}}
               columns={columns}
-              dataSource={data}
+              pagination={{
+                current: pagination.page,
+                pageSize: pagination.pageSize,
+                total: data.length,
+                onChange: handlePagination,
+              }}
+              dataSource={data.map((data, index) => ({
+                ...data,
+                STT: index + 1,
+              }))}
               style={{
-                    fontFamily: 'Poppins',
-                  fontStyle: 'normal',
-                  fontWeight: '500',
-                  fontSize: '13px',
-                  lineHeight: '24px',
-                  color: '#2F3A4C',
-                  marginTop:'20px',
-                  
-                  }} 
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: '500',
+                fontSize: '13px',
+                lineHeight: '24px',
+                color: '#2F3A4C',
+                marginTop: '20px',
+              }}
             ></Table>
           </Form>
         </div>

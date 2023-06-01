@@ -1,5 +1,4 @@
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import axiosInstance from '../../../shared/services/http-client';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -13,17 +12,8 @@ import {
   Table,
   theme,
   Modal,
-  Pagination,
 } from 'antd';
 import '../../GarageOwner/Garage-owner-list/style.css';
-import { async } from 'q';
-
-const useHandleAdd = () => {
-  const navigate = useNavigate();
-  return () => {
-    navigate('/garage-owner-create');
-  };
-};
 
 const GarageOwnerList = () => {
   const [searchText, setSearchText] = useState('');
@@ -33,6 +23,12 @@ const GarageOwnerList = () => {
     page: 1,
     pageSize: 10,
   });
+  const handleView = userId => {
+    navigate('/owner-details', { state: { userId: userId } });
+  };
+  const handleUpdate = userId => {
+    navigate('/owner-update', { state: { userId: userId } });
+  };
   const { Search } = Input;
   const options = [
     {
@@ -89,10 +85,10 @@ const GarageOwnerList = () => {
       key: 'actions',
       render: record => (
         <Space size="middle">
-  <EyeOutlined onClick={() => handleView(record.id)} />
-  <EditOutlined onClick={() => handleUpdate(record.id)} />
-  <DeleteOutlined onClick={()=> handleDelete(record)}/>
-</Space>
+          <EyeOutlined onClick={() => handleView(record.id)} />
+          <EditOutlined onClick={() => handleUpdate(record.id)} />
+          <DeleteOutlined onClick={() => handleDelete(record)} />
+        </Space>
       ),
     },
   ];
@@ -133,7 +129,6 @@ const GarageOwnerList = () => {
     const paginationParams = `pagination[page]=${pagination.page}&pagination[pageSize]=${pagination.pageSize}`;
 
     const apiUrl = `http://localhost:1337/api/users?${filters}&${paginationParams}`;
-    console.log(filters);
 
     fetch(apiUrl, requestOptions)
       .then(response => response.json())
@@ -150,20 +145,10 @@ const GarageOwnerList = () => {
       pageSize,
     }));
   };
+
   const handleAdd = () => {
     navigate('/garage-owner-create');
   };
-
-        fetch(`http://localhost:1337/api/users/${record.id}`, requestOptions)
-          .then(response => response.json())
-          .then(result => {
-            if (!result.success) {
-              console.log('Error deleting user');
-            }
-          })
-          .catch(error => console.log('Error deleting user', error));
-      },
-
   const handleDelete = record => {
     Modal.confirm({
       title: 'Are you sure about that?',
@@ -205,15 +190,18 @@ const GarageOwnerList = () => {
       <div>
         <Row>
           <Col md={22}>
-            <h1 style={{
-              fontFamily: 'Poppins',
-              fontStyle: 'normal',
-              fontWeight: 500,
-              fontSize: '24px',
-              lineHeight: '32px',
-              color: '#111111',
-
-            }}>All Garage Owners</h1>
+            <h1
+              style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                fontSize: '24px',
+                lineHeight: '32px',
+                color: '#111111',
+              }}
+            >
+              All Garage Owners
+            </h1>
           </Col>
           <Col md={2}>
             <Button
@@ -240,21 +228,21 @@ const GarageOwnerList = () => {
         </Row>
         <div>
           <Form>
-            <Space >
+            <Space>
               <Space.Compact size="large">
                 <Select
                   style={{ width: '100px' }}
                   defaultValue="Name"
                   options={options}
                   onChange={value => {
-                    setFilterField(value);
+                    setIsActived_1(value);
                   }}
                 />
                 <Search
                   placeholder="Search"
                   allowClear
                   onSearch={value => {
-                    setFilterValue(value);
+                    setSearchText(value);
                   }}
                 />
               </Space.Compact>
@@ -290,5 +278,4 @@ const GarageOwnerList = () => {
     </div>
   );
 };
-
 export default GarageOwnerList;
