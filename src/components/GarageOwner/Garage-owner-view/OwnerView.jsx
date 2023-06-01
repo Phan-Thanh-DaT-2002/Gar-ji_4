@@ -77,7 +77,7 @@ export default function OwnerView() {
   }, []);
 
   const handok = () => {
-    navigate('/owner-details');
+    navigate('/garage-owner');
   };
   const handleUpdate = userId => {
     if (isAdmin) {
