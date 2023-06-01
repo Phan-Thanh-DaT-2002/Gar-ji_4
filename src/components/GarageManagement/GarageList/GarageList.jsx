@@ -127,7 +127,7 @@ const GarageManagementList = () => {
       .map(([key, value]) => `filters[${key}]=${encodeURIComponent(value)}`)
       .join('&');
     const paginationParams = `pagination[page]=${pagination.page}&pagination[pageSize]=${pagination.pageSize}`;
-    const apiUrl = `http://localhost:1337/api/garages?${filters}&${paginationParams}&populate=owner`;
+    const apiUrl = `http://localhost:1337/api/garages?${filters}&${paginationParams}&populate=owner, `;
     console.log(apiUrl);
     fetch(apiUrl, requestOptions)
       .then(response => response.json())
