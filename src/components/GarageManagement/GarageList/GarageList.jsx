@@ -314,7 +314,6 @@ const GarageManagementList = () => {
                       src={`http://localhost:1337${avatar[index]}`}
                       alt="avatar"
                     />
-                    <>{console.log('333', avatar[index])}</>
                     <span style={{ marginLeft: '5px' }}>
                       {data.owner?.data?.attributes?.fullname || ''}
                     </span>
