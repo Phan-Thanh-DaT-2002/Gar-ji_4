@@ -205,6 +205,8 @@ const GarageManagementList = () => {
   const handleDelete = record => {
     Modal.confirm({
       title: 'Are you sure about that?',
+      okText: 'Yes',
+      cancelText: 'No',
       onOk: () => {
         setData(prevData => {
           return prevData.filter(data => data.id !== record.id);

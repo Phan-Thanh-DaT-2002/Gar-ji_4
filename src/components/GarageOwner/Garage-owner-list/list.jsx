@@ -32,8 +32,13 @@ const GarageOwnerList = () => {
   };
   const handleUpdate = userId => {
     if (isAdmin) {
-      navigate('/owner-update', { state: { userId: userId } });
-    } else {
+      if (isAdmin) {
+        navigate('/owner-update', { state: { userId: userId } });
+      } else {
+        message.error('You do not have permission to update.');
+      }
+    }
+    else {
       message.error('You do not have permission to update.');
     }
   };
@@ -203,11 +208,17 @@ const GarageOwnerList = () => {
   };
 
   const handleAdd = () => {
-    navigate('/garage-owner-create');
+    if (isAdmin) { navigate('/garage-owner-create'); }
+    else {
+      message.error('You do not have permission to delete.');
+    }
+
   };
   const handleDelete = record => {
     Modal.confirm({
       title: 'Are you sure about that?',
+      okText: 'Yes',
+      cancelText: 'No',
       onOk: () => {
         if (isAdmin) {
           setUserData(prevData => {
@@ -273,8 +284,8 @@ const GarageOwnerList = () => {
 
     fetchData();
   }, []);
-
   const isAdmin = data && data.type === 'admin';
+
   return (
     <div
       style={{
