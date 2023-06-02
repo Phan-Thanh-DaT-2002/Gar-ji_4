@@ -208,7 +208,11 @@ const GarageOwnerList = () => {
   };
 
   const handleAdd = () => {
-    navigate('/garage-owner-create');
+    if (isAdmin) { navigate('/garage-owner-create'); }
+    else {
+      message.error('You do not have permission to delete.');
+    }
+
   };
   const handleDelete = record => {
     Modal.confirm({
@@ -278,8 +282,8 @@ const GarageOwnerList = () => {
 
     fetchData();
   }, []);
-
   const isAdmin = data && data.type === 'admin';
+
   return (
     <div
       style={{

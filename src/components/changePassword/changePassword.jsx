@@ -25,6 +25,8 @@ const validatePassword = (rule, value, callback) => {
     callback('Enter a password with uppercase characters!');
   } else if (!/[!@#$%^&*]/.test(value)) {
     callback('Enter a password with special characters!');
+  } else if (!/\d/.test(value)) {
+    callback('Enter a password with at least one digit!');
   } else {
     callback();
   }
@@ -73,7 +75,7 @@ const ChangePassword = () => {
         .then(result => console.log(result))
         .catch(error => console.log('error', error));
     }
-    else alert("new password does not match")
+    else message.error("The confirm password is not match")
 
 
 
