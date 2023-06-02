@@ -13,6 +13,7 @@ import {
   Modal,
 } from 'antd';
 import { ReactComponent as Ellipse3 } from '../../assets/images/Ellipse 3.svg';
+import { ReactComponent as Ellipse2 } from '../../assets/images/Ellipse 2.svg';
 import { ReactComponent as Camera } from '../../assets/images/Camera/Vector.svg';
 import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
@@ -219,9 +220,17 @@ function UpdateProfile() {
                   alt="Avatar"
                 />
               ) : (
-                <AvatarImage
-                  src={avatar ? `http://localhost:1337${avatar}` : ''}
-                />
+                <>
+                  {avatar ? (
+                    <AvatarImage src={`http://localhost:1337${avatar}`} />
+                  ) : (
+                    <Avatar
+                      size={250}
+                      icon={<Ellipse2 />}
+                      onClick={showModal}
+                    ></Avatar>
+                  )}
+                </>
               )}
               <Modal
                 title="Update Avatar"
