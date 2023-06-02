@@ -58,9 +58,14 @@ const HomeLayout = () => {
           style={{
             height: 32,
             margin: 16,
+            textAlign: 'center',
           }}
         >
-          <p style={{ color: '#8767E1' }}>Menu</p>
+          <p
+            style={{ color: '#8767E1', fontWeight: 'bold', paddingTop: '8px' }}
+          >
+            Menu
+          </p>
         </div>
         <Menu
           theme="light"
