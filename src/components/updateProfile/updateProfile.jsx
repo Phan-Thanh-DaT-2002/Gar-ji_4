@@ -116,73 +116,74 @@ function UpdateProfile() {
       const jwt = localStorage.getItem('jwt');
       const { dob, address, phoneNumber } = values;
 
-      const formdata = new FormData();
-      formdata.append('ref', 'plugin::users-permissions.user');
-      formdata.append('refId', userId);
-      formdata.append('field', 'avatar');
-      formdata.append('files', uploadedImage); // Corrected field name
+      if (uploadedImage) {
+        // Nếu có ảnh mới được chọn, thực hiện tải lên ảnh
+        const formdata = new FormData();
+        formdata.append('ref', 'plugin::users-permissions.user');
+        formdata.append('refId', userId);
+        formdata.append('field', 'avatar');
+        formdata.append('files', uploadedImage);
 
-      const requestOptions = {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-        body: formdata,
-        redirect: 'follow',
-      };
-
-      const response = await fetch(
-        'http://localhost:1337/api/upload',
-        requestOptions
-      );
-      const uploadResult = await response.json(); // Parse response as JSON
-
-      if (response.ok) {
-        console.log('Image uploaded:', uploadResult);
-        console.log(response);
-        // Update other profile information
-        const raw = JSON.stringify({
-          dob: dob.format('YYYY-MM-DD'),
-          address,
-          phoneNumber,
-        });
-
-        const updateRequestOptions = {
-          method: 'PUT',
+        const requestOptions = {
+          method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
             Authorization: `Bearer ${jwt}`,
           },
-          body: raw,
+          body: formdata,
           redirect: 'follow',
         };
 
-        const updateResponse = await fetch(
-          `http://localhost:1337/api/users/${userId}`,
-          updateRequestOptions
+        const response = await fetch(
+          'http://localhost:1337/api/upload',
+          requestOptions
         );
-        const data = await updateResponse.json();
-        if (updateResponse.ok) {
-          console.log('Response:', data);
-          message.success('Form submitted successfully!');
-          navigate('/');
+        const uploadResult = await response.json();
 
-          // Load lại trang
-          window.location.reload();
+        if (response.ok) {
+          console.log('Image uploaded:', uploadResult);
+          // Tiếp tục cập nhật thông tin số điện thoại và các thông tin khác
         } else {
-          // console.error('Error:', data);
-          message.error('Failed to submit form!');
+          console.log('Image upload failed:', uploadResult);
+          message.error('Failed to upload image!');
         }
+      }
+
+      // Cập nhật thông tin số điện thoại và các thông tin khác (bao gồm cả khi không có ảnh mới)
+      const raw = JSON.stringify({
+        dob: dob.format('YYYY-MM-DD'),
+        address,
+        phoneNumber,
+      });
+
+      const updateRequestOptions = {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: raw,
+        redirect: 'follow',
+      };
+
+      const updateResponse = await fetch(
+        `http://localhost:1337/api/users/${userId}`,
+        updateRequestOptions
+      );
+      const data = await updateResponse.json();
+      if (updateResponse.ok) {
+        console.log('Response:', data);
+        message.success('Form submitted successfully!');
+
+        navigate('/');
+
+        // Load lại trang
+        window.location.reload();
       } else {
-        console.log('Image upload failed:', uploadResult);
-        message.error('Failed to upload image!');
+        message.error('Failed to submit form!');
       }
     } catch (error) {
-      // console.log(error);
-      // console.error('Error:', error);
       message.error('An error occurred');
     }
-    console.log('Upload:', uploadedImage);
   };
 
   const handleCancelForm = () => {

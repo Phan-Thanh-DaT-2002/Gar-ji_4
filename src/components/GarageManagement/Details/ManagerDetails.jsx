@@ -75,7 +75,7 @@ export default function ManagerDetails() {
             email: result.data.attributes.email,
             description: result.data.attributes.description,
             policy: result.data.attributes.policy,
-            owner: result.data.attributes.owner.data.attributes.fullname,
+            owner: result?.data?.attributes?.owner?.data?.attributes?.fullname,
             openTime: moment(result.data.attributes.openTime, 'HH:mm'),
             closeTime: moment(result.data.attributes.closeTime, 'HH:mm'),
             // services: result.data.attributes.services.map((services)=>services),
@@ -256,7 +256,7 @@ export default function ManagerDetails() {
                   labelCol={{ span: 24 }}
                   name="name"
                 >
-                  <Input placeholder="Enter owner name" style={{ border: "none", cursor:"default",pointerEvents: 'none' }} readOnly/>
+                  <Input style={{ border: "none", cursor:"default",pointerEvents: 'none' }} readOnly/>
                 </FormItem>
                 <FormItem
                   label={
@@ -276,7 +276,7 @@ export default function ManagerDetails() {
                   name="email"
                   
                 >
-                  <Input placeholder="Enter owner email" style={{ border: "none", cursor:"default",pointerEvents: 'none' }} readOnly/>
+                  <Input  style={{ border: "none", cursor:"default",pointerEvents: 'none' }} readOnly/>
                 </FormItem>
   
                 <FormItem
@@ -297,7 +297,7 @@ export default function ManagerDetails() {
                   name="phoneNumber"
                   
                 >
-                  <Input placeholder="Enter owner phone number" style={{ border: "none", cursor:"default",pointerEvents: 'none' }} readOnly/>
+                  <Input style={{ border: "none", cursor:"default",pointerEvents: 'none' }} readOnly/>
                 </FormItem>
               </FirstLine>
   
@@ -320,7 +320,7 @@ export default function ManagerDetails() {
                   name="address"
 
                 >
-                  <Input placeholder="Enter garage address" style={{ border: "none", cursor:"default",pointerEvents: 'none' }} readOnly/>
+                  <Input  style={{ border: "none", cursor:"default",pointerEvents: 'none' }} readOnly/>
                 </FormItem>
                 <FormItem
                   name="openTime"
@@ -342,7 +342,7 @@ export default function ManagerDetails() {
                   <StyledTimePicker
                     picker="time"
                     className="ant-select.ant-select-in-form-item"
-                    placeholder="Select open time"
+                 
                     format="HH:mm:ss"
                     defaultValue={''}
                     style={{ border: "none", cursor:"default",pointerEvents: 'none' }} inputReadOnly suffixIcon={null} readOnly
@@ -369,7 +369,7 @@ export default function ManagerDetails() {
                   <StyledTimePicker
                     dropdownClassName="my-dropdown-class"
                     className="ant-select.ant-select-in-form-item"
-                    placeholder="Select close time"
+                    
                     format="HH:mm:ss"
                     defaultValue={''}
                     style={{ border: "none", cursor:"default",pointerEvents: 'none' }} inputReadOnly suffixIcon={null} readOnly
@@ -395,7 +395,6 @@ export default function ManagerDetails() {
                   labelCol={{ span: 24 }}
                 >
                   <Input
-    placeholder="Enter owner name"
     style={{ border: "none", cursor:"default",pointerEvents: 'none' }}
     readOnly
     value={data?.attributes?.owner?.data?.attributes?.name} // Lấy tên chủ sở hữu

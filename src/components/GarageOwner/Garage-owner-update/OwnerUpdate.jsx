@@ -167,7 +167,9 @@ export default function OwnerUpdate() {
         if (response.ok) {
           console.log('Response:', data);
           message.success('Form submitted successfully!');
-          handcancel();
+          setTimeout(() => {
+            navigate('/garage-owner');
+          }, 1500); 
         } else {
           console.error('Error:', data);
           message.error('Failed to submit form!');
