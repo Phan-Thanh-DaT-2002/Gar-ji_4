@@ -157,6 +157,8 @@ export default function OwnerView() {
 
     Modal.confirm({
       title: 'Are you sure about that?',
+      okText: 'Yes',
+      cancelText: 'No',
       onOk: () => {
         if (isAdmin) {
           setUserData(prevData => {
