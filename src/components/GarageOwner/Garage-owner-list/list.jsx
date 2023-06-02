@@ -13,6 +13,7 @@ import {
   theme,
   Modal,
   message,
+  Avatar,
 } from 'antd';
 import '../../GarageOwner/Garage-owner-list/style.css';
 
@@ -21,6 +22,7 @@ const GarageOwnerList = () => {
   const [searchText, setSearchText] = useState('');
   const [isActived_1, setIsActived_1] = useState('Name');
   const [isActived_2, setIsActived_2] = useState('Status');
+  const [avatar, setAvatar] = useState(null);
   const [pagination, setPagination] = useState({
     page: 1,
     pageSize: 10,
@@ -30,13 +32,16 @@ const GarageOwnerList = () => {
   };
   const handleUpdate = userId => {
     if (isAdmin) {
-      navigate('/owner-update', { state: { userId: userId } });
+      if (isAdmin) {
+        navigate('/owner-update', { state: { userId: userId } });
+      } else {
+        message.error('You do not have permission to update.');
+      }
     }
     else {
       message.error('You do not have permission to update.');
     }
   };
-
   const { Search } = Input;
   const options = [
     {
@@ -65,13 +70,13 @@ const GarageOwnerList = () => {
   const columns = [
     {
       title: '#',
-      dataIndex: 'STT',
-      key: 'STT',
+      dataIndex: 'id',
+      key: 'id',
     },
     {
       title: 'Name',
-      dataIndex: 'username',
-      key: 'username',
+      dataIndex: 'fullname',
+      key: 'fullname',
     },
     {
       title: 'Email',
@@ -106,47 +111,94 @@ const GarageOwnerList = () => {
     token: { colorBgContainer },
   } = theme.useToken();
   useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    const requestOptions = {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${jwt}`,
-      },
-      redirect: 'follow',
+    const fetchData = async () => {
+      try {
+        const jwt = localStorage.getItem('jwt');
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+          redirect: 'follow',
+        };
+
+        let filterParams = {};
+
+        if (isActived_2 === 'Status') {
+          filterParams = {};
+        } else if (isActived_2 === 'Active') {
+          filterParams['blocked'] = false;
+        } else if (isActived_2 === 'Inactive') {
+          filterParams['blocked'] = true;
+        }
+
+        if (isActived_1 === 'Name') {
+          filterParams['fullname][$contains]'] = searchText;
+        } else if (isActived_1 === 'Email') {
+          filterParams['email][$contains]'] = searchText;
+        }
+
+        const filters = Object.entries(filterParams)
+          .map(([key, value]) => `filters[${key}]=${encodeURIComponent(value)}`)
+          .join('&');
+        const paginationParams = `pagination[page]=${pagination.page}&pagination[pageSize]=${pagination.pageSize}`;
+
+        const apiUrl = `http://localhost:1337/api/users?${filters}&${paginationParams}`;
+
+        const response = await fetch(apiUrl, requestOptions);
+        const result = await response.json();
+
+        if (response.ok) {
+          setUserData(result);
+          console.log(result);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+    fetchData();
+  }, [searchText, isActived_1, isActived_2, pagination]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const jwt = localStorage.getItem('jwt');
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwt}`,
+        },
+        redirect: 'follow',
+      };
+      const promises = userData.map(item => {
+        const apiUrl = `http://localhost:1337/api/users/${item.id}?populate=avatar`;
+        return fetch(apiUrl, requestOptions)
+          .then(response => response.json())
+          .then(result => {
+            if (result) {
+              console.log('111', result.avatar.url);
+              return result.avatar.url;
+            }
+            return null;
+          })
+          .catch(error => {
+            console.log('Error fetching avatar', error);
+            return null;
+          });
+      });
+      const avatarUrls = await Promise.all(promises);
+      console.log('333', avatarUrls);
+      const avatarMap = avatarUrls.reduce((map, url, index) => {
+        const userId = userData[index].id;
+        return { ...map, [userId]: url };
+      }, {});
+      console.log('222', avatarMap);
+      setAvatar(avatarMap);
     };
 
-    let filterParams = {};
+    fetchData();
+  }, [userData]);
 
-    if (isActived_2 === 'Status') {
-      filterParams = {};
-    } else if (isActived_2 === 'Active') {
-      filterParams['blocked'] = false;
-    } else if (isActived_2 === 'Inactive') {
-      filterParams['blocked'] = true;
-    }
-
-    if (isActived_1 === 'Name') {
-      filterParams['fullname][$contains]'] = searchText;
-    } else if (isActived_1 === 'Email') {
-      filterParams['email][$contains]'] = searchText;
-    }
-
-    const filters = Object.entries(filterParams)
-      .map(([key, value]) => `filters[${key}]=${encodeURIComponent(value)}`)
-      .join('&');
-    const paginationParams = `pagination[page]=${pagination.page}&pagination[pageSize]=${pagination.pageSize}`;
-
-    const apiUrl = `http://localhost:1337/api/users?${filters}&${paginationParams}`;
-    console.log(apiUrl);
-    fetch(apiUrl, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        console.log(result);
-        setUserData(result);
-      })
-      .catch(error => console.log('error', error));
-  }, [searchText, isActived_1, isActived_2, pagination]);
   const handlePagination = (page, pageSize) => {
     setPagination(prevPagination => ({
       ...prevPagination,
@@ -214,7 +266,6 @@ const GarageOwnerList = () => {
         const result = await response.json();
 
         if (response.ok) {
-          console.log(result);
           setData(result.role);
           console.log(result.role);
 
@@ -324,9 +375,9 @@ const GarageOwnerList = () => {
                 total: userData.length,
                 onChange: handlePagination,
               }}
-              dataSource={userData.map((user, index) => ({
+              dataSource={userData.map(user => ({
                 ...user,
-                STT: index + 1,
+
                 blocked: user.blocked ? 'Inactive' : 'Active',
               }))}
             />
