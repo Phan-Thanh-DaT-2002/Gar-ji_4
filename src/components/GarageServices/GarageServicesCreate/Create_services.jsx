@@ -25,10 +25,11 @@ import {
   message,
   
 } from 'antd';
-
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 export default function CreateServices() {
   const [form] = Form.useForm();
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(false);
   const onFinish = async (values) => {
     try {
@@ -63,6 +64,9 @@ export default function CreateServices() {
       if (response.ok) {
         console.log('Response:', data);
         message.success('Form submitted successfully!');
+        setTimeout(() => {
+          navigate('/garage-services');
+        }, 1500); 
        
       } else {
         console.error('Error:', data);
@@ -225,7 +229,7 @@ export default function CreateServices() {
                 fontWeight: 400,
                 fontSize: '16px',
                 lineHeight: '24px',
-                color: '#939393',
+                color: '#111111',
                 }}
                 />
               </FormItem>

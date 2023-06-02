@@ -117,7 +117,9 @@ export default function UpdateServices() {
       if (response.ok) {
         console.log('Response:', data);
         message.success('Form submitted successfully!');
-        onSave();
+        setTimeout(() => {
+          navigate('/garage-services');
+        }, 1500);
 
       } else {
         console.error('Error:', data);

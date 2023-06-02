@@ -110,7 +110,7 @@ const checkNameExists = (name) => {
         
         setTimeout(() => {
           navigate('/garage');
-        }, 3000); 
+        }, 1500); 
       } else {
         console.error('Error:', data);
         const errorMessage = data.error.message || 'Failed to submit form!';
@@ -487,7 +487,7 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
                 fontWeight: 500,
                 fontSize: '16px',
                 lineHeight: '24px',
-                color: '#939393',
+                color: '#111111',
               }}
                   autoSize={{ minRows: 4, maxRows: 30 }}
                   placeholder="Enter a description"
@@ -524,7 +524,7 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
                 fontWeight: 500,
                 fontSize: '16px',
                 lineHeight: '24px',
-                color: '#939393',
+                color: '#111111',
               }}
                 />
               </FormItem>

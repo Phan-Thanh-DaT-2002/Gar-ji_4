@@ -159,7 +159,7 @@ function UpdateMana() {
         message.success('Form submitted successfully!');
         setTimeout(() => {
           navigate('/garage');
-        }, 3000); 
+        }, 1500); 
         
       } else {
         console.error('Error:', data);
@@ -639,7 +639,7 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
                   <span>Save</span>
                 </ButtonStyle>
                 <ButtonStyle htmlType="button" onClick={onCancel}>
-                  <span>Delete</span>
+                  <span>Cancel</span>
                 </ButtonStyle>
               </div>
             </div>
