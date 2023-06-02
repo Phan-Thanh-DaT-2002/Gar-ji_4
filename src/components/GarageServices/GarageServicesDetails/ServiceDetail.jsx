@@ -106,58 +106,13 @@ export default function ServiceDetail() {
 
     fetchData();
   }, [userId]);
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const jwt = localStorage.getItem('jwt');
-  //       const requestOptions = {
-  //         method: 'GET',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           Authorization: `Bearer ${jwt}`,
-  //         },
-  //         redirect: 'follow',
-  //       };
-
-  //       const response = await fetch(
-  //         `http://localhost:1337/api/garage-services/${filters}`,
-  //         requestOptions
-  //       );
-
-  //       if (response.ok) {
-  //         const result = await response.json();
-  //         console.log(result);
-  //         // setData(result);
-  //         // console.log(data);
-  //         setGaragesData(result.garages);
-  //         setTotalGarages(result.garages.length);
-  //         temp_data_service(result.id);
-  //         form.setFieldsValue({
-  //           name: result.fullname,
-  //           email: result.email,
-  //           username: result.username,
-  //           phone: result.phoneNumber,
-  //           gender: result.gender,
-  //           dob: result?.dob ? moment(result.dob, 'YYYY-MM-DD') : null,
-  //           role: result.role.name,
-  //           garages: result.garages.map(garage => garage.id),
-  //         });
-  //       } else {
-  //         console.error('Error:', response.statusText);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error:', error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [userId]);
-
   const onDelete = record => {
     console.log(record);
 
     Modal.confirm({
       title: 'Are you sure about that?',
+      okText: 'Yes',
+      cancelText: 'No',
       onOk: () => {
         setUserData(prevData => {
           return prevData.filter(data => data.id !== record);
