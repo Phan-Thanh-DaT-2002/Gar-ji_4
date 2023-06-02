@@ -24,14 +24,14 @@ const GarageServicesList = () => {
     page: 1,
     pageSize: 10,
   });
-
+  const [totalItems, setTotalItems] = useState(0);
   const { Search } = Input;
 
   const columns = [
     {
       title: '#',
-      dataIndex: 'STT',
-      key: 'STT',
+      dataIndex: 'id',
+      key: 'id',
     },
     {
       title: 'Name',
@@ -69,36 +69,41 @@ const GarageServicesList = () => {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    const requestOptions = {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${jwt}`,
-      },
-      redirect: 'follow',
+    const fetchData = async () => {
+      try {
+        const jwt = localStorage.getItem('jwt');
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+          redirect: 'follow',
+        };
+        let filterParams = {};
+        filterParams['name][$contains]'] = searchText;
+        const filters = Object.entries(filterParams)
+          .map(([key, value]) => `filters[${key}]=${encodeURIComponent(value)}`)
+          .join('&');
+        const paginationParams = `pagination[page]=${pagination.page}&pagination[pageSize]=${pagination.pageSize}`;
+
+        const apiUrl = `http://localhost:1337/api/garage-services?${filters}&${paginationParams}`;
+
+        const response = await fetch(apiUrl, requestOptions);
+        const result = await response.json();
+        if (response.ok) {
+          const arrayNew = result.data.map(item => ({
+            ...item.attributes,
+            id: item.id,
+          }));
+          setData(arrayNew);
+          setTotalItems(result.meta.pagination.total);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
     };
-    let filterParams = {};
-    filterParams['name][$contains]'] = searchText;
-    const filters = Object.entries(filterParams)
-      .map(([key, value]) => `filters[${key}]=${encodeURIComponent(value)}`)
-      .join('&');
-    const paginationParams = `pagination[page]=${pagination.page}&pagination[pageSize]=${pagination.pageSize}`;
-
-    const apiUrl = `http://localhost:1337/api/garage-services?${filters}&${paginationParams}`;
-    console.log(filters);
-
-    fetch(apiUrl, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        const arrayNew = result.data.map(item => ({
-          ...item.attributes,
-          id: item.id,
-        }));
-
-        setData(arrayNew);
-      })
-      .catch(error => console.log('error', error));
+    fetchData();
   }, [searchText, pagination]);
   const handlePagination = (page, pageSize) => {
     setPagination(prevPagination => ({
@@ -217,12 +222,11 @@ const GarageServicesList = () => {
               pagination={{
                 current: pagination.page,
                 pageSize: pagination.pageSize,
-                total: data.length,
+                total: totalItems,
                 onChange: handlePagination,
               }}
               dataSource={data.map((data, index) => ({
                 ...data,
-                STT: index + 1,
               }))}
               style={{
                 fontFamily: 'Poppins',

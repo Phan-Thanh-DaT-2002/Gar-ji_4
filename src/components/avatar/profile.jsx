@@ -25,7 +25,7 @@ const items = [
   },
 ];
 
-function Profile({ }) {
+function Profile({}) {
   const navigate = useNavigate();
   const location = useLocation();
   const [data, setData] = useState(null);
