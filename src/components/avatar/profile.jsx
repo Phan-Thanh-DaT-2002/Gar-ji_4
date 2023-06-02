@@ -1,6 +1,7 @@
 import { Dropdown, Space, Avatar, Typography, theme } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { ReactComponent as Ellipse1 } from '../../assets/images/Ellipse 1.svg';
 
 import '../avatar/style.css';
 
@@ -111,10 +112,11 @@ function Profile({}) {
             }}
           >
             <div>
-              <Avatar
-                size={32}
-                src={avatar ? `http://localhost:1337${avatar}` : ''}
-              />
+              {avatar ? (
+                <Avatar src={`http://localhost:1337${avatar}`} />
+              ) : (
+                <Avatar size={32} icon={<Ellipse1 />}></Avatar>
+              )}
             </div>
             <div
               style={{

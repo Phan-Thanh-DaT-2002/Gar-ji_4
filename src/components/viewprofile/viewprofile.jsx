@@ -71,10 +71,11 @@ function ViewProfile() {
     >
       <div className="profile">
         <div className="avatar_view">
-          <Avatar
-            size={250}
-            src={avatar ? `http://localhost:1337${avatar}` : ''}
-          />
+          {avatar ? (
+            <Avatar src={`http://localhost:1337${avatar}`} />
+          ) : (
+            <Avatar size={250} icon={<Ellipse2 />}></Avatar>
+          )}
         </div>
         <div className="infor_view">
           <div>
