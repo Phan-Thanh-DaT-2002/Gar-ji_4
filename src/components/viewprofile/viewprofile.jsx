@@ -72,7 +72,7 @@ function ViewProfile() {
       <div className="profile">
         <div className="avatar_view">
           {avatar ? (
-            <Avatar src={`http://localhost:1337${avatar}`} />
+            <Avatar size={250} src={`http://localhost:1337${avatar}`} />
           ) : (
             <Avatar size={250} icon={<Ellipse2 />}></Avatar>
           )}
@@ -99,9 +99,9 @@ function ViewProfile() {
             <Text strong>{data.dob}</Text>
           </div>
           <div>
-            <Text type="secondary">Address</Text>
+            <Text type="secondary">Gender</Text>
             <br />
-            <Text strong>{data.address}</Text>
+            <Text strong>{data.gender}</Text>
           </div>
           <div>
             <Text type="secondary">Role</Text>
