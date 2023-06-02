@@ -40,9 +40,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 function Create() {
   const navigate = useNavigate();
-  const handsusses = () => {
-    navigate('/garage-owner');
-  }
+  
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const onFinish = async values => {
@@ -83,7 +81,9 @@ function Create() {
       if (response.ok) {
         console.log('Response:', data);
         message.success('Form submitted successfully!');
-        handsusses();
+        setTimeout(() => {
+          navigate('/garage-owner');
+        }, 1500); 
       } else {
         console.error('Error:', data);
         message.error('Failed to submit form!');
