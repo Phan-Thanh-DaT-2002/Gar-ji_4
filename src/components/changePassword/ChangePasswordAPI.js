@@ -1,28 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { AudioOutlined, DeleteOutlined } from '@ant-design/icons';
-import {
-  StyledDOB,
-  AllDiv,
-  DivForm,
-  DivStyle,
-  FirstInfo,
-  FirstLine,
-  FormItem,
-  StyledOption,
-  StyleSelect,
-  SecondLine,
-  FormSearch,
-  ThreeLine,
-  StyleSearch,
-  StyleInput,
-  SCheckbox,
-  StyleCheckBox,
-  LeftColumn,
-  RightColumn,
-  MyDivider,
-  Btn,
-  ButtonStyle,
-} from './create.js';
+import React, { useEffect, useRef, useState } from 'react';
+import moment from 'moment';
 import {
   DatePicker,
   Button,
@@ -34,58 +11,144 @@ import {
   AutoComplete,
   Divider,
   message,
+  Modal,
 } from 'antd';
+import {
+  StyledDOB,
+  AllDiv,
+  DivForm,
+  DivStyle,
+  FirstInfo,
+  FirstLine,
+  FormItem,
 
+  StyleSelect,
+  SecondLine,
+  FormSearch,
+  ThreeLine,
 
-function Create() {
+  StyleInput,
+  SCheckbox,
+  StyleCheckBox,
+  LeftColumn,
+  RightColumn,
+  MyDivider,
+
+  ButtonStyle,
+} from './index.js';
+import { AudioOutlined, DeleteOutlined } from '@ant-design/icons';
+import { useLocation, useNavigate } from 'react-router-dom';
+export default function OwnerUpdate() {
+
+  // const handok = () => {
+  //   navigate('/garage-owner');
+  // }
+  const { Option } = Select;
+  const [temp_data_user, setTemp_data_user] = useState(0);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [totalGarages, setTotalGarages] = useState(0);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { userId } = location.state || {};
+  const [data, setData] = useState(null);
+  const [garages, setGarages] = useState([])
+
+
+  const [selectedGarages, setSelectedGarages] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const jwt = localStorage.getItem('jwt');
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+          redirect: 'follow',
+        };
+
+        const response = await fetch(
+          `http://localhost:1337/api/users/${userId}?populate=role, garages`,
+          requestOptions
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+
+          setData(result);
+          setSelectedGarages(result.garages)
+          setTotalGarages(result.garages.length);
+          setTemp_data_user(result.id)
+          form.setFieldsValue({
+            name: result.fullname,
+            email: result.email,
+            username: result.username,
+            password: '******',
+            phone: result.phoneNumber,
+            gender: result.gender,
+            dob: result?.dob ? moment(result.dob, 'YYYY-MM-DD') : null,
+            role: result.role.id,
+            status: result?.blocked ? 'Inactive' : 'Active',
+            // garages: result.garages?.name,
+
+          });
+        } else {
+          console.error('Error:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    fetchData();
+  }, [userId]);
 
 
   const onFinish = async (values) => {
     try {
       const jwt = localStorage.getItem('jwt');
+      const updatedUserId = userId;
 
       const raw = JSON.stringify({
-        username: values.username,
         fullname: values.name,
-        email: values.email,
         dob: values.dob.format('YYYY-MM-DD'),
         address: values.address,
         phoneNumber: values.phone,
-        gender: values.gender,
-        password: values.password,
-        role: parseInt(values.role),
+        role: values.role,
+        garages: selectedGarages.map((garage) => garage.id),
         confirmed: true,
         blocked: false,
       });
 
       const requestOptions = {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${jwt}`,
+          Authorization: `Bearer ${jwt}`,
         },
         body: raw,
         redirect: 'follow',
       };
 
-      const response = await fetch('https://edison-garage-api.savvycom.xyz/api/users', requestOptions);
+      const response = await fetch(
+        `http://localhost:1337/api/users/${updatedUserId}`, // Sử dụng updatedUserId thay cho userId
+        requestOptions
+      );
       const data = await response.json();
 
       if (response.ok) {
         console.log('Response:', data);
         message.success('Form submitted successfully!');
-
       } else {
         console.error('Error:', data);
         message.error('Failed to submit form!');
-
       }
     } catch (error) {
       console.error('Error:', error);
       message.error('An error occurred');
-
     }
   };
 
@@ -94,11 +157,42 @@ function Create() {
     console.log('Failed:', errorInfo);
   };
 
-  const { Option } = Select;
+  const [userData, setUserData] = useState([]);
+  console.log(temp_data_user);
+  const onDelete = record => {
+    console.log(record);
 
-  const onCancel = () => {
-    form.resetFields();
-    window.history.back();
+    Modal.confirm({
+      title: 'Are you sure about that?',
+      onOk: () => {
+        setUserData(prevData => {
+          return prevData.filter(data => data.id !== record);
+        });
+
+        const jwt = localStorage.getItem('jwt');
+        console.log(jwt);
+        const requestOptions = {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+          redirect: 'follow',
+        };
+        fetch(`http://localhost:1337/api/users/${record}`, requestOptions)
+          .then(response => {
+            response.json();
+            // handok();
+          })
+          .then(result => {
+            if (!result.success) {
+              console.log('Error deleting user');
+            }
+          })
+          .catch(error => console.log('Error deleting user', error));
+
+      },
+    });
   };
 
   const onChange = (e) => {
@@ -110,11 +204,13 @@ function Create() {
 
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedGarages, setSelectedGarages] = useState([]);
 
+
+  const [displayCount, setDisplayCount] = useState(5);
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
+    setDisplayCount(5);
   };
 
   const handleGarageChange = (garage) => {
@@ -141,7 +237,7 @@ function Create() {
       redirect: 'follow'
     };
 
-    fetch("https://edison-garage-api.savvycom.xyz/api/garage-services", requestOptions)
+    fetch("http://localhost:1337/api/garages", requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
@@ -157,11 +253,19 @@ function Create() {
     return selectedGarage ? selectedGarage.attributes.name : '';
   };
 
-  const filteredGarages = garagesData.filter((garage) => {
-    const garageName = garage.attributes.name.toLowerCase();
-    const searchTermLower = searchTerm.toLowerCase();
-    return garage.id.toString().includes(searchTermLower) || garageName.includes(searchTermLower);
-  });
+  const filteredGarages = garagesData
+    ? garagesData
+      .filter((garage) => {
+        const garageName = garage.attributes.name.toLowerCase();
+        const searchTermLower = searchTerm.toLowerCase();
+        return (
+          garage.id.toString().includes(searchTermLower) ||
+          garageName.includes(searchTermLower)
+        );
+      })
+      .slice(0, displayCount)
+    : [];
+
   return (
     <DivStyle>
       <AllDiv>
@@ -174,33 +278,57 @@ function Create() {
             span: 16,
           }}
           style={{}}
-          initialValues={{
-            remember: true,
-          }}
+          form={form}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
+
           autoComplete="off"
-          form={form}
+
         >
           <FirstInfo>
             <FirstLine>
               <FormItem
-                label="Name"
+                label={
+                  <span style={{
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
+                    Name
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 name="name"
+
                 rules={[
                   {
                     required: true,
                     message: 'Please input your name!',
                   },
                 ]}
+
               >
                 <Input placeholder="Enter owner name" />
               </FormItem>
               <FormItem
-                label="Email"
+                label={
+                  <span style={{
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
+                    Email
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 name="email"
+
                 rules={[
                   {
                     required: true,
@@ -216,7 +344,18 @@ function Create() {
               </FormItem>
 
               <FormItem
-                label="Username"
+                label={
+                  <span style={{
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
+                    Username
+                  </span>
+                }
                 name="username"
                 labelCol={{ span: 24 }}
                 rules={[
@@ -232,7 +371,18 @@ function Create() {
 
             <FirstLine>
               <FormItem
-                label="Password"
+                label={
+                  <span style={{
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
+                    Password
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 name="password"
                 rules={[
@@ -245,7 +395,18 @@ function Create() {
                 <Input placeholder="Enter owner password" />
               </FormItem>
               <FormItem
-                label="Phone number"
+                label={
+                  <span style={{
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
+                    Phone Number
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 name="phone"
                 rules={[
@@ -263,7 +424,18 @@ function Create() {
               </FormItem>
               <FormItem
                 name="gender"
-                label="Gender"
+                label={
+                  <span style={{
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
+                    Gender
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 rules={[
                   {
@@ -276,6 +448,7 @@ function Create() {
                   className="style_select"
                   placeholder="Select owner gender"
                   allowClear={false}
+                  style={{}}
                 >
                   <Select.Option value="male">Male</Select.Option>
                   <Select.Option value="female">Female</Select.Option>
@@ -284,12 +457,34 @@ function Create() {
               </FormItem>
             </FirstLine>
             <SecondLine>
-              <FormItem label="DOB" labelCol={{ span: 24 }} name="dob">
+              <FormItem label={
+                <span style={{
+                  fontFamily: 'Poppins',
+                  fontStyle: 'normal',
+                  fontWeight: 400,
+                  fontSize: '16px',
+                  lineHeight: '24px',
+                  color: '#939393',
+                }}>
+                  DOB
+                </span>
+              } labelCol={{ span: 24 }} name="dob">
                 <StyledDOB />
               </FormItem>
               <FormItem
                 name='role'
-                label="Role"
+                label={
+                  <span style={{
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
+                    Role
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 rules={[
                   {
@@ -299,18 +494,30 @@ function Create() {
                 ]}
               >
                 <StyleSelect
+
                   className="selectStyle"
                   placeholder="Select a role"
                   name='role'
                   allowClear={false}
                 >
-                  <Option value="1">Admin</Option>
-                  <Option value="2">User</Option>
+                  <Option value={3}>Admin</Option>
+                  <Option value={1}>User</Option>
                 </StyleSelect>
               </FormItem>
               <FormItem
                 name="status"
-                label="Status"
+                label={
+                  <span style={{
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
+                    Status
+                  </span>
+                }
                 labelCol={{ span: 24 }}
                 rules={[
                   {
@@ -320,8 +527,8 @@ function Create() {
                 ]}
               >
                 <StyleSelect placeholder="Select a status" allowClear={false}>
-                  <Option value="1">1</Option>
-                  <Option value="2">2</Option>
+                  <Option value="active">Active</Option>
+                  <Option value="inactive">Inactive</Option>
                 </StyleSelect>
               </FormItem>
             </SecondLine>
@@ -372,10 +579,13 @@ function Create() {
                   style={{ background: '#8767E1' }}
                   htmlType="submit"
                 >
-                  <span>Save</span>
+                  <span>Update</span>
                 </ButtonStyle>
-                <ButtonStyle htmlType="button" onClick={onCancel}>
-                  <span>Cancel</span>
+                <ButtonStyle
+                  htmlType="button"
+                  onClick={() => onDelete(temp_data_user)}
+                >
+                  <span>Delete</span>
                 </ButtonStyle>
               </div>
             </div>
@@ -384,6 +594,5 @@ function Create() {
       </AllDiv>
     </DivStyle>
   );
-}
 
-export default Create;
+}

@@ -21,6 +21,13 @@ const useHandleAdd = () => {
   };
 };
 
+const UseHandleEdit = () => {
+  const navigate = useNavigate();
+  return () => {
+    navigate('/garage-owner-edit');
+  };
+};
+
 const GarageOwnerList = () => {
   const [searchText, setSearchText] = useState('');
   const [isActived_1, setIsActived_1] = useState('');
@@ -113,7 +120,8 @@ const GarageOwnerList = () => {
       render: (_, record) => (
         <Space size="middle">
           <EyeOutlined></EyeOutlined>
-          <EditOutlined></EditOutlined>
+          {/* <EditOutlined ></EditOutlined> */}
+          <EditOutlined onClick={() => UseHandleEdit(record)}></EditOutlined>
           <DeleteOutlined></DeleteOutlined>
         </Space>
       ),

@@ -22,7 +22,7 @@ import {
   MyDivider,
   Btn,
   ButtonStyle,
-} from './create.js';
+} from './edit.js';
 import {
   DatePicker,
   Button,
@@ -37,7 +37,7 @@ import {
 } from 'antd';
 
 
-function Create() {
+function Edit() {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
@@ -195,7 +195,7 @@ function Create() {
                   },
                 ]}
               >
-                <Input placeholder="Enter owner name" />
+                <Input placeholder="/////////////////////////" />
               </FormItem>
               <FormItem
                 label="Email"
@@ -212,7 +212,7 @@ function Create() {
                   },
                 ]}
               >
-                <Input placeholder="Enter owner email" />
+                <Input placeholder="/////////////////////////" />
               </FormItem>
 
               <FormItem
@@ -226,7 +226,7 @@ function Create() {
                   },
                 ]}
               >
-                <Input placeholder="Enter owner username" />
+                <Input placeholder="/////////////////////////" />
               </FormItem>
             </FirstLine>
 
@@ -242,7 +242,7 @@ function Create() {
                   },
                 ]}
               >
-                <Input placeholder="Enter owner password" />
+                <Input placeholder="/////////////////////////" />
               </FormItem>
               <FormItem
                 label="Phone number"
@@ -259,7 +259,7 @@ function Create() {
                   },
                 ]}
               >
-                <Input placeholder="Enter owner phone number" />
+                <Input placeholder="/////////////////////////" />
               </FormItem>
               <FormItem
                 name="gender"
@@ -331,7 +331,7 @@ function Create() {
               <FormSearch>
                 <LeftColumn>
                   <StyleInput
-                    placeholder="Search for garages..."
+                    placeholder="/////////////////////////"
                     type="text"
                     value={searchTerm}
                     onChange={handleSearchChange}
@@ -386,4 +386,4 @@ function Create() {
   );
 }
 
-export default Create;
+export default Edit;

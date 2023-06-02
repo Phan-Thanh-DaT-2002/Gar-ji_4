@@ -2,6 +2,9 @@ import { Button, Form, Input, theme } from 'antd';
 import { useState } from 'react';
 import React from 'react';
 import './style.css';
+import changePasswordAPI from './ChangePasswordAPI';
+
+
 
 const tailLayout = {
   wrapperCol: {
@@ -10,20 +13,20 @@ const tailLayout = {
   },
 };
 const ChangePassword = () => {
-  // const labelStyle = {
-  //   /* Now you can create a new password for your acconut */
-
-  //   fontFamily: 'Poppins',
-  //   fontStyle: 'normal',
-  //   fontWeight: 500,
-  //   fontSize: 16,
-  //   lineHeight: 24,
-
-  //   color: '#939393',
-  // };
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm();
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const onFinish = (values) => {
+    const { currentPassword, newPassword, confirmPassword } = values;
+    if (newPassword === confirmPassword) {
+      console.log('Form values:', currentPassword);
+      console.log('Form values:', newPassword);
+
+
+      // Gọi API để thay đổi mật khẩu
+      changePasswordAPI(currentPassword, newPassword);
+    }
+    else alert("mật khâủ mới nhập vào không khớp")
+  }
+
   const [requiredMark, setRequiredMarkType] = useState('');
   const onRequiredTypeChange = ({ requiredMarkValue }) => {
     setRequiredMarkType(requiredMarkValue);
@@ -49,21 +52,34 @@ const ChangePassword = () => {
         }}
         onValuesChange={onRequiredTypeChange}
         requiredMark={requiredMark}
+        onFinish={onFinish}
       >
         <p className="text">
           Now you can create a new password for your acconut
         </p>
         <p className="text-btn">Current Password</p>
-        <Form.Item>
-          <Input placeholder="Enter current password" />
+        <Form.Item name="currentPassword">
+          <Input
+            label='currentPassword'
+            placeholder="Enter current password"
+
+          />
         </Form.Item>
         <p className="text-btn">New Password</p>
-        <Form.Item>
-          <Input.Password Input placeholder="Enter new password" />
+        <Form.Item name="newPassword">
+          <Input
+            label='newPassword'
+            placeholder="Enter new password"
+
+          />
         </Form.Item>
         <p className="text-btn">Confirm Password</p>
-        <Form.Item>
-          <Input.Password placeholder="Enter confirm password" />
+        <Form.Item name="confirmPassword">
+          <Input
+            label='confirmPassword'
+            placeholder="Enter confirm password"
+
+          />
         </Form.Item>
         <div className="line"></div>
         <Form.Item {...tailLayout}>
@@ -74,6 +90,7 @@ const ChangePassword = () => {
                 background: '#8767E1',
                 marginRight: '10px',
               }}
+              htmlType="submit"
             >
               Save
             </Button>
