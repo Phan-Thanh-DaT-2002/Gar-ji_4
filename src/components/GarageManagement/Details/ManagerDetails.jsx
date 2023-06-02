@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { AudioOutlined, DeleteOutlined } from '@ant-design/icons';
 import {
   AllDiv,
   DivForm,
@@ -6,26 +7,41 @@ import {
   FirstInfo,
   FirstLine,
   FormItem,
+  StyleSelect,
   SecondLine,
   FormSearch,
   ThreeLine,
+  StyleInput,
+  SCheckbox,
+  StyleCheckBox,
+  LeftColumn,
   RightColumn,
+  MyDivider,
   ButtonStyle,
   StyledTimePicker,
+  StyleCommentBox,
+  StyledTextArea,
 } from './index.js';
-import { Form, Input, Divider, Modal, message } from 'antd';
+import { Form, Input, Select, Divider, message, Modal } from 'antd';
 import moment from 'moment';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+
 export default function ManagerDetails() {
   const [form] = Form.useForm();
+  const [garageOwners, setGarageOwners] = useState([]);
   const navigate = useNavigate();
-  const handleUpdate = userId => {
+  const handleUpdate = (userId) => {
     navigate('/manager-update', { state: { userId: userId } });
   };
+  const onok = () => {
+    navigate('/garage');
+
+  }
   const location = useLocation();
   const { userId } = location.state || {};
   const [data, setData] = useState(null);
+
 
   const [owner, setOwner] = useState(null);
 
@@ -79,13 +95,77 @@ export default function ManagerDetails() {
     fetchData();
   }, [userId]);
 
+
+  const [canDeleteFlag, setCanDeleteFlag] = useState(false);
+  const onFinishFailed = (errorInfo) => {
+    console.log('Failed:', errorInfo);
+  };
+
+  const { Option } = Select;
+
   const onCancel = () => {
     form.resetFields();
     window.history.back();
   };
 
+  const onChange = (e) => {
+    console.log(`checked = ${e.target.checked}`);
+  };
+
   const [garagesData, setGaragesData] = useState([]);
 
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedGarages, setSelectedGarages] = useState([]);
+
+  const [displayCount, setDisplayCount] = useState(5);
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+    setDisplayCount(5);
+  };
+
+  const handleGarageChange = (garage) => {
+    const index = selectedGarages.findIndex((g) => g.id === garage.id);
+    if (index === -1) {
+      setSelectedGarages([...selectedGarages, garage]);
+    } else {
+      setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
+    }
+  };
+
+  const handleRemoveGarage = (garage) => {
+    setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
+  };
+
+  useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwt}`,
+      },
+      redirect: 'follow'
+    };
+
+    fetch("http://localhost:1337/api/garage-services", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        setGaragesData(result.data);
+      })
+      .catch(error => console.log('error', error));
+  }, []);
+
+
+
+  const getServiceNameById = (serviceId) => {
+    const selectedService = garagesData.find((service) => service.id === serviceId);
+    return selectedService ? selectedService.attributes.name : '';
+  };
+
+  const [userData, setUserData] = useState([])
   useEffect(() => {
     const jwt = localStorage.getItem('jwt');
     const requestOptions = {
@@ -97,38 +177,25 @@ export default function ManagerDetails() {
       redirect: 'follow',
     };
 
-    fetch(`http://localhost:1337/api/garages/${userId}`, requestOptions)
+    fetch("http://localhost:1337/api/users", requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
-        setGaragesData(result.data);
+        setUserData(result);
       })
       .catch(error => console.log('error', error));
   }, []);
 
-  const getServiceNameById = serviceId => {
-    const selectedService = garagesData.find(
-      service => service.id === serviceId
-    );
-    return selectedService ? selectedService.attributes.name : '';
-  };
-
-  const [userData, setUserData] = useState([]);
-
   const handleDelete = record => {
     console.log(record);
-
     Modal.confirm({
       title: 'Are you sure about that?',
-      okText: 'Yes',
-      cancelText: 'No',
       onOk: () => {
         setUserData(prevData => {
-          return prevData.filter(garagesData => garagesData.id !== record);
+          return prevData.filter(data => data.id !== record.id);
         });
 
         const jwt = localStorage.getItem('jwt');
-        console.log(jwt);
         const requestOptions = {
           method: 'DELETE',
           headers: {
@@ -136,23 +203,22 @@ export default function ManagerDetails() {
           },
           redirect: 'follow',
         };
+        console.log(jwt);
         fetch(`http://localhost:1337/api/garages/${record}`, requestOptions)
           .then(response => {
             response.json();
-            message.success('delete sussesful');
-            handok();
+            message.success("delete complete");
+            onok();
           })
           .then(result => {
             if (!result.success) {
-              console.log('Error deleting');
+              console.log('Error ss ');
             }
           })
-          .catch(error => console.log('Error deleting user', error));
+          .catch(error => console.log('Error deleting ', error));
+
       },
     });
-  };
-  const handok = () => {
-    navigate('/garage');
   };
   return (
     <DivStyle>
@@ -169,6 +235,7 @@ export default function ManagerDetails() {
           initialValues={{
             remember: true,
           }}
+
           autoComplete="off"
           form={form}
         >
@@ -176,134 +243,99 @@ export default function ManagerDetails() {
             <FirstLine>
               <FormItem
                 label={
-                  <span
-                    style={{
-                      marginLeft: '15px',
-                      fontFamily: 'Poppins',
-                      fontStyle: 'normal',
-                      fontWeight: 400,
-                      fontSize: '16px',
-                      lineHeight: '24px',
-                      color: '#939393',
-                    }}
-                  >
+                  <span style={{
+                    marginLeft: '15px',
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
                     Name
                   </span>
                 }
                 labelCol={{ span: 24 }}
                 name="name"
               >
-                <Input
-                  style={{
-                    border: 'none',
-                    cursor: 'default',
-                    pointerEvents: 'none',
-                  }}
-                  readOnly
-                />
+                <Input style={{ border: "none", cursor: "default", pointerEvents: 'none' }} readOnly />
               </FormItem>
               <FormItem
                 label={
-                  <span
-                    style={{
-                      marginLeft: '15px',
-                      fontFamily: 'Poppins',
-                      fontStyle: 'normal',
-                      fontWeight: 400,
-                      fontSize: '16px',
-                      lineHeight: '24px',
-                      color: '#939393',
-                    }}
-                  >
+                  <span style={{
+                    marginLeft: '15px',
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
                     Email
                   </span>
                 }
                 labelCol={{ span: 24 }}
                 name="email"
+
               >
-                <Input
-                  style={{
-                    border: 'none',
-                    cursor: 'default',
-                    pointerEvents: 'none',
-                  }}
-                  readOnly
-                />
+                <Input style={{ border: "none", cursor: "default", pointerEvents: 'none' }} readOnly />
               </FormItem>
 
               <FormItem
                 label={
-                  <span
-                    style={{
-                      marginLeft: '15px',
-                      fontFamily: 'Poppins',
-                      fontStyle: 'normal',
-                      fontWeight: 400,
-                      fontSize: '16px',
-                      lineHeight: '24px',
-                      color: '#939393',
-                    }}
-                  >
+                  <span style={{
+                    marginLeft: '15px',
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
                     Phone number
                   </span>
                 }
                 labelCol={{ span: 24 }}
                 name="phoneNumber"
+
               >
-                <Input
-                  style={{
-                    border: 'none',
-                    cursor: 'default',
-                    pointerEvents: 'none',
-                  }}
-                  readOnly
-                />
+                <Input style={{ border: "none", cursor: "default", pointerEvents: 'none' }} readOnly />
               </FormItem>
             </FirstLine>
 
             <FirstLine>
               <FormItem
                 label={
-                  <span
-                    style={{
-                      marginLeft: '15px',
-                      fontFamily: 'Poppins',
-                      fontStyle: 'normal',
-                      fontWeight: 400,
-                      fontSize: '16px',
-                      lineHeight: '24px',
-                      color: '#939393',
-                    }}
-                  >
+                  <span style={{
+                    marginLeft: '15px',
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
                     Address
                   </span>
                 }
                 labelCol={{ span: 24 }}
                 name="address"
+
               >
-                <Input
-                  style={{
-                    border: 'none',
-                    cursor: 'default',
-                    pointerEvents: 'none',
-                  }}
-                  readOnly
-                />
+                <Input style={{ border: "none", cursor: "default", pointerEvents: 'none' }} readOnly />
               </FormItem>
               <FormItem
                 name="openTime"
                 label={
-                  <span
-                    style={{
-                      marginLeft: '15px',
-                      fontFamily: 'Poppins',
-                      fontStyle: 'normal',
-                      fontWeight: 400,
-                      fontSize: '16px',
-                      lineHeight: '24px',
-                      color: '#939393',
-                    }}
-                  >
+                  <span style={{
+                    marginLeft: '15px',
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
                     Open time
                   </span>
                 }
@@ -312,50 +344,37 @@ export default function ManagerDetails() {
                 <StyledTimePicker
                   picker="time"
                   className="ant-select.ant-select-in-form-item"
+
                   format="HH:mm:ss"
                   defaultValue={''}
-                  style={{
-                    border: 'none',
-                    cursor: 'default',
-                    pointerEvents: 'none',
-                  }}
-                  inputReadOnly
-                  suffixIcon={null}
-                  readOnly
+                  style={{ border: "none", cursor: "default", pointerEvents: 'none' }} inputReadOnly suffixIcon={null} readOnly
                 />
               </FormItem>
               <FormItem
                 name="closeTime"
                 label={
-                  <span
-                    style={{
-                      marginLeft: '15px',
-                      fontFamily: 'Poppins',
-                      fontStyle: 'normal',
-                      fontWeight: 400,
-                      fontSize: '16px',
-                      lineHeight: '24px',
-                      color: '#939393',
-                    }}
-                  >
+                  <span style={{
+                    marginLeft: '15px',
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
                     Close Time
                   </span>
                 }
                 labelCol={{ span: 24 }}
+
               >
                 <StyledTimePicker
                   dropdownClassName="my-dropdown-class"
                   className="ant-select.ant-select-in-form-item"
+
                   format="HH:mm:ss"
                   defaultValue={''}
-                  style={{
-                    border: 'none',
-                    cursor: 'default',
-                    pointerEvents: 'none',
-                  }}
-                  inputReadOnly
-                  suffixIcon={null}
-                  readOnly
+                  style={{ border: "none", cursor: "default", pointerEvents: 'none' }} inputReadOnly suffixIcon={null} readOnly
                 />
               </FormItem>
             </FirstLine>
@@ -363,28 +382,22 @@ export default function ManagerDetails() {
               <FormItem
                 name="owner"
                 label={
-                  <span
-                    style={{
-                      marginLeft: '15px',
-                      fontFamily: 'Poppins',
-                      fontStyle: 'normal',
-                      fontWeight: 400,
-                      fontSize: '16px',
-                      lineHeight: '24px',
-                      color: '#939393',
-                    }}
-                  >
+                  <span style={{
+                    marginLeft: '15px',
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
                     Garage owner
                   </span>
                 }
                 labelCol={{ span: 24 }}
               >
                 <Input
-                  style={{
-                    border: 'none',
-                    cursor: 'default',
-                    pointerEvents: 'none',
-                  }}
+                  style={{ border: "none", cursor: "default", pointerEvents: 'none' }}
                   readOnly
                   value={data?.attributes?.owner?.data?.attributes?.name} // Lấy tên chủ sở hữu
                 />
@@ -392,41 +405,32 @@ export default function ManagerDetails() {
               <FormItem
                 name="status"
                 label={
-                  <span
-                    style={{
-                      marginLeft: '15px',
-                      fontFamily: 'Poppins',
-                      fontStyle: 'normal',
-                      fontWeight: 400,
-                      fontSize: '16px',
-                      lineHeight: '24px',
-                      color: '#939393',
-                    }}
-                  >
+                  <span style={{
+                    marginLeft: '15px',
+                    fontFamily: 'Poppins',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    color: '#939393',
+                  }}>
                     Status
                   </span>
                 }
                 labelCol={{ span: 24 }}
+
               >
-                <Input
-                  style={{
-                    border: 'none',
-                    cursor: 'default',
-                    pointerEvents: 'none',
-                  }}
-                  readOnly
-                />
+                <Input style={{ border: "none", cursor: "default", pointerEvents: 'none' }} readOnly />
               </FormItem>
             </SecondLine>
             <ThreeLine>
               <div className="title_formS">Garages</div>
               <FormSearch>
                 <RightColumn style={{}}>
+
                   {Array.isArray(serviceValues) &&
                     serviceValues.map((service, index) => (
-                      <div className="content_formS" key={index}>
-                        {getServiceNameById(service.id)}
-                      </div>
+                      <div className='content_formS' key={index}>{getServiceNameById(service.id)}</div>
                     ))}
                 </RightColumn>
               </FormSearch>
@@ -441,7 +445,8 @@ export default function ManagerDetails() {
                 >
                   <span>Edit</span>
                 </ButtonStyle>
-                <ButtonStyle htmlType="button" onClick={handleDelete}>
+                <ButtonStyle htmlType="button"
+                  onClick={() => handleDelete(userId)}>
                   <span>Delete</span>
                 </ButtonStyle>
               </div>
@@ -452,3 +457,4 @@ export default function ManagerDetails() {
     </DivStyle>
   );
 }
+
