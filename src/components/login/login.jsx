@@ -1,12 +1,14 @@
-import { Button, Checkbox,Form, Input, message } from 'antd';
-import React, { useState } from 'react'
-import {DivStyle, FormItem, FormStyle, HeadingLogin,Label,MainLogin, InforLogin,FormItemBtn, StyleBtn} from './login'
+import { Button, Checkbox, Form, Input, message } from 'antd';
+import React, { useState } from 'react';
+import { DivStyle, FormItem, FormStyle, HeadingLogin, Label, MainLogin, InforLogin, FormItemBtn, StyleBtn } from './login';
 import { useNavigate } from 'react-router-dom';
+
 const handleLoginSuccess = (jwt) => {
   localStorage.setItem('jwt', jwt);
   const jwtUpdatedEvent = new CustomEvent('jwtUpdated');
   window.dispatchEvent(jwtUpdatedEvent);
 };
+
 const onFinish = (values) => {
   console.log('Success:', values);
 };
@@ -37,23 +39,35 @@ export default function Login() {
 
   const handleSubmit = async (values) => {
     try {
-      // Gửi yêu cầu đăng nhập và nhận JWT từ phản hồi
+      let identifierType = 'username';
+      if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.identifier)) {
+        identifierType = 'email';
+      }
+  
       const response = await fetch('http://localhost:1337/api/auth/local', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify({
+          identifier: values.identifier,
+          password: values.password,
+          identifierType: identifierType,
+        }),
       });
-
+  
       const data = await response.json();
-
+  
+      console.log('Response:', response);
+      console.log('Data:', data);
+  
       if (response.ok) {
-        // Nếu đăng nhập thành công, gọi hàm handleLoginSuccess và truyền JWT
         handleLoginSuccess(data.jwt);
         navigate('/');
-      } else if (response.status === 404 && data.message === 'User not found') {
-        message.error('Email not found');
+      } else if (response.status === 400 && data.error.name === 'ValidationError') {
+        message.error('Invalid username or password');
+      } else if (response.status === 404 && data.error.message === 'User not found') {
+        message.error('Username does not exist');
       } else {
         message.error('An error occurred');
       }
@@ -64,81 +78,76 @@ export default function Login() {
   };
 
   return (
-    <DivStyle >
+    <DivStyle>
       <FormStyle
-    className='form_login'
-    name="basic"
-    labelCol={{
-      span: 8,
-    }}
-    wrapperCol={{
-      span: 16,
-    }}
-    style={{
-      maxWidth: 600,
-    }}
-    initialValues={{
-      remember: true,
-    }}
-    onFinish={handleSubmit}
-    onFinishFailed={onFinishFailed}
-    autoComplete="off"
-  >
-    <HeadingLogin>
-        <div className="wel_login">
-            Welcome
-        </div>
-        <div className="tit_login">
-            Log in to your account     
-        </div>
-    </HeadingLogin>
-    <MainLogin>
-    <InforLogin>
+        className="form_login"
+        name="basic"
+        labelCol={{
+          span: 8,
+        }}
+        wrapperCol={{
+          span: 16,
+        }}
+        style={{
+          maxWidth: 600,
+        }}
+        initialValues={{
+          remember: true,
+        }}
+        onFinish={handleSubmit}
+        onFinishFailed={onFinishFailed}
+        autoComplete="off"
+      >
+        <HeadingLogin>
+          <div className="wel_login">Welcome</div>
+          <div className="tit_login">Log in to your account</div>
+        </HeadingLogin>
+        <MainLogin>
+          <InforLogin>
+            <FormItem
+              label={<Label>Email</Label>}
+              labelCol={{ span: 24 }}
+              name="identifier"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input your email or username!',
+                },
+                {
+                  pattern: /^\S+@\S+\.\S+$/,
+                  message: 'The email is not valid.',
+                },
+              ]}
+            >
+              <Input />
+            </FormItem>
 
-    <FormItem
-      label={<Label>Email</Label>}
-      labelCol={{span:24}}
-      name="identifier"
-      rules={[
-        {
-          required: true,
-          message: 'Please input your email!',
-        },
-        // {
-        //     validator: validateEmail, 
-        // },
-      ]}
-    >
-      <Input />
-    </FormItem>
+            <FormItem
+              label={<Label>Password</Label>}
+              labelCol={{ span: 24 }}
+              name="password"
+              rules={[
+                {
+                  required: true,
+                  validator: validatePassword,
+                },
+              ]}
+              style={{
+                marginBottom: '8px',
+              }}
+            >
+              <Input type="password" />
+            </FormItem>
+          </InforLogin>
 
-    <FormItem
-      label={<Label>Password</Label>}
-      labelCol={{span:24}}
-      name="password"
-      rules={[
-        {
-          required: true,
-          validator: validatePassword,
-        },
-      ]}
-      style={{
-        marginBottom: '8px'
-      }}
-    >
-  
-      <Input type='password'/>
-    </FormItem>
-    </InforLogin>
-
-    <FormItem>
-      <StyleBtn type="" htmlType="submit">
-        <span>Log in</span>
-      </StyleBtn>
-    </FormItem>
-    {error && <div>{error}</div>}
-    </MainLogin>
-  </FormStyle>
+          <FormItem>
+            <StyleBtn type="" htmlType="submit">
+              <span>Log in</span>
+            </StyleBtn>
+          </FormItem>
+       
+        </MainLogin>
+      </FormStyle>
     </DivStyle>
-  )
+  );
 }
