@@ -19,6 +19,7 @@ import './style.css';
 const GarageManagementList = () => {
   const navigate = useNavigate();
   const [avatar, setAvatar] = useState(null);
+  const [avatarIds, setAvatarIds] = useState(null);
   const handleView = userId => {
     navigate('/manager-details', { state: { userId: userId } });
   };
@@ -153,39 +154,34 @@ const GarageManagementList = () => {
   }, [searchText, isActived_1, isActived_2, pagination]);
   useEffect(() => {
     const fetchData = async () => {
-      const jwt = localStorage.getItem('jwt');
-      const requestOptions = {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${jwt}`,
-        },
-        redirect: 'follow',
-      };
-      const promises = data.map(item => {
-        if (!item.owner || !item.owner.data) {
-          return null;
+      try {
+        const jwt = localStorage.getItem('jwt');
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+          redirect: 'follow',
+        };
+        const apiUrl = `http://localhost:1337/api/garages?populate[owner][populate]=*`;
+        const response = await fetch(apiUrl, requestOptions);
+        const result = await response.json();
+        console.log('aaa', result);
+        if (response.ok) {
+          const urlArray = result.data.map(item => ({
+            avatarUrl:
+              item.attributes.owner.data?.attributes?.avatar?.data?.attributes
+                ?.url,
+            id: item.id,
+          }));
+          console.log('avt', urlArray[0].id);
+          setAvatar(urlArray);
         }
-        const apiUrl = `http://localhost:1337/api/users/${item.owner.data.id}?populate=avatar`;
-        return fetch(apiUrl, requestOptions)
-          .then(response => response.json())
-          .then(result => {
-            if (result) {
-              console.log(result);
-              return result.avatar.url;
-            }
-            return null;
-          })
-          .catch(error => {
-            console.log('Error fetching avatar', error);
-            return null;
-          });
-      });
-      const avatarUrls = await Promise.all(promises);
-      console.log(avatarUrls);
-      setAvatar(avatarUrls);
+      } catch (error) {
+        console.error('Error:', error);
+      }
     };
-
     fetchData();
   }, [data]);
 
@@ -313,12 +309,22 @@ const GarageManagementList = () => {
               }}
               dataSource={data.map((data, index) => ({
                 ...data,
-                STT: index + 1,
+                id: data.id,
                 owner: (
                   <>
                     <Avatar
                       size={32}
-                      src={`http://localhost:1337${avatar[index]}`}
+                      src={
+                        avatar &&
+                        avatar[avatar.findIndex(item => item.id === data.id)]
+                          ?.avatarUrl
+                          ? `http://localhost:1337${
+                              avatar[
+                                avatar.findIndex(item => item.id === data.id)
+                              ]?.avatarUrl
+                            }`
+                          : null
+                      }
                       alt="avatar"
                     />
                     <span style={{ marginLeft: '5px' }}>
