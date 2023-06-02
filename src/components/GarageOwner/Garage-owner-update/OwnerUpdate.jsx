@@ -121,7 +121,6 @@ export default function OwnerUpdate() {
           console.log(result);
           setData(result.role);
           console.log(result.role);
-
           console.error('Error:', result);
         }
       } catch (error) {
@@ -243,15 +242,15 @@ export default function OwnerUpdate() {
 
   const filteredGarages = garagesData
     ? garagesData
-        .filter(garage => {
-          const garageName = garage.attributes.name.toLowerCase();
-          const searchTermLower = searchTerm.toLowerCase();
-          return (
-            garage.id.toString().includes(searchTermLower) ||
-            garageName.includes(searchTermLower)
-          );
-        })
-        .slice(0, displayCount)
+      .filter(garage => {
+        const garageName = garage.attributes.name.toLowerCase();
+        const searchTermLower = searchTerm.toLowerCase();
+        return (
+          garage.id.toString().includes(searchTermLower) ||
+          garageName.includes(searchTermLower)
+        );
+      })
+      .slice(0, displayCount)
     : [];
   const isAdmin = data && data.type === 'admin';
 
