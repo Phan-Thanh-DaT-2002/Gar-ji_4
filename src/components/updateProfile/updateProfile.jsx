@@ -39,6 +39,7 @@ const AvatarImage = styled.img`
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
+  border: #bebcbc solid;
 `;
 
 const CameraAvatar = styled(Avatar)`
@@ -48,8 +49,6 @@ const CameraAvatar = styled(Avatar)`
   transform: translate(-50%, -50%);
   color: #eeeeee;
   background: rgba(0, 0, 0, 0);
-  opacity: 0;
-  transition: opacity 0.3s ease;
 `;
 
 const BlackClover = styled(AntAvatar)`
