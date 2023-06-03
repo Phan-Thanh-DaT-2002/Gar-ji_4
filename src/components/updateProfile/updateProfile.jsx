@@ -115,7 +115,7 @@ function UpdateProfile() {
   const onFinish = async values => {
     try {
       const jwt = localStorage.getItem('jwt');
-      const { dob, address, phoneNumber } = values;
+      const { dob, gender, phoneNumber } = values;
 
       if (uploadedImage) {
         // Nếu có ảnh mới được chọn, thực hiện tải lên ảnh
@@ -152,7 +152,7 @@ function UpdateProfile() {
       // Cập nhật thông tin số điện thoại và các thông tin khác (bao gồm cả khi không có ảnh mới)
       const raw = JSON.stringify({
         dob: dob.format('YYYY-MM-DD'),
-        address,
+        gender,
         phoneNumber,
       });
 
@@ -278,8 +278,11 @@ function UpdateProfile() {
                   </Form.Item>
                 </Col>
               </Row>
-              <Form.Item label="Address" name="address">
-                <Input placeholder="" />
+              <Form.Item label="Gender" name="gender">
+                <Select placeholder="">
+                  <Option value="male">Male</Option>
+                  <Option value="female">Female</Option>
+                </Select>
               </Form.Item>
               <Form.Item label="Role" name="role">
                 {data.role.type === 'admin' ? (
