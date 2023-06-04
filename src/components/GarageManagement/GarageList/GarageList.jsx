@@ -13,6 +13,7 @@ import {
   theme,
   Modal,
   Avatar,
+  message,
 } from 'antd';
 import './style.css';
 
@@ -219,7 +220,10 @@ const GarageManagementList = () => {
         };
 
         fetch(`http://localhost:1337/api/garages/${record.id}`, requestOptions)
-          .then(response => response.json())
+          .then(response => {
+            response.json()
+            message.success("delete success")
+          })
           .then(result => {
             if (!result.success) {
               console.log('Error deleting user');
@@ -318,13 +322,12 @@ const GarageManagementList = () => {
                       size={32}
                       src={
                         avatar &&
-                        avatar[avatar.findIndex(item => item.id === data.id)]
-                          ?.avatarUrl
-                          ? `http://localhost:1337${
-                              avatar[
-                                avatar.findIndex(item => item.id === data.id)
-                              ]?.avatarUrl
-                            }`
+                          avatar[avatar.findIndex(item => item.id === data.id)]
+                            ?.avatarUrl
+                          ? `http://localhost:1337${avatar[
+                            avatar.findIndex(item => item.id === data.id)
+                          ]?.avatarUrl
+                          }`
                           : null
                       }
                       alt="avatar"

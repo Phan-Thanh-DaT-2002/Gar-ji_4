@@ -16,6 +16,7 @@ import {
   Table,
   theme,
   Modal,
+  message,
 } from 'antd';
 
 const GarageServicesList = () => {
@@ -149,7 +150,10 @@ const GarageServicesList = () => {
           `http://localhost:1337/api/garage-services/${record.id}`,
           requestOptions
         )
-          .then(response => response.json())
+          .then(response => {
+            response.json()
+            message.success("delete success")
+          })
           .then(result => {
             if (!result.success) {
               console.log('Error deleting user');
