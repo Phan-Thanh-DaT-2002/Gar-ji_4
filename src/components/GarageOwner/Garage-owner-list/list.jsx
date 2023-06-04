@@ -37,8 +37,7 @@ const GarageOwnerList = () => {
       } else {
         message.error('You do not have permission to update.');
       }
-    }
-    else {
+    } else {
       message.error('You do not have permission to update.');
     }
   };
@@ -208,11 +207,11 @@ const GarageOwnerList = () => {
   };
 
   const handleAdd = () => {
-    if (isAdmin) { navigate('/garage-owner-create'); }
-    else {
+    if (isAdmin) {
+      navigate('/garage-owner-create');
+    } else {
       message.error('You do not have permission to delete.');
     }
-
   };
   const handleDelete = record => {
     Modal.confirm({

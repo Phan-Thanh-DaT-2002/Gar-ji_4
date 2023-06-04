@@ -79,8 +79,18 @@ const HomeLayout = () => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider collapsed={collapsed} onCollapse={value => setCollapsed(value)}>
-        <div style={{ height: 32, margin: 16 }}>
-          <p style={{ color: '#8767E1' }}>Menu</p>
+        <div
+          style={{
+            height: 32,
+            margin: 16,
+            textAlign: 'center',
+          }}
+        >
+          <p
+            style={{ color: '#8767E1', fontWeight: 'bold', paddingTop: '8px' }}
+          >
+            Menu
+          </p>
         </div>
         <Menu theme="light" mode="inline" items={items} onClick={useProfileClick()} />
       </Sider>

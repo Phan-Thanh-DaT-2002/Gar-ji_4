@@ -148,8 +148,8 @@ export default function OwnerUpdate() {
           gender: values.gender,
           role: values.role,
           garages: selectedGarages.map(garage => garage.id),
-          confirmed: true,
-          blocked: false,
+          
+          blocked: values.status === 'inactive' ? true : false,
         });
        
         const requestOptions = {
