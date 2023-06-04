@@ -99,9 +99,9 @@ function ViewProfile() {
             <Text strong>{data.dob}</Text>
           </div>
           <div>
-            <Text type="secondary">Address</Text>
+            <Text type="secondary">Gender</Text>
             <br />
-            <Text strong>{data.address}</Text>
+            <Text strong>{data.gender}</Text>
           </div>
           <div>
             <Text type="secondary">Role</Text>

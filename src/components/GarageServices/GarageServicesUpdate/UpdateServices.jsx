@@ -39,7 +39,7 @@ export default function UpdateServices() {
   const { userId } = location.state || {};
   const [data, setData] = useState(null);
 
-
+  const [fullName, setFullName] = useState('');
   const [owner, setOwner] = useState(null);
 
   const [serviceValues, setServiceValues] = useState([]);
@@ -65,6 +65,7 @@ export default function UpdateServices() {
           const result = await response.json();
           console.log(result);
           setData(result);
+          setFullName(result?.data?.attributes?.name || '');
           form.setFieldsValue({
             name: result.data.attributes.name,
             description: result.data.attributes.description,
@@ -148,6 +149,17 @@ export default function UpdateServices() {
   return (
     <DivStyle>
       <AllDiv>
+      <h1
+  style={{
+    fontFamily: 'Poppins',
+    fontStyle: 'normal',
+    fontWeight: 500,
+    fontSize: '24px',
+    color: '#111111',
+  }}
+>
+  <span style={{ opacity: '0.5' }}>All Garages </span> &gt; {fullName}
+</h1>
         <DivForm
           name="basic"
           labelCol={{

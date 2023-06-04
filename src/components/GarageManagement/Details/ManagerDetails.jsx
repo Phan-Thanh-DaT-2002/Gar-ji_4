@@ -30,6 +30,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 export default function ManagerDetails() {
   const [form] = Form.useForm();
   const [garageOwners, setGarageOwners] = useState([]);
+  const [fullName, setFullName] = useState('');
   const navigate = useNavigate();
   const handleUpdate = (userId) => {
     navigate('/manager-update', { state: { userId: userId } });
@@ -69,7 +70,7 @@ export default function ManagerDetails() {
           console.log(result);
           setData(result);
           setServiceValues(result.data.attributes.services.data || []);
-
+          setFullName(result?.data?.attributes?.name || '');
           console.log(owner);
           form.setFieldsValue({
             name: result.data.attributes.name,
@@ -223,6 +224,17 @@ export default function ManagerDetails() {
   return (
     <DivStyle>
       <AllDiv>
+      <h1
+  style={{
+    fontFamily: 'Poppins',
+    fontStyle: 'normal',
+    fontWeight: 500,
+    fontSize: '24px',
+    color: '#111111',
+  }}
+>
+  <span style={{ opacity: '0.5' }}>All Garages </span> &gt; {fullName}
+</h1>
         <DivForm
           name="basic"
           labelCol={{
@@ -256,6 +268,9 @@ export default function ManagerDetails() {
                   </span>
                 }
                 labelCol={{ span: 24 }}
+                style={{
+                  pointerEvents: 'none'
+                }}
                 name="name"
               >
                 <Input style={{ border: "none", cursor: "default", pointerEvents: 'none' }} readOnly />
@@ -275,6 +290,9 @@ export default function ManagerDetails() {
                   </span>
                 }
                 labelCol={{ span: 24 }}
+                style={{
+                  pointerEvents: 'none'
+                }}
                 name="email"
 
               >
@@ -296,6 +314,9 @@ export default function ManagerDetails() {
                   </span>
                 }
                 labelCol={{ span: 24 }}
+                style={{
+                  pointerEvents: 'none'
+                }}
                 name="phoneNumber"
 
               >
@@ -319,6 +340,9 @@ export default function ManagerDetails() {
                   </span>
                 }
                 labelCol={{ span: 24 }}
+                style={{
+                  pointerEvents: 'none'
+                }}
                 name="address"
 
               >
@@ -340,6 +364,9 @@ export default function ManagerDetails() {
                   </span>
                 }
                 labelCol={{ span: 24 }}
+                style={{
+                  pointerEvents: 'none'
+                }}
               >
                 <StyledTimePicker
                   picker="time"
@@ -366,6 +393,9 @@ export default function ManagerDetails() {
                   </span>
                 }
                 labelCol={{ span: 24 }}
+                style={{
+                  pointerEvents: 'none'
+                }}
 
               >
                 <StyledTimePicker
@@ -395,6 +425,9 @@ export default function ManagerDetails() {
                   </span>
                 }
                 labelCol={{ span: 24 }}
+                style={{
+                  pointerEvents: 'none'
+                }}
               >
                 <Input
                   style={{ border: "none", cursor: "default", pointerEvents: 'none' }}
@@ -418,6 +451,9 @@ export default function ManagerDetails() {
                   </span>
                 }
                 labelCol={{ span: 24 }}
+                style={{
+                  pointerEvents: 'none'
+                }}
 
               >
                 <Input style={{ border: "none", cursor: "default", pointerEvents: 'none' }} readOnly />

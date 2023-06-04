@@ -7,7 +7,7 @@ import styled from 'styled-components';
 export const DivStyle = styled.div `
     position: relative;
     width: 100%;
-    height: 115vh;
+    height: 125vh;
     background: #F6F6F6;  
 `
 export const AllDiv = styled.div`
@@ -15,7 +15,6 @@ export const AllDiv = styled.div`
     flex-direction: column;
     align-items: flex-start;
     padding: 0px;
-    gap: 32px;
   
     position: absolute;
     

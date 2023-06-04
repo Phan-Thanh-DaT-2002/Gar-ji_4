@@ -15,7 +15,7 @@ export const AllDiv = styled.div`
     flex-direction: column;
     align-items: flex-start;
     padding: 0px;
-    gap: 32px;
+  
   
     position: absolute;
     

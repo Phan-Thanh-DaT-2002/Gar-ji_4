@@ -50,7 +50,7 @@ export default function OwnerUpdate() {
   const { userId } = location.state || {};
   const [data, setData] = useState(null);
   const [garages, setGarages] = useState([]);
-
+  const [fullName, setFullName] = useState('');
   const [selectedGarages, setSelectedGarages] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
@@ -76,10 +76,12 @@ export default function OwnerUpdate() {
           // setData(result);
           setSelectedGarages(result.garages);
           setTotalGarages(result.garages.length);
+          setFullName(result.fullname)
           form.setFieldsValue({
             name: result.fullname,
             email: result.email,
             username: result.username,
+            
             password: '******',
             phone: result.phoneNumber,
             gender: result.gender,
@@ -88,6 +90,7 @@ export default function OwnerUpdate() {
             status: result?.blocked ? 'Inactive' : 'Active',
             // garages: result.garages?.name,
           });
+         
         } else {
           console.error('Error:', response.statusText);
         }
@@ -142,12 +145,13 @@ export default function OwnerUpdate() {
           dob: values.dob.format('YYYY-MM-DD'),
           address: values.address,
           phoneNumber: values.phone,
+          gender: values.gender,
           role: values.role,
           garages: selectedGarages.map(garage => garage.id),
           confirmed: true,
           blocked: false,
         });
-
+       
         const requestOptions = {
           method: 'PUT',
           headers: {
@@ -177,11 +181,13 @@ export default function OwnerUpdate() {
       } else {
         message.error('You do not have permission to delete.');
       }
+      console.log(888, values)
     } catch (error) {
       console.error('Error:', error);
       message.error('An error occurred');
     }
   };
+  
 
   const onFinishFailed = errorInfo => {
     console.log('Failed:', errorInfo);
@@ -257,6 +263,17 @@ export default function OwnerUpdate() {
   return (
     <DivStyle>
       <AllDiv>
+      <h1
+  style={{
+    fontFamily: 'Poppins',
+    fontStyle: 'normal',
+    fontWeight: 500,
+    fontSize: '24px',
+    color: '#111111',
+  }}
+>
+  <span style={{ opacity: '0.5' }}>All Garages </span> &gt; {fullName}
+</h1>
         <DivForm
           name="basic"
           labelCol={{

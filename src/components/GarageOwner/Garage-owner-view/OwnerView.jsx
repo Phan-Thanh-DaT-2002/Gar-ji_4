@@ -41,7 +41,7 @@ import {
 import moment from 'moment';
 export default function OwnerView() {
   const [userData, setUserData] = useState([]);
-
+  const [fullName, setFullName] = useState('');
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -126,6 +126,7 @@ export default function OwnerView() {
           setGaragesData(result.garages);
           setTotalGarages(result.garages.length);
           setTemp_data_user(result.id);
+          setFullName(result.fullname)
           form.setFieldsValue({
             name: result.fullname,
             email: result.email,
@@ -213,6 +214,17 @@ export default function OwnerView() {
   return (
     <DivStyle>
       <AllDiv>
+      <h1
+  style={{
+    fontFamily: 'Poppins',
+    fontStyle: 'normal',
+    fontWeight: 500,
+    fontSize: '24px',
+    color: '#111111',
+  }}
+>
+  <span style={{ opacity: '0.5' }}>All Garages </span> &gt; {fullName}
+</h1>
         <DivForm
           name="basic"
           labelCol={{
@@ -246,7 +258,9 @@ export default function OwnerView() {
                     Name
                   </span>
                 }
-                style={{}}
+                style={{
+                  pointerEvents: 'none'
+                }}
                 labelCol={{ span: 24 }}
                 name="name"
               >
@@ -277,6 +291,9 @@ export default function OwnerView() {
                   </span>
                 }
                 labelCol={{ span: 24 }}
+                style={{
+                  pointerEvents: 'none'
+                }}
                 name="email"
               >
                 <Input
@@ -308,6 +325,9 @@ export default function OwnerView() {
                 }
                 name="username"
                 labelCol={{ span: 24 }}
+                style={{
+                  pointerEvents: 'none'
+                }}
               >
                 <Input
                   placeholder="Enter owner username"
@@ -339,6 +359,9 @@ export default function OwnerView() {
                   </span>
                 }
                 labelCol={{ span: 24 }}
+                style={{
+                  pointerEvents: 'none'
+                }}
                 name="dob"
               >
                 <StyledDOB
@@ -369,6 +392,9 @@ export default function OwnerView() {
                   </span>
                 }
                 labelCol={{ span: 24 }}
+                style={{
+                  pointerEvents: 'none'
+                }}
                 name="phone"
               >
                 <Input
@@ -399,6 +425,9 @@ export default function OwnerView() {
                   </span>
                 }
                 labelCol={{ span: 24 }}
+                style={{
+                  pointerEvents: 'none'
+                }}
               >
                 <Input
                   className="selectStyle"
@@ -438,6 +467,9 @@ export default function OwnerView() {
                   </span>
                 }
                 labelCol={{ span: 24 }}
+                style={{
+                  pointerEvents: 'none'
+                }}
                 name="role"
               >
                 <Input

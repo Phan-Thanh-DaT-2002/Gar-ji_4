@@ -31,7 +31,7 @@ function UpdateMana() {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [garageOwners, setGarageOwners] = useState([]);
-
+  const [fullName, setFullName] = useState('');
   const { userId } = location.state || {};
   const [data, setData] = useState(null);
   const navigate = useNavigate()
@@ -85,7 +85,7 @@ function UpdateMana() {
           console.log(result);
           setData(result);
           setSelectedGarages(result.data.attributes.services.data || []);
-
+          setFullName(result?.data?.attributes?.name || '');
           form.setFieldsValue({
             name: result.data.attributes.name,
             address: result.data.attributes.address,
@@ -125,7 +125,7 @@ function UpdateMana() {
         "data": {
           name: values.name,
           address: values.address,
-          blocked: values.status === 'inactive' ? true : false,
+          status: values.status,
           phoneNumber: values.phoneNumber,
           email: values.email,
           openTime: openTime,
@@ -257,6 +257,17 @@ function UpdateMana() {
   return (
     <DivStyle>
       <AllDiv>
+      <h1
+  style={{
+    fontFamily: 'Poppins',
+    fontStyle: 'normal',
+    fontWeight: 500,
+    fontSize: '24px',
+    color: '#111111',
+  }}
+>
+  <span style={{ opacity: '0.5' }}>All Garages </span> &gt; {fullName}
+</h1>
         <DivForm
           name="basic"
           id="my_Form"
@@ -615,7 +626,7 @@ function UpdateMana() {
                 </LeftColumn>
                 <MyDivider type="vertical" />
                 <RightColumn>
-                  <div className="select_gara">Select garages ({selectedGarages.length})</div>
+                  <div className="select_gara">Select services ({selectedGarages.length})</div>
                   {selectedGarages.map((garage) => (
                     <div className="select_remove" key={garage.id}>
                       <span>{getGarageNameById(garage.id)}</span>
