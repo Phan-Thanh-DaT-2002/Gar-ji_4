@@ -80,7 +80,7 @@ const checkNameExists = (name) => {
         data: {
           name: values.name,
           address: values.address,
-          blocked: values.status === 'inactive' ? true : false,
+          status: values.status,
           phoneNumber: phoneNumber,
           email: values.email,
           openTime: openTime,
@@ -206,6 +206,17 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
   return (
     <DivStyle>
       <AllDiv>
+      <h1
+              style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                fontSize: '24px',
+                color: '#111111',
+              }}
+            >
+              <span style={{opacity:'0.5'}}>All Garages </span>  &gt; <span> Add a new garage </span>
+            </h1>
         <DivForm
           name="basic"
           id="my_Form"
@@ -555,7 +566,7 @@ setSelectedGarages(selectedGarages.filter((g) => g.id !== garage.id));
       </LeftColumn>
       <MyDivider type="vertical" />
       <RightColumn>
-        <div className="select_gara">Select garages ({selectedGarages.length})</div>
+        <div className="select_gara">Select services ({selectedGarages.length})</div>
         {selectedGarages.map((garage) => (
           <div className="select_remove" key={garage.id}>
             <span>{getGarageNameById(garage.id)}</span>

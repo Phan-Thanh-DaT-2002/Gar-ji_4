@@ -190,6 +190,17 @@ function Create() {
   return (
     <DivStyle>
       <AllDiv>
+      <h1
+              style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                fontSize: '24px',
+                color: '#111111',
+              }}
+            >
+              <span style={{opacity:'0.5'}}>All Garages </span>  &gt; <span> Add a new owner </span>
+            </h1>
         <DivForm
           name="basic"
           labelCol={{
@@ -317,7 +328,7 @@ function Create() {
                   },
                 ]}
               >
-                <Input placeholder="Enter owner password" />
+                <Input placeholder="Enter owner password" type="password" />
               </FormItem>
               <FormItem
 

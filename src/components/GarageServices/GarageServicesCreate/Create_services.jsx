@@ -92,6 +92,17 @@ export default function CreateServices() {
   return (
     <DivStyle>
       <AllDiv>
+      <h1
+              style={{
+                fontFamily: 'Poppins',
+                fontStyle: 'normal',
+                fontWeight: 500,
+                fontSize: '24px',
+                color: '#111111',
+              }}
+            >
+              <span style={{opacity:'0.5'}}>All Garages </span>  &gt; <span> Add a new services </span>
+            </h1>
         <DivForm
           name="basic"
           labelCol={{

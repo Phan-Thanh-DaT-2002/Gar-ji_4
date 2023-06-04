@@ -17,7 +17,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function ServiceDetail() {
   const [userData, setUserData] = useState([]);
-
+  const [fullName, setFullName] = useState('');
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const { Option } = Select;
@@ -90,6 +90,7 @@ export default function ServiceDetail() {
           const result = await response.json();
           console.log(result);
           settemp_data_service(result);
+          setFullName(result?.data?.attributes?.name || '');
           form.setFieldsValue({
             name: result.data.attributes.name,
             description: result.data.attributes.description,
@@ -154,6 +155,17 @@ export default function ServiceDetail() {
   return (
     <DivStyle>
       <AllDiv>
+      <h1
+  style={{
+    fontFamily: 'Poppins',
+    fontStyle: 'normal',
+    fontWeight: 500,
+    fontSize: '24px',
+    color: '#111111',
+  }}
+>
+  <span style={{ opacity: '0.5' }}>All Garages </span> &gt; {fullName}
+</h1>
         <DivForm
           name="basic"
           labelCol={{
@@ -188,6 +200,9 @@ export default function ServiceDetail() {
                   </span>
                 }
                 labelCol={{ span: 24 }}
+                style={{
+                  pointerEvents: 'none'
+                }}
                 name="name"
               >
                 <Input
@@ -217,6 +232,9 @@ export default function ServiceDetail() {
                   </span>
                 }
                 labelCol={{ span: 24 }}
+                style={{
+                  pointerEvents: 'none'
+                }}
                 name="minPrice"
               >
                 <Input
@@ -247,6 +265,9 @@ export default function ServiceDetail() {
                   </span>
                 }
                 labelCol={{ span: 24 }}
+                style={{
+                  pointerEvents: 'none'
+                }}
                 name="maxPrice"
               >
                 <Input
@@ -278,6 +299,9 @@ export default function ServiceDetail() {
                   </span>
                 }
                 labelCol={{ span: 24 }}
+                style={{
+                  pointerEvents: 'none'
+                }}
                 name="description"
               >
                 <StyledTextArea
