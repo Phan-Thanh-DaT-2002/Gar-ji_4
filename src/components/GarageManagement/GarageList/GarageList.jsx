@@ -16,6 +16,7 @@ import {
   message,
 } from 'antd';
 import './style.css';
+import { ReactComponent as Ellipse1 } from '../../../assets/images/Ellipse 1.svg';
 
 const GarageManagementList = () => {
   const navigate = useNavigate();
@@ -221,8 +222,8 @@ const GarageManagementList = () => {
 
         fetch(`http://localhost:1337/api/garages/${record.id}`, requestOptions)
           .then(response => {
-            response.json()
-            message.success("delete success")
+            response.json();
+            message.success('delete success');
           })
           .then(result => {
             if (!result.success) {
@@ -323,12 +324,14 @@ const GarageManagementList = () => {
                       src={
                         avatar &&
                           avatar[avatar.findIndex(item => item.id === data.id)]
-                            ?.avatarUrl
-                          ? `http://localhost:1337${avatar[
+                            ?.avatarUrl ? (
+                          `http://localhost:1337${avatar[
                             avatar.findIndex(item => item.id === data.id)
                           ]?.avatarUrl
                           }`
-                          : null
+                        ) : (
+                          <Avatar size={32} icon={<Ellipse1 />}></Avatar>
+                        )
                       }
                       alt="avatar"
                     />
