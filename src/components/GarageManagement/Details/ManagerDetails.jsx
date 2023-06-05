@@ -191,6 +191,8 @@ export default function ManagerDetails() {
     console.log(record);
     Modal.confirm({
       title: 'Are you sure about that?',
+      okText: 'Yes',
+      cancelText: 'No',
       onOk: () => {
         setUserData(prevData => {
           return prevData.filter(data => data.id !== record.id);
@@ -224,17 +226,17 @@ export default function ManagerDetails() {
   return (
     <DivStyle>
       <AllDiv>
-      <h1
-  style={{
-    fontFamily: 'Poppins',
-    fontStyle: 'normal',
-    fontWeight: 500,
-    fontSize: '24px',
-    color: '#111111',
-  }}
->
-  <span style={{ opacity: '0.5' }}>All Garages </span> &gt; {fullName}
-</h1>
+        <h1
+          style={{
+            fontFamily: 'Poppins',
+            fontStyle: 'normal',
+            fontWeight: 500,
+            fontSize: '24px',
+            color: '#111111',
+          }}
+        >
+          <span style={{ opacity: '0.5' }}>All Garages </span> &gt; {fullName}
+        </h1>
         <DivForm
           name="basic"
           labelCol={{
