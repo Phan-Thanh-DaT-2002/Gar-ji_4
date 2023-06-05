@@ -69,7 +69,8 @@ const ChangePassword = () => {
         .then(response => {
           if (response.ok) {
             message.success('change password successfully!');
-            navigate('/');
+            localStorage.removeItem('jwt');
+            navigate('/login');
           }
         })
         .then(result => console.log(result))
